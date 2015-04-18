@@ -1,0 +1,129 @@
+
+//Net Params
+
+if (name_declared("mat_inh_coupling") == 5) {
+inh_coupling = mat_inh_coupling
+} else {
+inh_coupling = 0.11
+}
+
+if (name_declared("mat_d_rge") == 5) {
+d_rge = mat_d_rge
+} else {
+d_rge = 0.4
+}
+
+if (name_declared("mat_d_rgf") == 5) {
+d_rgf = mat_d_rgf
+} else {
+d_rgf = 0.5
+}
+
+if (name_declared("mat_exc_coupling") == 5) {
+exc_coupling = mat_exc_coupling
+} else {
+exc_coupling = 0.0125
+}
+
+
+if (name_declared("mat_gi_bar") == 5) {
+gi_bar = mat_gi_bar
+} else {
+gi_bar = 0.05e-3
+}
+
+if (name_declared("mat_excitation") == 5) {
+excitation = mat_excitation
+} else {
+excitation = 0
+}
+
+if (name_declared("mat_inrg_el") == 5) {
+inrg_el = mat_inrg_el
+} else {
+inrg_el = -57.5
+}
+
+if (name_declared("mat_rg_el") == 5) {
+rg_el = mat_rg_el
+} else {
+rg_el = -64
+}
+
+ge_bar = 0.05e-3
+
+xopen("netbuild_large_scale_RG")
+
+//load_file("testing3.ses")
+tstop = 30000
+
+ena = 55
+ek = -80
+
+
+for i=0,N-1 {
+
+}
+
+objref RG_E_v_vec[20]
+objref RG_F_v_vec[20]
+
+objref Inrg_E_v_vec[20]
+objref Inrg_F_v_vec[20]
+
+for i=0,N-1 {
+
+RG_E_v_vec[i] = new Vector()
+RG_E_v_vec[i].record(&RG_E_rg_int[i].soma.v(0.5))
+RG_F_v_vec[i] = new Vector()
+RG_F_v_vec[i].record(&RG_F_rg_int[i].soma.v(0.5))
+
+Inrg_E_v_vec[i] = new Vector()
+Inrg_E_v_vec[i].record(&Inrg_E_int[i].soma.v(0.5))
+Inrg_F_v_vec[i] = new Vector()
+Inrg_F_v_vec[i].record(&Inrg_F_int[i].soma.v(0.5))
+
+
+}
+
+init()
+run()
+
+objref RG_E_v_file
+
+objref RG_F_v_file
+
+
+objref Inrg_E_v_file
+
+objref Inrg_F_v_file
+
+strdef filename
+
+for i=0,N-1 {
+
+RG_E_v_file = new File()
+sprint(filename, "%s%d%s", "RG_E_v_", i,".txt")
+RG_E_v_file.wopen(filename)
+RG_E_v_vec[i].printf(RG_E_v_file)
+RG_E_v_file.close
+
+RG_F_v_file = new File()
+sprint(filename, "%s%d%s", "RG_F_v_", i,".txt")
+RG_F_v_file.wopen(filename)
+RG_F_v_vec[i].printf(RG_F_v_file)
+RG_F_v_file.close
+
+Inrg_E_v_file = new File()
+sprint(filename, "%s%d%s", "INRG_E_v_", i,".txt")
+Inrg_E_v_file.wopen(filename)
+Inrg_E_v_vec[i].printf(Inrg_E_v_file)
+Inrg_E_v_file.close
+
+Inrg_F_v_file = new File()
+sprint(filename, "%s%d%s", "INRG_F_v_", i,".txt")
+Inrg_F_v_file.wopen(filename)
+Inrg_F_v_vec[i].printf(Inrg_F_v_file)
+Inrg_F_v_file.close
+
+}

@@ -1,0 +1,47 @@
+
+objref c_file // There's some sort of object called c_file
+c_file = new File() // c_file is a pointer to a file in memory
+strdef params_file 
+sprint(params_file, "%s%s", tempdata_address, "cell_params")
+print params_file
+c_file.ropen(params_file) // give it the name of the file and open for reading
+
+//note that all parameters are in tempdata directory!!
+
+mat_n_nodes = c_file.scanvar() // save the first number to a variable
+start_time = c_file.scanvar() // save the second number...
+dur_time = c_file.scanvar()
+interval_time = c_file.scanvar()
+mat_diam = c_file.scanvar()
+mat_l = mat_diam // nodes are as long as they are wide
+mat_inl = c_file.scanvar()
+
+mat_amp = c_file.scanvar() //max amplitude input from matlab
+mat_step = c_file.scanvar() //step size input from matlab
+mat_start_amp = c_file.scanvar() //step size input from matlab
+
+// Close the file
+c_file.close
+
+/*
+Here we are declaring functions that return the values of variables read in from the text file. If for some reason
+we didn't declare any one of them in the file, the function instead returns some default value. This is because variables
+were not visible inside the cell type template files.
+*/
+
+func n_nodes(){ // how many nodes are we simulating for our fiber?
+//print "n_nodes() = ", mat_n_nodes
+	return mat_n_nodes
+}
+
+func get_diam(){ // what is the diameter of a node?
+	return mat_diam
+}
+
+func get_L(){ // how long is a node
+	return mat_diam
+}
+
+func get_INL(){ // how many times longer is a node than a paranode? (the Inter Node Length)
+	return mat_inl
+}

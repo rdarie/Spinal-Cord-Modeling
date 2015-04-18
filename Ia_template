@@ -1,0 +1,135 @@
+public is_art
+public init, topol, basic_shape, subsets, geom, biophys, geom_nseg, biophys_inhomo, setv
+public synlist, x, y, z, position, connect2target
+
+/* a template is a class definition that doesn't have access to the functions 
+and variables defined in the main body of the script unless you specifically point it to each one.
+*/
+external lambda_f, n_nodes, get_diam, get_L, get_INL, mat_n_nodes, tempdata_address, geom_file
+public soma, Ia_node, Ia_paranode
+public all
+
+objref synlist
+	create soma
+	//print "Going to make ", n_nodes(), "sections"
+	create Ia_node[n_nodes()]
+	create Ia_paranode[n_nodes()]
+
+proc init() {
+  topol()
+  subsets()
+  geom()
+  biophys()
+  geom_nseg()
+  basic_shape()
+  synlist = new List()
+  synapses()
+  x = y = z = 0 // only change via position
+}
+
+  
+proc topol() { local i
+  //soma {pt3dclear() pt3dadd(0, 0, 0, 1) pt3dadd(15, 0, 0, 1)}
+  { connect soma(1), Ia_node[0](0)}
+  //count = 0
+	for ii = 0, n_nodes()-1 {
+		//Ia_node[ii] {pt3dclear() pt3dadd(15+count, 0, 0, 1) pt3dadd(16+count, 0, 0, 1)}
+		//Ia_paranode[ii] {pt3dclear() pt3dadd(15+count, 0, 0, 1) pt3dadd(16+count, 0, 0, 1)}
+		//print "Connecting node ", ii
+		connect Ia_node[ii](1), Ia_paranode[ii](0)
+		if (ii != n_nodes()-1) {connect Ia_paranode[ii](1), Ia_node[ii+1](0)}
+		//count = count+1
+	}
+}
+
+objref all
+proc subsets() { local i
+  objref all
+  all = new SectionList()
+    soma all.append()
+	for ii = 0, n_nodes()-1 {
+    Ia_node[ii] all.append()
+    Ia_paranode[ii] all.append()
+	}
+
+}
+
+proc geom() {
+  soma {  L = 30  diam = 30  }
+	for ii = 0, n_nodes()-1 {
+    Ia_node[ii] {  diam = get_diam()  L = get_L()  }
+    Ia_paranode[ii] {  diam = get_diam()  L = get_L()  }
+	}
+}
+
+proc geom_nseg() {
+  soma { nseg = int((L/(0.1*lambda_f(100))+.999)/2)*2 + 1  }
+	for ii = 0, n_nodes()-1 {
+    Ia_node[ii] { nseg = int((L/(0.1*lambda_f(100))+.999)/2)*2 + 1  }
+    Ia_paranode[ii] { nseg = int((L/(0.1*lambda_f(100))+.999)/2)*2 + 1 }
+	}
+}
+
+proc biophys() {
+	Base_Ra = 150
+	for ii = 0, n_nodes()-1 {
+	Ia_node[ii] {
+    insert axnode
+    Ra = Base_Ra
+    cm = 1
+    insert extracellular{
+      xg[0]=1e10
+      xg[1]=1e10
+      xc[0]=0
+      xc[1]=0
+      xraxial[0]=1e20
+      xraxial[1]=1e20
+      e_extracellular=0
+      }
+  }
+  Ia_paranode[ii] {
+    Ra = Base_Ra*get_INL()
+    cm = 1
+	insert pas
+      g_pas=0.001/(2*9.15*diam+2*30)
+      e_pas=-80
+    insert extracellular{
+      xg[0]=1e10
+      xg[1]=1e10
+      xc[0]=0
+      xc[1]=0
+      xraxial[0]=1e20
+      xraxial[1]=1e20
+      e_extracellular=0
+      }
+  }
+	}
+}
+proc basic_shape() {
+xopen(geom_file)
+}
+proc setv() {
+forall {
+v = $1
+}
+}
+
+proc position() { local i
+  soma for i = 0, n3d()-1 {
+    pt3dchange(i, $1-x+x3d(i), $2-y+y3d(i), $3-z+z3d(i), diam3d(i))
+  }
+  x = $1  y = $2  z = $3
+}
+
+obfunc connect2target() { localobj nc //$o1 target point process, optional $o2 returned NetCon
+  Ia_node[n_nodes()-1] nc = new NetCon(&v(1), $o1)
+  nc.threshold = 10
+  if (numarg() == 2) { $o2 = nc } // for backward compatibility
+  return nc
+}
+
+objref syn_
+proc synapses() {
+}
+
+func is_art() { return 0 }

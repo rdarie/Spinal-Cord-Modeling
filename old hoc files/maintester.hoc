@@ -1,0 +1,261 @@
+
+load_file("nrngui.hoc") // Brings up the GUI
+//load_file("noload.hoc") // Does not bring up the GUI, but loads certain function dependencies
+
+systype = unix_mac_pc()
+strdef tempdata_address
+
+//changed to double equal
+if (systype == 3) { //if windows
+	tempdata_address = ".\\tempdata\\"
+	} else {
+ 	tempdata_address = "tempdata/"
+ 	}
+//for mac, must be of form "tempdata/cell_params"
+
+/* Here we will load the text file containing the cell and stimulation parameters.
+*/
+objref c_file // There's some sort of object called c_file
+c_file = new File() // c_file is a pointer to a file in memory
+strdef params_file 
+sprint(params_file, "%s%s", tempdata_address, "cell_params")
+print params_file
+c_file.ropen(params_file) // give it the name of the file and open for reading
+
+
+mat_n_nodes = c_file.scanvar() // save the first number to a variable
+start_time = c_file.scanvar() // save the second number...
+dur_time = c_file.scanvar()
+interval_time = c_file.scanvar()
+mat_diam = c_file.scanvar()
+mat_l = mat_diam // nodes are as long as they are wide
+mat_inl = c_file.scanvar()
+
+//amplitudes?!
+
+// Close the file
+c_file.close
+
+/*
+Here we are declaring functions that return the values of variables that get declared in the command line. If for some reason
+we didn't declare any one of them in the command line, the function instead returns some default value.
+*/
+
+func n_nodes(){ // how many nodes are we simulating for our fiber?
+//print "n_nodes() = ", mat_n_nodes
+return mat_n_nodes
+}
+
+func get_diam(){ // what is the diameter of a node?
+//print "get_diam() = ", mat_diam
+return mat_diam
+}
+
+func get_L(){ // how long is a node
+//print " get_L() = ", mat_diam
+return mat_diam
+}
+
+func get_INL(){ // how many times longer is a node than a paranode? (the Inter Node Length)
+//print " get_INL() = ", mat_inl
+return mat_inl
+}
+
+func start_t(){ // when should stimulation start (ms)
+//print " start_t() = ", start_time
+return start_time
+}
+
+func interval_t(){ // how long in between pulses? (ms)
+//print " interval_t() = ", interval_time
+return interval_time
+}
+func dur_t(){ // how wide a stimulation pulse do we want (ms)
+//print " dur_t() = ", dur_time
+return dur_time
+}
+
+/*
+Here we create a vector in NEURON called V_extra that will hold the values of the extracellular voltage calculated by MATLAB.
+It holds values for both nodes and paranodes, so it is 2*n_nodes long. 
+*/
+objref V_extra
+V_extra = new Vector(2*n_nodes(),0)
+/*We declare (new File()) that there is a file called matlab_v_extra.
+We open (file.ropen) the MATLAB generated file, matlab_v_extra,
+and we read in (file.scanvar) each value sequentially in the for loop. finally we close the file.*/
+objref v_file
+v_file = new File()
+strdef voltage_file 
+sprint(voltage_file, "%s%s", tempdata_address, "matlab_v_extra")
+
+//voltage_file
+
+v_file.ropen(voltage_file) // give it the name of the file and open for reading
+
+for ii = 0, (2*n_nodes()-1) {
+	V_extra.x[ii] = v_file.scanvar()
+}
+v_file.close
+
+
+/*
+Here we define some objects that will hold the list of cell instances in our simulation (cells), the list of connections between them (nclist) and 
+the list of (netcon)
+*/
+objref cells, nclist, netcon
+{cells = new List()  nclist = new List()} // empty lists at this point
+
+/*
+Here we define some functions that will set the values of the extracellular voltage at each point along the axon to the values red from a vector.
+*/
+proc set_extracellular(){
+/* set_extracellular(cell, extracellular V, amp)
+The first argument ($o1) is the cell we want to apply changes to. The second argument, $o2 , is the vector and the third argument $3 is the scaling amplitude
+'o's are just instructing NEURON to expect that those arguments are objects, as opposed to scalars.
+*/
+   k = 0 // count through the vector
+   for ii= 0, n_nodes()-1 {
+       $o1.Ia_node[ii].e_extracellular=$o2.x[k]*$3
+	   /*
+	   $o1 is the cell, so it necessarily  has a field called Ia_node. We define this in the template definition below, see details there. Ia_node is a vector of length
+	   n_nodes(), where each entry is a NEURON section, and each entry has the extracellular mechanism inserted. we are addressing the e_extracellular parameter of the current (ii'th) section.
+	   $o2 is the vector containing the values. each entry in the vector has a .x field where we can get the voltage value from. we are addressing the current (k'th) value each time.
+	   $3 is the scalar amplitude. Not that we're also setting this to negative voltage because this is cathode stimulation.
+	   */
+	   k = k + 1
+	   $o1.Ia_paranode[ii].e_extracellular=$o2.x[k]*$3
+	   // same explanation as above, except this is the paranode.
+	   k = k + 1
+   }
+}
+
+// Save the stimulation parameters to NEURON variables. This is kind of a roundabout way of doing it...
+
+START = start_t()
+DUR = dur_t()
+INTERVAL = interval_t()
+
+// Debugging: override stim params manually set amplitude
+
+//DUR = .05
+//INTERVAL = 1500
+//START = 500
+AMP = -3.725e-1
+
+
+/*
+Here we set up the functions that will handle the stimulation. Basically we are generating the square waveform through a cascade of event listeners.
+*/
+
+// I'm not sure what this does yet.
+objref fih
+fih = new FInitializeHandler("initi()")
+
+/* initi() is a function that takes one argument, START, and launches a cvode event. the cvode listener probes the current time, t, at each
+step in the simulation. When, finally, t = START, the cvode listener launches the seti() function, and stops listening. 
+*/
+proc initi() {
+// START = $1
+  STIMON = 0 // stimulation off until we get to seti()
+  cvode.event(START, "seti()")
+}
+
+/*
+toggles between stimulus ON states and stimulus off states.
+seti() gets called in two situations: for the very first time, it is called by the cvode event listener that initi() sent out. This happens at t = START, and only happens once.
+the end of seti() creates a new cvode event listener, that will call seti() again. This happens continuously throughout execution of the program.
+*/
+proc seti() {
+// DUR = $1, Interval = $2, amp = $3
+
+  if (STIMON==0) { // if we're at an off state,
+    STIMON = 1 // turn stimulation on
+    {set_extracellular(cells.object(1),V_extra, AMP)} // set the extracellular voltage to the values calculated in matlab
+    cvode.event(t + DUR, "seti()") // call seti() after DUR milliseconds have elapsed
+  } else { // if we're at an on state,
+    STIMON = 0 // turn stimulation off
+    {set_extracellular(cells.object(1),V_extra, 0)} // and set all the extracelulluar voltages to zero.
+    cvode.event(t + INTERVAL, "seti()") // call seti() again after INTERVAL milliseconds have elapsed
+  }
+  // we've changed a parameter abruptly
+  // so we really should re-initialize cvode
+  if (cvode.active()) {
+    cvode.re_init()
+  } else {
+    fcurrent()
+  }
+}
+
+begintemplate Motoneuron_Cell
+{xopen("motoneuron_template")}
+endtemplate Motoneuron_Cell
+
+begintemplate Ia_axon_Cell
+{xopen("Ia_template")}
+endtemplate Ia_axon_Cell
+
+//Network specification interface
+
+func cell_append() {cells.append($o1)  $o1.position($2,$3,$4)
+	return cells.count - 1
+}
+
+func nc_append() {//srcindex, tarcelindex, synindex
+  if ($3 >= 0) {
+    netcon = cells.object($1).connect2target(cells.object($2).synlist.object($3))
+    netcon.weight = $4   netcon.delay = $5
+  }else{
+    netcon = cells.object($1).connect2target(cells.object($2).pp)
+    netcon.weight = $4   netcon.delay = $5
+  }
+  nclist.append(netcon)
+  return nclist.count - 1
+}
+
+//intracellular v
+proc init() {	//change default v values, hoc file calls init() after run
+ cells.object(0).setv(-68) //motor neuron
+ cells.object(1).setv(-88) //Ia fiber axon
+ finitialize()
+}
+
+//Network instantiation
+
+  /* Motoneuron0 */  cell_append(new Motoneuron_Cell(),-92,43, 0)
+  /* Ia_axon1 */  cell_append(new Ia_axon_Cell(),33,-23, 0)
+  /* Ia_axon1 -> Motoneuron0.E0 */nc_append(1,0,0,15,1)
+ 
+  
+  initi() 
+  access cells.object(1).Ia_node[n_nodes()-1]
+  objref apc_term   //Creating AP Counter in the terminal
+  
+  //this part parallel?
+  apc_term=new APCount(.5)
+  apc_term.thresh = 0
+  
+  //need to generate new amplitude
+  
+  /*
+  // Comment for Debugging
+  // Uncomment this section for batch processing!!
+	tstop = 5000
+	run()
+	print "Finished running. ", apc_term.n, "action potentials recorded" 
+	
+	objref fobj
+	fobj = new File()
+
+	strdef apc_file 
+	sprint(apc_file, "%s%s", tempdata_address, "curr_ap_count.txt")
+	fobj.wopen(apc_file) // give it the name of the file and open for reading
+	fobj.printf("%4.4f", apc_term.n)
+	fobj.close()
+	/* 
+
+	print "done running!"
+//runtime without parallelization is 2 min through nrn interface (longer w/ matlab)
+//next step is to generate parallel network
+
+//quit()

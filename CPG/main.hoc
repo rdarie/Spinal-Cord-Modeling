@@ -1,0 +1,12 @@
+xopen("netbuild")
+
+access cells.object(0).soma
+objref stim
+stim = new IClamp(0.5)
+stim.del = 100
+stim.dur = 10
+stim.amp = 100
+
+tstop = 300
+load_file("testing.ses")
+run()

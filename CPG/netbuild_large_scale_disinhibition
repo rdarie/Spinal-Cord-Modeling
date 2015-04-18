@@ -1,0 +1,670 @@
+// Artificial cells no longer need a default section.
+//Network cell templates
+//   RG_E_rg_int
+//   RG_F_rg_int
+//   PF_E_rg_int
+//   PF_F_rg_int
+//   Inrg_E_int
+//   Inrg_F_int
+//   Inpf_E_int
+//   Inpf_F_int
+//   Ia_E_int
+//   Ia_F_int
+//   R_E_int
+//   R_F_int
+//   Irg_E_int
+//   Irg_F_int
+//   Ipf_E_int
+//   Ipf_F_int
+//   Iab_E_int
+//   In_E_int
+//   Ib_E_int
+//   Ib_F_int
+//   Mn_E_motoneuron
+//   Mn_F_motoneuron
+//   Ia_fibE_fiber
+//   Ia_fibF_fiber
+//   Ib_fibE_fiber
+//   Ib_fibF_fiber
+//   II_fibE_fiber
+//   II_fibF_fiber
+
+//load_file("nrngui.hoc") // Brings up the GUI
+load_file("noload.hoc") // Does not bring up the GUI, but loads certain function dependencies
+
+begintemplate RG_E_rg_int
+
+xopen("rg_int_template")
+
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynE3 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate RG_E_rg_int
+
+begintemplate RG_F_rg_int
+
+xopen("rg_int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynE3 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate RG_F_rg_int
+
+begintemplate PF_E_rg_int
+
+xopen("pf_int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynI2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynE3 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate PF_E_rg_int
+
+begintemplate PF_F_rg_int
+
+xopen("pf_int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynI2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynE3 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate PF_F_rg_int
+
+begintemplate Inrg_E_int
+xopen("inrg_int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate Inrg_E_int
+
+begintemplate Inrg_F_int
+
+xopen("inrg_int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate Inrg_F_int
+
+begintemplate Inpf_E_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate Inpf_E_int
+
+begintemplate Inpf_F_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate Inpf_F_int
+
+begintemplate Ia_E_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynI2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynE3 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate Ia_E_int
+
+begintemplate Ia_F_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynI2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynE3 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate Ia_F_int
+
+begintemplate R_E_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+}
+func is_art() { return 0 }
+
+endtemplate R_E_int
+
+begintemplate R_F_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+}
+func is_art() { return 0 }
+
+endtemplate R_F_int
+
+begintemplate Irg_E_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate Irg_E_int
+
+begintemplate Irg_F_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate Irg_F_int
+
+begintemplate Ipf_E_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate Ipf_E_int
+
+begintemplate Ipf_F_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+}
+func is_art() { return 0 }
+
+endtemplate Ipf_F_int
+
+begintemplate Iab_E_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI3 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+}
+func is_art() { return 0 }
+
+endtemplate Iab_E_int
+
+begintemplate In_E_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynI0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+}
+func is_art() { return 0 }
+
+endtemplate In_E_int
+
+begintemplate Ib_E_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+}
+func is_art() { return 0 }
+
+endtemplate Ib_E_int
+
+begintemplate Ib_F_int
+
+xopen("int_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE1 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI2 */   soma syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+}
+func is_art() { return 0 }
+
+endtemplate Ib_F_int
+
+begintemplate Mn_E_motoneuron
+
+xopen("motoneuron_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   dend syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE1 */   dend syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE2 */   dend syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI3 */   dend syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynI4 */   dend syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+}
+func is_art() { return 0 }
+
+endtemplate Mn_E_motoneuron
+
+begintemplate Mn_F_motoneuron
+
+xopen("motoneuron_template")
+objref syn_
+proc synapses() {
+  /* SynE0 */   dend syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynE1 */   dend syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -10
+  /* SynI2 */   dend syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynI3 */   dend syn_ = new ExpSyn(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+}
+func is_art() { return 0 }
+
+endtemplate Mn_F_motoneuron
+
+begintemplate Ia_fibE_fiber
+
+xopen("fiber_template")
+objref syn_
+proc synapses() {
+}
+func is_art() { return 0 }
+
+endtemplate Ia_fibE_fiber
+
+begintemplate Ia_fibF_fiber
+
+xopen("fiber_template")
+objref syn_
+proc synapses() {
+}
+func is_art() { return 0 }
+
+endtemplate Ia_fibF_fiber
+
+begintemplate Ib_fibE_fiber
+
+xopen("fiber_template")
+objref syn_
+proc synapses() {
+}
+func is_art() { return 0 }
+
+endtemplate Ib_fibE_fiber
+
+begintemplate Ib_fibF_fiber
+
+xopen("fiber_template")
+objref syn_
+proc synapses() {
+}
+func is_art() { return 0 }
+
+endtemplate Ib_fibF_fiber
+
+begintemplate II_fibE_fiber
+
+xopen("fiber_template")
+objref syn_
+proc synapses() {
+}
+func is_art() { return 0 }
+
+endtemplate II_fibE_fiber
+
+begintemplate II_fibF_fiber
+
+xopen("fiber_template")
+objref syn_
+proc synapses() {
+}
+func is_art() { return 0 }
+
+endtemplate II_fibF_fiber
+
+//Network specification interface
+
+objref cells, nclist, netcon
+{cells = new List()  nclist = new List()}
+
+func cell_append() {cells.append($o1)  $o1.position($2,$3,$4)
+	return cells.count - 1
+}
+
+func nc_append() {//srcindex, tarcelindex, synindex
+  if ($3 >= 0) {
+    netcon = cells.object($1).connect2target(cells.object($2).synlist.object($3))
+    netcon.weight = $4   netcon.delay = $5
+  }else{
+    netcon = cells.object($1).connect2target(cells.object($2).pp)
+    netcon.weight = $4   netcon.delay = $5
+  }
+  nclist.append(netcon)
+  return nclist.count - 1
+}
+
+objref r
+r = new Random()
+//Multiply conductance to simulate many neurons
+N = 20
+//max Synaptic conductance
+ge_bar = 0.05e3
+gi_bar = 0.05e3
+
+//Network instantiation
+for i=0,N-1 {
+//print "i = ", i
+  /* RG_E0 */  cell_append(new RG_E_rg_int(),	-47,	 216, 0)
+  /* RG_F1 */  cell_append(new RG_F_rg_int(),	118,	 213, 0)
+  /* PF_E2 */  cell_append(new PF_E_rg_int(),	-44,	 136, 0)
+  /* PF_F3 */  cell_append(new PF_F_rg_int(),	116,	 143, 0)
+  /* Inrg_E4 */  cell_append(new Inrg_E_int(),	-5,	 179, 0)
+  /* Inrg_F5 */  cell_append(new Inrg_F_int(),	70,	 178, 0)
+  /* Inpf_E6 */  cell_append(new Inpf_E_int(),	-4,	 159, 0)
+  /* Inpf_F7 */  cell_append(new Inpf_F_int(),	69,	 160, 0)
+  /* Irg_E8 */  cell_append(new Irg_E_int(),	-94,	 216, 0)
+  /* Ipf_E9 */  cell_append(new Ipf_E_int(),	-94,	 133, 0)
+  /* Irg_F10 */  cell_append(new Irg_F_int(),	161,	 214, 0)
+  /* Ipf_F11 */  cell_append(new Ipf_F_int(),	163,	 143, 0)
+  /* Iab_E12 */  cell_append(new Iab_E_int(),	-66,	 87, 0)
+  /* In_E13 */  cell_append(new In_E_int(),	-6,	 87, 0)
+  /* Ib_E14 */  cell_append(new Ib_E_int(),	0,	 40, 0)
+  /* Ib_F15 */  cell_append(new Ib_F_int(),	74,	 41, 0)
+  /* Ia_E16 */  cell_append(new Ia_E_int(),	1,	 -4, 0)
+  /* Ia_F17 */  cell_append(new Ia_F_int(),	76,	 -2, 0)
+  /* Mn_E18 */  cell_append(new Mn_E_motoneuron(),	-46,	 -73, 0)
+  /* Mn_F19 */  cell_append(new Mn_F_motoneuron(),	132,	 -72, 0)
+  /* R_E20 */  cell_append(new R_E_int(),	2,	 -109, 0)
+  /* R_F21 */  cell_append(new R_F_int(),	82,	 -108, 0)
+  /* Ia_fibE22 */  cell_append(new Ia_fibE_fiber(),	-159,	 -6, 0)
+  /* Ib_fibE23 */  cell_append(new Ib_fibE_fiber(),	-159,	 -17, 0)
+  /* II_fibE24 */  cell_append(new II_fibE_fiber(),	-158,	 -28, 0)
+  /* Ia_fibF25 */  cell_append(new Ia_fibF_fiber(),	187,	 -9, 0)
+  /* Ib_fibF26 */  cell_append(new Ib_fibF_fiber(),	187,	 -17, 0)
+  /* II_fibF27 */  cell_append(new II_fibF_fiber(),	186,	 -26, 0)
+}
+
+for i=0,N-1 {
+for j=0,N-1 {
+  /* RG_E0 -> RG_E0.SynE0 */       nc_append(0+28*j ,   0+28*i , 0,  0.0125*ge_bar,1)
+  /* RG_F1 -> RG_E0.SynE1 */       nc_append(1+28*j ,   0+28*i , 1,  0.0125*ge_bar,1)
+  /* Inrg_E4 -> RG_E0.SynI2 */     nc_append(4+28*j ,   0+28*i , 2,  0.115*0,1)
+  /* Irg_E8 -> RG_E0.SynE3 */      nc_append(8+28*j ,   0+28*i , 3,  0.05*0,1)
+  /* RG_E0 -> RG_F1.SynE0 */       nc_append(0+28*j ,   1+28*i , 0,  0.0125*ge_bar,1)
+  /* RG_F1 -> RG_F1.SynE1 */       nc_append(1+28*j ,   1+28*i , 1,  0.0125*ge_bar,1)
+  /* Inrg_F5 -> RG_F1.SynI2 */     nc_append(5+28*j ,   1+28*i , 2,  0.115*0,1)
+  /* Irg_F10 -> RG_F1.SynE3 */     nc_append(10+28*j,   1+28*i , 3,  0.05*0,1)
+  /* RG_E0 -> PF_E2.SynE0 */       nc_append(0+28*j ,   2+28*i , 0,  0.0075*ge_bar,1)
+  /* Inrg_E4 -> PF_E2.SynI1 */     nc_append(4+28*j ,   2+28*i , 1,  0.05*0,1)
+  /* Inpf_E6 -> PF_E2.SynI2 */     nc_append(6+28*j ,   2+28*i , 2,  0.35*0,1)
+  /* Ipf_E9 -> PF_E2.SynE3 */      nc_append(9+28*j ,   2+28*i , 3,  0.5*0,1)
+  /* RG_F1 -> PF_F3.SynE0 */       nc_append(1+28*j ,   3+28*i , 0,  0.0075*ge_bar,1)
+  /* Inrg_F5 -> PF_F3.SynI1 */     nc_append(5+28*j ,   3+28*i , 1,  0.05*0,1)
+  /* Inpf_F7 -> PF_F3.SynI2 */     nc_append(7+28*j ,   3+28*i , 2,  0.35*0,1)
+  /* Ipf_F11 -> PF_F3.SynE3 */     nc_append(11+28*j,   3+28*i , 3,  0.5*0,1)
+  /* RG_F1 -> Inrg_E4.SynE0 */     nc_append(1+28*j ,   4+28*i , 0,  0.45*ge_bar,1)
+  /* RG_E0 -> Inrg_F5.SynE0 */     nc_append(0+28*j ,   5+28*i , 0,  0.45*ge_bar,1)
+  /* PF_F3 -> Inpf_E6.SynE0 */     nc_append(3+28*j ,   6+28*i , 0,  0.2*ge_bar,1)
+  /* PF_E2 -> Inpf_F7.SynE0 */     nc_append(2+28*j ,   7+28*i , 0,  0.2*ge_bar,1)
+  /* Ia_fibE22 -> Irg_E8.SynE0 */  nc_append(22+28*j,   8+28*i , 0,  0.1*0,1)
+  /* Ib_fibE23 -> Irg_E8.SynE1 */  nc_append(23+28*j,   8+28*i , 1,  0.03*0,1)
+  /* II_fibF27 -> Irg_E8.SynE2 */  nc_append(27+28*j,   8+28*i , 2,  1.7*0,1)
+  /* Ia_fibE22 -> Ipf_E9.SynE0 */  nc_append(22+28*j,   9+28*i , 0,  0.25*0,1)
+  /* Ib_fibE23 -> Ipf_E9.SynE1 */  nc_append(23+28*j,   9+28*i , 1,  0.75*0,1)
+  /* II_fibF27 -> Ipf_E9.SynE2 */  nc_append(27+28*j,   9+28*i , 2,  1*0,1)
+  /* Ia_fibF25 -> Irg_F10.SynE0 */ nc_append(25+28*j,   10+28*i, 0,  0.1*0,1)
+  /* Ib_fibF26 -> Irg_F10.SynE1 */ nc_append(26+28*j,   10+28*i, 1,  0.03*0,1)
+  /* II_fibE24 -> Irg_F10.SynE2 */ nc_append(24+28*j,   10+28*i, 2,  0*0,1)
+  /* Ia_fibF25 -> Ipf_F11.SynE0 */ nc_append(25+28*j,   11+28*i, 0,  0.075*0,1)
+  /* Ib_fibF26 -> Ipf_F11.SynE1 */ nc_append(26+28*j,   11+28*i, 1,  0.225*0,1)
+  /* II_fibE24 -> Ipf_F11.SynE2 */ nc_append(24+28*j,   11+28*i, 2,  0*0,1)
+  /* Ib_fibE23 -> Iab_E12.SynE0 */ nc_append(23+28*j,   12+28*i, 0,  0.15*0,1)
+  /* PF_E2 -> Iab_E12.SynE1 */     nc_append(2+28*j ,   12+28*i, 1,  0.2*0,1)
+  /* Ia_fibE22 -> Iab_E12.SynE2 */ nc_append(22+28*j,   12+28*i, 2,  0.05*0,1)
+  /* In_E13 -> Iab_E12.SynI3 */    nc_append(13+28*j,   12+28*i, 3,  0.5*0,1)
+  /* Inpf_F7 -> In_E13.SynI0 */    nc_append(7+28*j ,   13+28*i, 0,  0.35*0,1)
+  /* Ib_fibE23 -> Ib_E14.SynE0 */  nc_append(23+28*j,   14+28*i, 0,  0*0,1)
+  /* Ia_fibE22 -> Ib_E14.SynE1 */  nc_append(22+28*j,   14+28*i, 1,  0*0,1)
+  /* Ib_F15 -> Ib_E14.SynI2 */     nc_append(15+28*j,   14+28*i, 2,  0*0,1)
+  /* Ib_fibF26 -> Ib_F15.SynE0 */  nc_append(26+28*j,   15+28*i, 0,  0*0,1)
+  /* Ia_fibF25 -> Ib_F15.SynE1 */  nc_append(25+28*j,   15+28*i, 1,  0*0,1)
+  /* Ib_E14 -> Ib_F15.SynI2 */     nc_append(14+28*j,   15+28*i, 2,  0*0,1)
+  /* Ia_fibE22 -> Ia_E16.SynE0 */  nc_append(22+28*j,   16+28*i, 0,  0.1*0,1)
+  /* Ia_F17 -> Ia_E16.SynI1 */     nc_append(17+28*j,   16+28*i, 1,  0.1*0,1)
+  /* R_E20 -> Ia_E16.SynI2 */      nc_append(20+28*j,   16+28*i, 2,  0.1*0,1)
+  /* PF_E2 -> Ia_E16.SynE3 */      nc_append(2+28*j ,   16+28*i, 3,  0.4*ge_bar,1)
+  /* Ia_fibF25 -> Ia_F17.SynE0 */  nc_append(25+28*j,   17+28*i, 0,  0.1*0,1)
+  /* Ia_E16 -> Ia_F17.SynI1 */     nc_append(16+28*j,   17+28*i, 1,  0.1*0,1)
+  /* R_F21 -> Ia_F17.SynI2 */      nc_append(21+28*j,   17+28*i, 2,  0.1*0,1)
+  /* PF_F3 -> Ia_F17.SynE3 */      nc_append(3+28*j ,   17+28*i, 3,  0.4*ge_bar,1)
+  /* Iab_E12 -> Mn_E18.SynE0 */    nc_append(12+28*j,   18+28*i, 0,  0.08*0,1)
+  /* PF_E2 -> Mn_E18.SynE1 */      nc_append(2+28*j ,   18+28*i, 1,  0.5*ge_bar,1)
+  /* Ia_fibE22 -> Mn_E18.SynE2 */  nc_append(22+28*j,   18+28*i, 2,  0.01*0,1)
+  /* Ia_F17 -> Mn_E18.SynI3 */     nc_append(17+28*j,   18+28*i, 3,  0.6*0,1)
+  /* R_E20 -> Mn_E18.SynI4 */      nc_append(20+28*j,   18+28*i, 4,  0.2*0,1)
+  /* Ia_fibF25 -> Mn_F19.SynE0 */  nc_append(25+28*j,   19+28*i, 0,  0.01*0,1)
+  /* PF_F3 -> Mn_F19.SynE1 */      nc_append(3+28*j ,   19+28*i, 1,  0.5*ge_bar,1)
+  /* R_F21 -> Mn_F19.SynI2 */      nc_append(21+28*j,   19+28*i, 2,  0.2*0,1)
+  /* Ia_E16 -> Mn_F19.SynI3 */     nc_append(16+28*j,   19+28*i, 3,  0.6*0,1)
+  /* Mn_E18 -> R_E20.SynE0 */      nc_append(18+28*j,   20+28*i, 0,  0.25*ge_bar,1)
+  /* R_F21 -> R_E20.SynI1 */       nc_append(21+28*j,   20+28*i, 1,  0.1*0,1)
+  /* Mn_F19 -> R_F21.SynE0 */      nc_append(19+28*j,   21+28*i, 0,  0.25*ge_bar,1)
+  /* R_E20 -> R_F21.SynI1 */       nc_append(20+28*j,   21+28*i, 1,  0.1*0,1)
+}
+}
+
+for i=0,N-1 {
+RG_E_rg_int[i].setel(-64+0.64*r.repick())
+RG_F_rg_int[i].setel(-64+0.64*r.repick())
+PF_E_rg_int[i].setel(-64+0.64*r.repick())
+PF_F_rg_int[i].setel(-64+0.64*r.repick())
+Inrg_E_int[i].setel(57.5+2.875*r.repick())
+Inrg_F_int[i].setel(57.5+2.875*r.repick())
+Inpf_E_int[i].setel(-64+3.2*r.repick())
+Inpf_F_int[i].setel(-64+3.2*r.repick())
+Irg_E_int[i].setel(-64+3.2*r.repick())
+Irg_F_int[i].setel(-64+3.2*r.repick())
+Ipf_E_int[i].setel(-64+3.2*r.repick())
+Ipf_F_int[i].setel(-64+3.2*r.repick())
+Iab_E_int[i].setel(-64+3.2*r.repick())
+In_E_int[i].setel(-64+3.2*r.repick())
+Ib_E_int[i].setel(-64+3.2*r.repick())
+Ib_F_int[i].setel(-64+3.2*r.repick())
+Ia_E_int[i].setel(-64+3.2*r.repick())
+Ia_F_int[i].setel(-64+3.2*r.repick())
+Mn_E_motoneuron[i].setel(-65+3.25*r.repick())
+Mn_F_motoneuron[i].setel(-65+3.25*r.repick())
+R_E_int[i].setel(-64+3.2*r.repick())
+R_F_int[i].setel(-64+3.2*r.repick())
+}
+/*
+proc init() {	//change default v values, hoc file calls init() after run
+ cells.object(0).setv(-65) //RG_E
+ cells.object(1).setv(-65) //RG_F
+ cells.object(4).setv(-65) //Inrg_E
+ cells.object(5).setv(-65) //Inrg_F
+ finitialize()
+}
+*/

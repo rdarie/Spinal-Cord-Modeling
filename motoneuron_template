@@ -1,0 +1,67 @@
+public is_art
+public init, topol, basic_shape, subsets, geom, biophys, geom_nseg, biophys_inhomo, setv
+public synlist, x, y, z, position, connect2target
+
+public soma, dend
+public all
+
+objref synlist
+
+proc init() {
+  topol()
+  subsets()
+  geom()
+  biophys()
+  geom_nseg()
+  synlist = new List()
+  synapses()
+  x = y = z = 0 // only change via position
+}
+
+xopen("motoneuron_geometry")
+
+proc biophys() {
+  forsec somatic {
+    cm=2
+	Ra=200
+	insert motoneuron 
+	ena_motorneuron= 50
+	ek_motorneuron= -80
+	el_motorneuron= -70
+  }
+  forsec basal {
+		Ra = 200
+		cm = 2 
+		insert pas
+		g_pas = 0.0002
+		e_pas = -70.0 
+  }
+}
+
+proc biophys_inhomo(){}
+
+proc position() { local i
+  soma for i = 0, n3d()-1 {
+    pt3dchange(i, $1-x+x3d(i), $2-y+y3d(i), $3-z+z3d(i), diam3d(i))
+  }
+  x = $1  y = $2  z = $3
+}
+obfunc connect2target() { localobj nc //$o1 target point process, optional $o2 returned NetCon
+  soma nc = new NetCon(&v(1), $o1)
+  nc.threshold = 10
+  if (numarg() == 2) { $o2 = nc } // for backward compatibility
+  return nc
+}
+objref syn_
+proc synapses() {
+  /* E0 */   dend[1] syn_ = new ExpSyn(0.4)  synlist.append(syn_)
+    syn_.tau = 3
+}
+
+proc setv() {
+forsec all {
+v = $1
+}
+}
+
+func is_art() { return 0 }

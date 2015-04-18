@@ -1,0 +1,91 @@
+xopen("netbuild")
+
+load_file("testing.ses")
+tstop = 20000
+ena = 55
+ek = -80
+N = 1
+
+if (name_declared("AMP") == 5) {
+MLR_drive = AMP
+} else {
+MLR_drive = 0
+}
+
+MLR_drive_del = 0
+
+objref stim[4*N]
+
+for i=0,N-1 {
+
+access RG_E_rg_int[i].soma
+stim[0+4*i] = new IClamp(0.5)
+stim[0+4*i].del = MLR_drive_del
+stim[0+4*i].dur = tstop
+stim[0+4*i].amp = 0.45*MLR_drive
+
+
+access RG_F_rg_int[i].soma
+
+stim[1+4*i] = new IClamp(0.5)
+stim[1+4*i].del = MLR_drive_del
+stim[1+4*i].dur = tstop
+stim[1+4*i].amp = 0.51*MLR_drive
+
+
+access PF_E_rg_int[i].soma
+
+stim[2+4*i] = new IClamp(0.5)
+stim[2+4*i].del = MLR_drive_del
+stim[2+4*i].dur = tstop
+stim[2+4*i].amp = 0.5*MLR_drive
+
+
+access PF_F_rg_int[i].soma
+
+stim[3+4*i] = new IClamp(0.5)
+stim[3+4*i].del = MLR_drive_del
+stim[3+4*i].dur = tstop
+stim[3+4*i].amp = 0.5*MLR_drive
+
+}
+
+objref RG_E_v_vec
+RG_E_v_vec = new Vector()
+RG_E_v_vec.record(&RG_E_rg_int[0].soma.v(0.5))
+objref RG_F_v_vec
+RG_F_v_vec = new Vector()
+RG_F_v_vec.record(&RG_F_rg_int[0].soma.v(0.5))
+objref Inrg_E_v_vec
+Inrg_E_v_vec = new Vector()
+Inrg_E_v_vec.record(&Inrg_E_int[0].soma.v(0.5))
+objref Inrg_F_v_vec
+Inrg_F_v_vec = new Vector()
+Inrg_F_v_vec.record(&Inrg_F_int[0].soma.v(0.5))
+
+init()
+run()
+
+objref RG_E_v_file
+RG_E_v_file = new File()
+RG_E_v_file.wopen("RG_E_v.txt")
+RG_E_v_vec.printf(RG_E_v_file)
+RG_E_v_file.close
+
+objref RG_F_v_file
+RG_F_v_file = new File()
+RG_F_v_file.wopen("RG_F_v.txt")
+RG_F_v_vec.printf(RG_F_v_file)
+RG_F_v_file.close
+
+objref Inrg_E_v_file
+Inrg_E_v_file = new File()
+Inrg_E_v_file.wopen("Inrg_E_v.txt")
+Inrg_E_v_vec.printf(Inrg_E_v_file)
+Inrg_E_v_file.close
+
+objref Inrg_F_v_file
+Inrg_F_v_file = new File()
+Inrg_F_v_file.wopen("Inrg_F_v.txt")
+Inrg_F_v_vec.printf(Inrg_F_v_file)
+Inrg_F_v_file.close

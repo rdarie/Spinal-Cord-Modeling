@@ -1,0 +1,56 @@
+xopen("netbuild")
+
+load_file("testing3.ses")
+tstop = 12000
+N = 1
+
+d_rge = 0.45
+d_rgf = 0.5
+
+for i=0,N-1 {
+
+RG_E_rg_int[i].soma.g_pas = d_rge * 0.05e-3
+
+RG_F_rg_int[i].soma.g_pas = d_rgf * 0.05e-3
+
+}
+
+objref RG_E_v_vec
+RG_E_v_vec = new Vector()
+RG_E_v_vec.record(&RG_E_rg_int[0].soma.v(0.5))
+objref RG_F_v_vec
+RG_F_v_vec = new Vector()
+RG_F_v_vec.record(&RG_F_rg_int[0].soma.v(0.5))
+objref Inrg_E_v_vec
+Inrg_E_v_vec = new Vector()
+Inrg_E_v_vec.record(&Inrg_E_int[0].soma.v(0.5))
+objref Inrg_F_v_vec
+Inrg_F_v_vec = new Vector()
+Inrg_F_v_vec.record(&Inrg_F_int[0].soma.v(0.5))
+
+init()
+run()
+
+objref RG_E_v_file
+RG_E_v_file = new File()
+RG_E_v_file.wopen("RG_E_v.txt")
+RG_E_v_vec.printf(RG_E_v_file)
+RG_E_v_file.close
+
+objref RG_F_v_file
+RG_F_v_file = new File()
+RG_F_v_file.wopen("RG_F_v.txt")
+RG_F_v_vec.printf(RG_F_v_file)
+RG_F_v_file.close
+
+objref Inrg_E_v_file
+Inrg_E_v_file = new File()
+Inrg_E_v_file.wopen("Inrg_E_v.txt")
+Inrg_E_v_vec.printf(Inrg_E_v_file)
+Inrg_E_v_file.close
+
+objref Inrg_F_v_file
+Inrg_F_v_file = new File()
+Inrg_F_v_file.wopen("Inrg_F_v.txt")
+Inrg_F_v_vec.printf(Inrg_F_v_file)
+Inrg_F_v_file.close

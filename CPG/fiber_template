@@ -1,0 +1,79 @@
+
+public init, topol, basic_shape,setv, subsets, geom, biophys, geom_nseg, biophys_inhomo
+public synlist, x, y, z, position, connect2target
+
+public soma, axon
+public all
+
+objref synlist
+
+proc init() {
+  topol()
+  subsets()
+  geom()
+  biophys()
+  geom_nseg()
+  synlist = new List()
+  synapses()
+  x = y = z = 0 // only change via position
+}
+
+create soma, axon
+
+proc topol() { local i
+  connect axon(0), soma(1)
+  basic_shape()
+}
+proc basic_shape() {
+  soma {pt3dclear() pt3dadd(0, 0, 0, 1) pt3dadd(15, 0, 0, 1)}
+  axon {pt3dclear() pt3dadd(15, 0, 0, 1) pt3dadd(180, 0, 0, 1)}
+}
+
+objref all
+proc subsets() { local i
+  objref all
+  all = new SectionList()
+    soma all.append()
+    axon all.append()
+
+}
+proc geom() {
+  axon {  L = 100  }
+}
+external lambda_f
+proc geom_nseg() {
+  axon { nseg = int((L/(0.1*lambda_f(100))+.999)/2)*2 + 1  }
+}
+proc biophys() {
+  forsec all {
+    Ra = 35.4
+    cm = 1
+	
+    insert hh3
+      gnabar_hh3 = 120*1e-3
+      gkbar_hh3 = 100*1e-3
+      gl_hh3 = 0.5*1e-3
+      el_hh3 = -64
+	  
+	ena = 55
+	ek = -80
+  }
+}
+proc biophys_inhomo(){}
+proc position() { local i
+  soma for i = 0, n3d()-1 {
+    pt3dchange(i, $1-x+x3d(i), $2-y+y3d(i), $3-z+z3d(i), diam3d(i))
+  }
+  x = $1  y = $2  z = $3
+}
+proc setv() {
+forsec all {
+v = $1
+}
+}
+obfunc connect2target() { localobj nc //$o1 target point process, optional $o2 returned NetCon
+  soma nc = new NetCon(&v(1), $o1)
+  nc.threshold = -10
+  if (numarg() == 2) { $o2 = nc } // for backward compatibility
+  return nc
+}

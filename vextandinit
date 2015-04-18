@@ -1,0 +1,76 @@
+/*
+Here we create a vector in NEURON called V_extra that will hold the values of the extracellular voltage calculated by MATLAB.
+It holds values for both nodes and paranodes, so it is 2*n_nodes long. 
+*/
+
+objref V_extra
+V_extra = new Vector(2*n_nodes(),0)
+objref v_file
+v_file = new File()
+strdef voltage_file 
+sprint(voltage_file, "%s%s", tempdata_address, "matlab_v_extra")
+
+v_file.ropen(voltage_file) // give it the name of the file and open for reading
+
+for ii = 0, (2*n_nodes()-1) {
+	V_extra.x[ii] = v_file.scanvar()
+}
+v_file.close
+/*
+Here we define some functions that will set the values of the extracellular voltage at each point along the axon to the values red from a vector.
+*/
+
+
+proc set_extracellular(){
+/* set_extracellular(cell, extracellular V, amp) */
+   k = 0 // count through the vector
+   for ii= 0, n_nodes()-1 {
+       $o1.Ia_node[ii].e_extracellular=$o2.x[k]*$3
+	   k = k + 1
+	   $o1.Ia_paranode[ii].e_extracellular=$o2.x[k]*$3
+	   // same explanation as above, except this is the paranode.
+	   k = k + 1
+   }
+}
+
+
+
+/*
+Here we set up the functions that will handle the stimulation. Basically we are generating the square waveform through a cascade of event listeners.
+*/
+
+
+/* initi() is a function that takes one argument, START, and launches a cvode event. the cvode listener probes the current time, t, at each
+step in the simulation. When, finally, t = START, the cvode listener launches the seti() function, and stops listening. 
+*/
+proc initi() {
+// START = $1
+	strdef init_str
+	sprint(init_str, "%s%4.4f%s", "seti(", $1, ")")
+	//print "I am in initi(), getting ready to call ", init_str
+	STIMON = 0 // stimulation off until we get to seti()
+	cvode.event(start_time, init_str)
+}
+
+proc seti() {
+	strdef seti_str
+	sprint(seti_str, "%s%4.4f%s", "seti(", $1, ")")
+	
+  if (STIMON==0) { // if we're at an off state,
+    STIMON = 1 // turn stimulation on
+	//print "I am in seti() and amplitude is: ", $1
+    {set_extracellular(cells.object(1),V_extra, $1)} // set the extracellular voltage to the values calculated in matlab
+    cvode.event(t + dur_time, seti_str) // call seti() after DUR milliseconds have elapsed
+  } else { // if we're at an on state,
+    STIMON = 0 // turn stimulation off
+    {set_extracellular(cells.object(1),V_extra, 0)} // and set all the extracelulluar voltages to zero.
+    cvode.event(t + interval_time, seti_str) // call seti() again after INTERVAL milliseconds have elapsed
+  }
+  // we've changed a parameter abruptly
+  // so we really should re-initialize cvode
+  if (cvode.active()) {
+    cvode.re_init()
+  } else {
+    fcurrent()
+  }
+}

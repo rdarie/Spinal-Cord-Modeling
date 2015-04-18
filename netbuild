@@ -1,0 +1,43 @@
+/*
+Here we define some objects that will hold the list of cell instances in our simulation (cells), the list of connections between them (nclist) and 
+the list of (netcon)
+*/
+objref cells, nclist, netcon
+{cells = new List()  nclist = new List()} // empty lists at this point
+
+begintemplate Motoneuron_Cell
+{xopen("motoneuron_template")}
+endtemplate Motoneuron_Cell
+
+begintemplate Ia_axon_Cell
+{xopen("Ia_template")}
+endtemplate Ia_axon_Cell
+
+//Network specification interface
+func cell_append() {cells.append($o1)  $o1.position($2,$3,$4)
+	return cells.count - 1
+}
+
+func nc_append() {//srcindex, tarcelindex, synindex
+  if ($3 >= 0) {
+    netcon = cells.object($1).connect2target(cells.object($2).synlist.object($3))
+    netcon.weight = $4   netcon.delay = $5
+  }else{
+    netcon = cells.object($1).connect2target(cells.object($2).pp)
+    netcon.weight = $4   netcon.delay = $5
+  }
+  nclist.append(netcon)
+  return nclist.count - 1
+}
+
+//intracellular v
+proc init() {	//change default v values, hoc file calls init() after run
+ cells.object(0).setv(-69) //motor neuron
+ cells.object(1).setv(-88) //Ia fiber axon
+ finitialize()
+}
+//Network instantiation
+//actual instances created
+  /* Motoneuron0 */  cell_append(new Motoneuron_Cell(),-92,43, 0)
+  /* Ia_axon1 */  cell_append(new Ia_axon_Cell(),33,-23, 0)
+  /* Ia_axon1 -> Motoneuron0.E0 */nc_append(1,0,0,0.15,1)

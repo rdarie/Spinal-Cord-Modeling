@@ -1,0 +1,121 @@
+//load_file("nrngui.hoc") // Brings up the GUI
+
+load_file("noload.hoc") // Does not bring up the GUI, but loads certain function dependencies
+
+
+//objref apc_term  
+//objref apc_file_obj  
+
+
+systype = unix_mac_pc()
+strdef tempdata_address
+strdef geom_file
+objref fih
+
+fudge_factor = 200
+
+if (systype == 3) { //if windows
+	tempdata_address = ".\\tempdata\\"
+	} else {
+ 	tempdata_address = "tempdata/"
+ 	}
+sprint(geom_file, "%s%s", tempdata_address, "Ia_geometry")
+
+
+objref pc
+pc = new ParallelContext()
+
+
+{xopen("net_params")}
+
+
+// Debugging: override stim params manually set amplitude
+//start_time = 15 // save the second number...
+//dur_time = 0.5
+//interval_time = 20
+
+{xopen("netbuild")}
+
+//load_file("MySes.ses")
+
+{xopen("vextandinit")}
+
+objref results
+results = new Vector()
+
+
+func plzwrk(){ localobj apc_term, stimvec
+
+	wait = pc.wait_time()
+	amplitude = fudge_factor*$1
+	key = $1
+	
+	fih	= new FInitializeHandler("initi(amplitude)")
+	
+	print "Running with an amplitude of, ", amplitude
+	
+  	cells.object(1).Ia_node[n_nodes()-1]{
+  		apc_term = new APCount(0.5)
+  		apc_term.thresh = 10
+ 	}
+	
+	tstop = 400
+	run()
+	
+	strdef shost
+	{
+	system("hostname", shost)
+	printf("There are %d processes. My rank is %d and I am on %s\n", pc.nhost, pc.id, shost)
+	}
+	
+	
+	stimvec = new Vector() //strange method of returning two values -- pack in a vector, then unpack after function call
+	stimvec.append($1)
+	stimvec.append(apc_term.n)
+	pc.pack(stimvec)
+	pc.post($1)
+	print "Finished running. ", apc_term.n, "action potentials recorded"
+	return $1
+}
+
+{pc.runworker()}
+
+objref vecReturned 
+vecReturned = new Vector()
+
+proc par_test(){
+	
+	for(ii=mat_start_amp; ii <= $1; ii+=mat_step)  pc.submit("plzwrk", ii)  //has to be on same line? print pc.id
+	   while(pc.working){
+		key = pc.retval()
+		pc.look_take(key) //find package
+		vecReturned = pc.upkvec()
+		//amp_val = vecReturned.x[0]
+		//apc_val = vecReturned.x[1]
+		results.append[vecReturned.x[0]]		//all results in one results vector
+		results.append[vecReturned.x[1]]	
+		//print "amp ", vecReturned.x[0]
+		//print "apc ", vecReturned.x[1]
+		
+	}
+}
+
+par_test(mat_amp) // max amp val passed in from le matlab
+{pc.done()}
+
+objref apc_file_obj
+apc_file_obj = new File()
+	strdef apc_file
+	sprint(apc_file, "%s%s", tempdata_address, "curr_ap_count.txt")
+	apc_file_obj.wopen(apc_file) // give it the name of the file and open for reading
+	
+	for(ii=0; ii< results.size-1; ii+=2) {	 //prints amp and apc in alternating lines	
+    	apc_file_obj.printf("%f\n",results.x[ii])
+		apc_file_obj.printf("%f\n",results.x[ii+1])
+    	//print results.x[ii]
+	}
+apc_file_obj.close()
+
+//quit()
+//cd ~/Documents/Spinal-Cord-Modeling
+//mpirun -n 4 nrngui -mpi mainparallel.hoc
