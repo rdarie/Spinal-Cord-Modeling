@@ -45,8 +45,8 @@ proc biophys() {
   forsec all {
 	L = 5.64
 	diam = 5.64
-    Ra = 35.41
-    cm = 11
+    Ra = 1
+    cm = 1
     insert motoneuron
   }
 }

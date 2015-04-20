@@ -1,7 +1,7 @@
 os = ispc;
 %code for system agnosticism in opening directory
 if os == 1
-    tempdata_address = '.\tempdata\' ;
+    tempdata_address = '..\..\tempdata\' ;
     nrniv_dir = '"C:\nrn73w64\bin64\nrniv.exe"';
     %mpi_dir = '"C:\Program Files\MPICH2\bin\mpiexec.exe"';
     mpi_dir = '"C:\nrn73w64\bin64\mpiexec.exe"';

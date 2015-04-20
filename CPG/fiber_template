@@ -46,7 +46,10 @@ proc geom_nseg() {
 }
 proc biophys() {
   forsec all {
-    Ra = 35.4
+	nseg = 1
+	L = 5.64
+	diam = 5.64
+    Ra = 1
     cm = 1
 	
     insert hh3
@@ -69,6 +72,11 @@ proc position() { local i
 proc setv() {
 forsec all {
 v = $1
+}
+}
+proc setel() {
+forsec all {
+el_hh3 = $1
 }
 }
 obfunc connect2target() { localobj nc //$o1 target point process, optional $o2 returned NetCon

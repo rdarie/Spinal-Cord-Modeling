@@ -1,16 +1,10 @@
 clear; clc; close all;
 format long
 os = ispc;
-%code for system agnosticism in opening directory
-if os == 1
-    tempdata_address = '.\tempdata\' ;
-    nrniv_dir = 'C:\nrn73w64\bin64\nrniv.exe' ;
-else
-    tempdata_address = 'tempdata/' ;
-    nrniv_dir = '/Applications/NEURON-7.3/nrngui';
-end
 
-AMPS = 0.1:0.002:0.12
+system_id;
+
+AMPS = 0;
 
 for a = 1:length(AMPS)
     tic
@@ -48,7 +42,7 @@ for a = 1:length(AMPS)
 
     end
     pop_name = sprintf('pop_test2_inh_coupling_%4.4f.mat',AMPS(a));
-    save(pop_name);
+    save([tempdata_address pop_name]);
 	rasters_population(pop_name, 0.025, 30000);
     plot_population(pop_name, 0.025, 30000);
     toc

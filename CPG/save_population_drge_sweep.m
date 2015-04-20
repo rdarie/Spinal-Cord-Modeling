@@ -1,14 +1,6 @@
 clear; clc; close all;
 format long
-os = ispc;
-%code for system agnosticism in opening directory
-if os == 1
-    tempdata_address = '.\tempdata\' ;
-    nrniv_dir = 'C:\nrn73w64\bin64\nrniv.exe' ;
-else
-    tempdata_address = 'tempdata/' ;
-    nrniv_dir = '/Applications/NEURON-7.3/nrngui';
-end
+system_id;
 
 AMPS = 0.2:0.05:0.6;
 
@@ -48,7 +40,7 @@ for a = 1:length(AMPS)
     
      end
     pop_name = sprintf('pop_test2_d_rge_%4.4f.mat',AMPS(a));
-    save(pop_name);
+    save([tempdata_address pop_name]);
 	rasters_population(pop_name, 0.025, 30000);
     plot_population(pop_name, 0.025, 30000);
 	toc

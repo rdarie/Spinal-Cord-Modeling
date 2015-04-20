@@ -1,0 +1,114 @@
+objref Ia_fibE_stim[N]
+objref Ia_fibF_stim[N]
+objref Ib_fibE_stim[N]
+objref Ib_fibF_stim[N]
+objref II_fibE_stim[N]
+objref II_fibF_stim[N]
+
+Ia_fibE_stimval = 1
+Ia_fibF_stimval = 1
+Ib_fibE_stimval = 1
+Ib_fibF_stimval = 1
+II_fibE_stimval = 1
+II_fibF_stimval = 1
+
+for i=0,N-1 {
+
+access Ia_fibE_fiber[i].soma
+Ia_fibE_stim[i] = new IClamp(0.5)
+Ia_fibE_stim[i].del = 0
+Ia_fibE_stim[i].dur = tstop
+Ia_fibE_stim[i].amp = 0
+
+access Ia_fibF_fiber[i].soma
+Ia_fibF_stim[i] = new IClamp(0.5)
+Ia_fibF_stim[i].del = 0
+Ia_fibF_stim[i].dur = tstop
+Ia_fibF_stim[i].amp = 0
+
+access Ib_fibE_fiber[i].soma
+Ib_fibE_stim[i] = new IClamp(0.5)
+Ib_fibE_stim[i].del = 0
+Ib_fibE_stim[i].dur = tstop
+Ib_fibE_stim[i].amp = 0
+
+access Ib_fibF_fiber[i].soma
+Ib_fibF_stim[i] = new IClamp(0.5)
+Ib_fibF_stim[i].del = 0
+Ib_fibF_stim[i].dur = tstop
+Ib_fibF_stim[i].amp = 0
+
+access II_fibE_fiber[i].soma
+II_fibE_stim[i] = new IClamp(0.5)
+II_fibE_stim[i].del = 0
+II_fibE_stim[i].dur = tstop
+II_fibE_stim[i].amp = 0
+
+access II_fibF_fiber[i].soma
+II_fibF_stim[i] = new IClamp(0.5)
+II_fibF_stim[i].del = 0
+II_fibF_stim[i].dur = tstop
+II_fibF_stim[i].amp = 0
+}
+
+start_time = 5
+dur_time = 0.5
+interval_time = 10
+STIMON = 0
+
+proc pulses_start() {
+// START = $1
+	strdef init_str
+	sprint(init_str, "%s%4.4f%s", "pulses(", $1, ")")
+	//print "I am in pulses_start(), getting ready to call ", init_str
+	STIMON = 0 // stimulation off until we get to seti()
+	cvode.event(start_time, init_str)
+}
+
+proc pulses() {
+	strdef seti_str
+	sprint(seti_str, "%s%4.4f%s", "pulses(", $1, ")")
+	
+  if (STIMON==0) { // if we're at an off state,
+    STIMON = 1 // turn stimulation on
+	//print "I am in pulses() and amplitude is: ", $1
+    {
+	for i=0,N-1 {
+		Ia_fibE_stim[i].amp = Ia_fibE_stimval
+		Ia_fibE_stim[i].del = t
+		Ia_fibE_stim[i].dur = dur_time
+		
+		Ia_fibF_stim[i].amp = Ia_fibF_stimval
+		Ia_fibF_stim[i].del = t
+		Ia_fibF_stim[i].dur = dur_time
+		
+		Ib_fibE_stim[i].amp = Ib_fibE_stimval
+		Ib_fibE_stim[i].del = t
+		Ib_fibE_stim[i].dur = dur_time
+		
+		Ib_fibF_stim[i].amp = Ib_fibF_stimval
+		Ib_fibF_stim[i].del = t
+		Ib_fibF_stim[i].dur = dur_time
+		
+		II_fibE_stim[i].amp = II_fibE_stimval
+		II_fibE_stim[i].del = t
+		II_fibE_stim[i].dur = dur_time
+		
+		II_fibF_stim[i].amp = II_fibF_stimval
+		II_fibF_stim[i].del = t
+		II_fibF_stim[i].dur = dur_time
+		}
+	} // set the extracellular voltage to the values calculated in matlab
+    cvode.event(t + dur_time, seti_str) // call seti() after DUR milliseconds have elapsed
+  } else { // if we're at an on state,
+    STIMON = 0 // turn stimulation off
+    cvode.event(t + interval_time, seti_str) // call seti() again after INTERVAL milliseconds have elapsed
+  }
+  // we've changed a parameter abruptly
+  // so we really should re-initialize cvode
+  if (cvode.active()) {
+    cvode.re_init()
+  } else {
+    fcurrent()
+  }
+}

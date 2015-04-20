@@ -46,16 +46,6 @@ proc biophys() {
     Ra = 1
     cm = 1
 	
-	/*
-	
-    insert hh2
-      gnabar_hh2 = 30 * 1e-3
-      gkbar_hh2 = 1.2 * 1e-3
-      gl_hh2 = 0.1 * 1e-3
-      el_hh2 = -64
-	  gnapbar_hh2 = 0.1 * 1e-3
-	*/  
-	
 	insert nap
 	  gbar_nap = 0.1* 1e-3
 	  

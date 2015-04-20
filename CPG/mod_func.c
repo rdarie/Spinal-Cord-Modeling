@@ -8,6 +8,7 @@ extern void _hh1_reg();
 extern void _hh2_reg();
 extern void _hh3_reg();
 extern void _motoneuron_reg();
+extern void _motoneuron2_reg();
 extern void _nap_reg();
 
 modl_reg(){
@@ -20,6 +21,7 @@ fprintf(stderr," hh1.mod");
 fprintf(stderr," hh2.mod");
 fprintf(stderr," hh3.mod");
 fprintf(stderr," motoneuron.mod");
+fprintf(stderr," motoneuron2.mod");
 fprintf(stderr," nap.mod");
 fprintf(stderr, "\n");
     }
@@ -28,5 +30,6 @@ _hh1_reg();
 _hh2_reg();
 _hh3_reg();
 _motoneuron_reg();
+_motoneuron2_reg();
 _nap_reg();
 }

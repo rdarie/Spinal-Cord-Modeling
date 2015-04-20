@@ -1,16 +1,16 @@
 clear; clc; close all;
 format long
-
+os = ispc;
 system_id;
 
-AMPS = -70:1:-60;
+AMPS = 0;
 
 for a = 1:length(AMPS)
     tic
     fprintf('cell %d',a);
     
         nrncommand = [nrniv_dir...
-            ' -nobanner -c mat_rg_el=' sprintf('%4.4f', AMPS(a))...
+            ' -nobanner -c mat_gi_bar=' sprintf('%4.4f', AMPS(a))...
             ' testing3.hoc -c quit()'];
     system(nrncommand);
     
@@ -38,11 +38,11 @@ for a = 1:length(AMPS)
     
     INRG_E_v{b+1} = textread(sprintf('INRG_E_v_%d.txt',b),'%f');
     INRG_F_v{b+1} = textread(sprintf('INRG_F_v_%d.txt',b),'%f');
-    
-     end
-    pop_name = sprintf('pop_test2_rg_el_%4.4f.mat',AMPS(a));
+
+    end
+    pop_name = sprintf('pop_test2_gibar_%4.4f.mat',AMPS(a));
     save([tempdata_address pop_name]);
 	rasters_population(pop_name, 0.025, 30000);
     plot_population(pop_name, 0.025, 30000);
-	toc
+    toc
 end

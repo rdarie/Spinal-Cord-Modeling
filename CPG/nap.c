@@ -225,7 +225,7 @@ static int _ode_spec1(_threadargsproto_);
 static int  settables ( _threadargsprotocomma_ double _lv ) {
    minf = 1.0 / ( 1.0 + exp ( - ( _lv + 47.1 ) / 3.1 ) ) ;
    hinf = 1.0 / ( 1.0 + exp ( ( _lv + 59.0 ) / 8.0 ) ) ;
-   htau = 1200.0 / cosh ( ( _lv + 59.0 ) / 16.0 ) ;
+   htau = 2400.0 / cosh ( ( _lv + 59.0 ) / 16.0 ) ;
     return 0; }
  
 static void _hoc_settables(void) {

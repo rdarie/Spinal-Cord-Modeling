@@ -40,7 +40,7 @@ UNITSOFF
 PROCEDURE settables(v) {
 	minf = 1 / ( 1 + exp( - ( v + 47.1 ) / 3.1 ) )
 	hinf = 1 / ( 1 + exp( ( v + 59 ) / 8 ) )
-	htau = 1200 / cosh(( v + 59 ) / 16)
+	htau = 2400 / cosh(( v + 59 ) / 16)
 }
 UNITSON
 

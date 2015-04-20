@@ -1,6 +1,6 @@
 function rasters_population(pop_name, dt, tstop)
-
-load(pop_name);
+system_id;
+load([tempdata_address pop_name]);
 dec_factor = 100;
 t = (0:dt*dec_factor:tstop).*1e-3;
 rfig();
