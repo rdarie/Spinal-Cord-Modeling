@@ -53,4 +53,40 @@ mn_el = mat_mn_el
 mn_el = -70
 }
 
+if (name_declared("mat_g_Ib_Ib") == 5) {
+g_Ib_Ib = mat_g_Ib_Ib
+} else {
+g_Ib_Ib = 0.1
+}
+
+if (name_declared("mat_g_Ibfib_Ib") == 5) {
+g_Ibfib_Ib = mat_g_Ibfib_Ib
+} else {
+g_Ibfib_Ib = 0.1
+}
+
+if (name_declared("mat_g_Iafib_Ib") == 5) {
+g_Iafib_Ib = mat_g_Iafib_Ib
+} else {
+g_Iafib_Ib = 0.1
+}
+
+if (name_declared("mat_interval_time") == 5) {
+interval_time = mat_interval_time
+} else {
+interval_time = 2
+}
+
+if (name_declared("mat_dur_time") == 5) {
+dur_time = mat_dur_time
+} else {
+dur_time = 0.5
+}
+
+if (name_declared("mat_start_time") == 5) {
+start_time = mat_mn_el
+} else {
+start_time = 5
+}
+
 ge_bar = 0.05e-3

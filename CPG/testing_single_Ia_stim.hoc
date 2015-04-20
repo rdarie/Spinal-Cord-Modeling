@@ -8,10 +8,6 @@ mult_factor = 20
 
 xopen("netbuild_final")
 
-start_time = 5
-dur_time = 0.5
-interval_time = 10
-
 xopen("stimulation")
 
 xopen("preparation")

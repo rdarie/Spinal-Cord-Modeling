@@ -5,12 +5,12 @@ objref Ib_fibF_stim[N]
 objref II_fibE_stim[N]
 objref II_fibF_stim[N]
 
-Ia_fibE_stimval = 1
-Ia_fibF_stimval = 1
-Ib_fibE_stimval = 1
-Ib_fibF_stimval = 1
-II_fibE_stimval = 1
-II_fibF_stimval = 1
+Ia_fibE_stimval = 0
+Ia_fibF_stimval = 0
+Ib_fibE_stimval = 0
+Ib_fibF_stimval = 0
+II_fibE_stimval = 0
+II_fibF_stimval = 0
 
 for i=0,N-1 {
 
