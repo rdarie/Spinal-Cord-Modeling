@@ -16,7 +16,7 @@ plot_colors = {...
     [0.9290    0.6940    0.1250],...
     [0.4940    0.1840    0.5560]
 };
-system_id;
+system_id_old;
 f1 = rfig();
     hold on;
 f2 = rfig();
@@ -44,8 +44,10 @@ legend(h1,'Location','southwest');
 
 ylabel('Activating function');
 xlabel('Percentage along length of fiber');
+print('-dpng', 'Activating_Function');
 figure(f2);
 legend(h2,'Location','southwest');
 
 ylabel('Extracellular voltage');
 xlabel('Percentage along length of fiber');
+print('-dpng', 'Voltage_Function');

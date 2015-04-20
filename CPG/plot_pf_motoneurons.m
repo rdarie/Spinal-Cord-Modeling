@@ -19,7 +19,7 @@ for a = 1:length(MN_E_v)
     h.Color(4) = 0.1;
     title('MN');
     
-xlim([20 30]);
+xlim([10 15]);
     subplot(2,1,2);
     h = plot(t,PF_E_v{a}(1:dec_factor:length(PF_E_v{a})),'b-');
     hold on;
@@ -28,7 +28,7 @@ xlim([20 30]);
     h.Color(4) = 0.1;
     title('PF');
     
-xlim([20 30]);
+xlim([10 15]);
 end
 
 xlabel('Time(s)');

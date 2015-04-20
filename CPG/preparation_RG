@@ -1,0 +1,22 @@
+
+proc preparation() {	//change default v values, hoc file calls init() after run
+
+for i=0,N-1 {
+RG_E_rg_int[i].setel(rg_el+excitation+0.64*r.repick())
+RG_F_rg_int[i].setel(rg_el+excitation+0.64*r.repick())
+
+Inrg_E_int[i].setel(inrg_el+2.875*r.repick())
+Inrg_F_int[i].setel(inrg_el+2.875*r.repick())
+
+	RG_E_rg_int[i].setv(-80)
+	RG_F_rg_int[i].setv(-80)
+	
+	Inrg_E_int[i].setv(-80)
+	Inrg_F_int[i].setv(-80)
+	
+
+RG_E_rg_int[i].soma.g_pas = d_rge * 0.05 * 1e-3
+RG_F_rg_int[i].soma.g_pas = d_rgf * 0.05 * 1e-3
+}
+
+}

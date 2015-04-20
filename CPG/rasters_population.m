@@ -15,7 +15,7 @@ for a = 1:length(RG_E_v)
     h1 = plot([RG_F_raster{a}; RG_F_raster{a}],...
         [a.*RG_F_raster{a}.^0;(a+1).*RG_F_raster{a}.^0],...
         'g-', 'DisplayName', 'Flexor');
-    RG_E_short{a} = RG_E_v{a}(1:100:length(RG_E_v{a}));
+    RG_E_short{a} = RG_E_v{a}(1:dec_factor:length(RG_E_v{a}));
     [~, RG_E_raster{a}] = findpeaks(RG_E_short{a},'minpeakheight',-20);
     RG_E_raster{a} = t(RG_E_raster{a});
     %plot(RG_E_short{a});
@@ -23,15 +23,15 @@ for a = 1:length(RG_E_v)
     h2 = plot([RG_E_raster{a}; RG_E_raster{a}],...
         [a.*RG_E_raster{a}.^0;(a+1).*RG_E_raster{a}.^0],...
         'b-', 'DisplayName', 'Extensor');
-    INRG_E_short{a} = INRG_E_v{a}(1:100:length(INRG_E_v{a}));
+    INRG_E_short{a} = INRG_E_v{a}(1:dec_factor:length(INRG_E_v{a}));
    
-    INRG_F_short{a} = INRG_F_v{a}(1:100:length(RG_E_v{a}));
+    INRG_F_short{a} = INRG_F_v{a}(1:dec_factor:length(RG_E_v{a}));
     
 end
 
 
 xlabel('Time(s)');
-xlim([20 30]);
+xlim([10 15]);
 ylim([1 a]);
 print('-dpng', [pop_name(1:end-4), '.png']);
 

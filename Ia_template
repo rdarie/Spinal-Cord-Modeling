@@ -58,7 +58,7 @@ proc geom() {
   soma {  L = 30  diam = 30  }
 	for ii = 0, n_nodes()-1 {
     Ia_node[ii] {  diam = get_diam()  L = get_L()  }
-    Ia_paranode[ii] {  diam = get_diam()  L = get_L()  }
+    Ia_paranode[ii] {  diam = get_diam()  L = get_INL()*get_L()  }
 	}
 }
 
@@ -71,12 +71,14 @@ proc geom_nseg() {
 }
 
 proc biophys() {
-	Base_Ra = 150
+	Base_Ra = 70
+	
 	for ii = 0, n_nodes()-1 {
 	Ia_node[ii] {
-    insert axnode
     Ra = Base_Ra
-    cm = 1
+    cm = 2
+    //insert axnode
+    
     insert extracellular{
       xg[0]=1e10
       xg[1]=1e10
@@ -87,12 +89,14 @@ proc biophys() {
       e_extracellular=0
       }
   }
+  
   Ia_paranode[ii] {
-    Ra = Base_Ra*get_INL()
-    cm = 1
+    Ra = Base_Ra
+    cm = 0.1/(2*9.15*diam+2*30)
 	insert pas
       g_pas=0.001/(2*9.15*diam+2*30)
       e_pas=-80
+	  
     insert extracellular{
       xg[0]=1e10
       xg[1]=1e10
@@ -103,7 +107,7 @@ proc biophys() {
       e_extracellular=0
       }
   }
-	}
+}
 }
 proc basic_shape() {
 xopen(geom_file)

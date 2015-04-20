@@ -1,0 +1,19 @@
+
+//Multiply conductance to simulate many neurons
+N = 20
+mult_factor = 1
+
+xopen("get_mat_vars")
+
+xopen("netbuild_RG")
+
+xopen("preparation_RG")
+
+objref fih
+	fih = new FInitializeHandler("preparation()")
+	
+load_file("testing_RG_INRG.ses")
+tstop = 15000
+
+init()
+run()

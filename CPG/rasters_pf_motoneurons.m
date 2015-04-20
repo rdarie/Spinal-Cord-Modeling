@@ -32,7 +32,7 @@ for a = 1:length(MN_E_v)
 end
 
 xlabel('Time(s)');
-xlim([20 30]);
+xlim([10 15]);
 ylim([1 a]);
 print('-dpng', [pop_name(1:end-4), '_MN.png']);
 

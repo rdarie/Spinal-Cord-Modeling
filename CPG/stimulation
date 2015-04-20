@@ -51,9 +51,6 @@ II_fibF_stim[i].dur = tstop
 II_fibF_stim[i].amp = 0
 }
 
-start_time = 5
-dur_time = 0.5
-interval_time = 10
 STIMON = 0
 
 proc pulses_start() {

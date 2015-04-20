@@ -12,7 +12,7 @@ strdef tempdata_address
 strdef geom_file
 objref fih
 
-fudge_factor = 200
+fudge_factor = 100
 
 if (systype == 3) { //if windows
 	tempdata_address = ".\\tempdata\\"
@@ -21,13 +21,10 @@ if (systype == 3) { //if windows
  	}
 sprint(geom_file, "%s%s", tempdata_address, "Ia_geometry")
 
-
 objref pc
 pc = new ParallelContext()
 
-
 {xopen("net_params")}
-
 
 // Debugging: override stim params manually set amplitude
 //start_time = 15 // save the second number...
@@ -36,7 +33,7 @@ pc = new ParallelContext()
 
 {xopen("netbuild")}
 
-//load_file("MySes.ses")
+load_file("MySes.ses")
 
 {xopen("vextandinit")}
 
@@ -47,7 +44,7 @@ results = new Vector()
 func plzwrk(){ localobj apc_term, stimvec
 
 	wait = pc.wait_time()
-	amplitude = fudge_factor*$1
+	amplitude = -fudge_factor*$1
 	key = $1
 	
 	fih	= new FInitializeHandler("initi(amplitude)")
@@ -59,7 +56,7 @@ func plzwrk(){ localobj apc_term, stimvec
   		apc_term.thresh = 10
  	}
 	
-	tstop = 400
+	tstop = 4000
 	run()
 	
 	strdef shost

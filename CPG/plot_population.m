@@ -14,7 +14,7 @@ for a = 1:length(RG_E_v)
     h.Color(4) = 0.1;
     title('RG');
     
-xlim([20 30]);
+xlim([10 15]);
     subplot(2,1,2);
     h = plot(t,INRG_E_v{a}(1:dec_factor:length(INRG_E_v{a})),'b-');
     hold on;
@@ -23,7 +23,7 @@ xlim([20 30]);
     h.Color(4) = 0.1;
     title('INRG');
     
-xlim([20 30]);
+xlim([10 15]);
 end
 
 xlabel('Time(s)');

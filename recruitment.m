@@ -12,7 +12,7 @@ stepsize = 0.5;
 % together, these last two determine the waveform/duty cycle of the square
 % wave that stimulates the fiber.
 
-system_id;
+system_id_old;
 
 
 comsol_file = strcat(tempdata_address, data_file);

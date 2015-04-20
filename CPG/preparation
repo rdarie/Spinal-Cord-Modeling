@@ -1,0 +1,64 @@
+	
+proc preparation() {	//change default v values, hoc file calls init() after run
+
+for i=0,N-1 {
+RG_E_rg_int[i].setel(rg_el+excitation+0.64*r.repick())
+RG_F_rg_int[i].setel(rg_el+excitation+0.64*r.repick())
+PF_E_rg_int[i].setel(-64+excitation+0.64*r.repick())
+PF_F_rg_int[i].setel(-64+excitation+0.64*r.repick())
+
+Inrg_E_int[i].setel(inrg_el+2.875*r.repick())
+Inrg_F_int[i].setel(inrg_el+2.875*r.repick())
+Inpf_E_int[i].setel(-64+3.2*r.repick())
+Inpf_F_int[i].setel(-64+3.2*r.repick())
+Irg_E_int[i].setel(-64+3.2*r.repick())
+Irg_F_int[i].setel(-64+3.2*r.repick())
+Ipf_E_int[i].setel(-64+3.2*r.repick())
+Ipf_F_int[i].setel(-64+3.2*r.repick())
+
+Iab_E_int[i].setel(-64+3.2*r.repick())
+In_E_int[i].setel(-64+3.2*r.repick())
+
+Ib_E_int[i].setel(inrg_el+3.2*r.repick())
+Ib_F_int[i].setel(inrg_el+3.2*r.repick())
+
+Ia_E_int[i].setel(-64+3.2*r.repick())
+Ia_F_int[i].setel(-64+3.2*r.repick())
+
+Mn_E_motoneuron[i].setel(mn_el+0.5*r.repick())
+Mn_F_motoneuron[i].setel(mn_el+0.5*r.repick())
+
+R_E_int[i].setel(-64+3.2*r.repick())
+R_F_int[i].setel(-64+3.2*r.repick())
+
+	RG_E_rg_int[i].setv(-80)
+	RG_F_rg_int[i].setv(-80)
+	PF_E_rg_int[i].setv(-80)
+	PF_F_rg_int[i].setv(-80)
+	Inrg_E_int[i].setv(-80)
+	Inrg_F_int[i].setv(-80)
+	Inpf_E_int[i].setv(-80)
+	Inpf_F_int[i].setv(-80)
+	Irg_E_int[i].setv(-80)
+	Irg_F_int[i].setv(-80)
+	Ipf_E_int[i].setv(-80)	
+	Ipf_F_int[i].setv(-80)
+	Iab_E_int[i].setv(-80)
+	In_E_int[i].setv(-80)
+	Ib_E_int[i].setv(-80)
+	Ib_F_int[i].setv(-80)
+	Ia_E_int[i].setv(-80)
+	Ia_F_int[i].setv(-80)
+	R_E_int[i].setv(-80)
+	R_F_int[i].setv(-80)
+
+Ia_fibE_fiber[i].setv(-63.84)
+Ia_fibF_fiber[i].setv(-63.84)
+
+RG_E_rg_int[i].soma.g_pas = d_rge * 0.05 * 1e-3
+RG_F_rg_int[i].soma.g_pas = d_rgf * 0.05 * 1e-3
+PF_E_rg_int[i].soma.g_pas = 0.5 * 0.05 * 1e-3
+PF_F_rg_int[i].soma.g_pas = 0.5 * 0.05 * 1e-3
+}
+
+}

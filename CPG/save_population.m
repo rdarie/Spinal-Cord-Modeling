@@ -9,7 +9,7 @@ fprintf('cell 1');
 
 nrncommand = [nrniv_dir...
     ' -nobanner'...
-    ' testing2.hoc -c quit()'];
+    ' testing_all.hoc -c quit()'];
 system(nrncommand);
 
 RG_E_v = cell(1,20);
@@ -56,10 +56,10 @@ end
 pop_name = sprintf('pop_test.mat');
 save([tempdata_address pop_name]);
 
-rasters_population(pop_name, 0.025, 30000);
-plot_population(pop_name, 0.025, 30000);
+rasters_population(pop_name, 0.025, 15000);
+plot_population(pop_name, 0.025, 15000);
 
-rasters_pf_motoneurons(pop_name, 0.025, 30000);
-plot_pf_motoneurons(pop_name, 0.025, 30000);
+rasters_pf_motoneurons(pop_name, 0.025, 15000);
+plot_pf_motoneurons(pop_name, 0.025, 15000);
 
 toc
