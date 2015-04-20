@@ -1,4 +1,3 @@
- 
 if (name_declared("mat_inh_coupling") == 5) {
 inh_coupling = mat_inh_coupling
 } else {
@@ -74,19 +73,25 @@ g_Iafib_Ib = 0.1
 if (name_declared("mat_interval_time") == 5) {
 interval_time = mat_interval_time
 } else {
-interval_time = 2
+interval_time = 1000
 }
 
 if (name_declared("mat_dur_time") == 5) {
 dur_time = mat_dur_time
 } else {
-dur_time = 0.5
+dur_time = 1000
 }
 
 if (name_declared("mat_start_time") == 5) {
 start_time = mat_mn_el
 } else {
-start_time = 5
+start_time = 250
+}
+
+if (name_declared("mat_ib_el") == 5) {
+ib_el = mat_ib_el
+} else {
+ib_el = -64
 }
 
 ge_bar = 0.05e-3

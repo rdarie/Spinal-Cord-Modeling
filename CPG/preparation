@@ -19,8 +19,8 @@ Ipf_F_int[i].setel(-64+3.2*r.repick())
 Iab_E_int[i].setel(-64+3.2*r.repick())
 In_E_int[i].setel(-64+3.2*r.repick())
 
-Ib_E_int[i].setel(inrg_el+3.2*r.repick())
-Ib_F_int[i].setel(inrg_el+3.2*r.repick())
+Ib_E_int[i].setel(ib_el+3.2*r.repick())
+Ib_F_int[i].setel(ib_el+3.2*r.repick())
 
 Ia_E_int[i].setel(-64+3.2*r.repick())
 Ia_F_int[i].setel(-64+3.2*r.repick())

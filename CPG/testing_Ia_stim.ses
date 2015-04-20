@@ -27,7 +27,7 @@ screen_update_invl = 0.05
 xvalue("Scrn update invl","screen_update_invl", 1,"", 0, 1 )
 realtime = 0.35
 xvalue("Real Time","realtime", 0,"", 0, 1 )
-xpanel(1956,43)
+xpanel(1956,42)
 }
 {
 save_window_ = new Graph(0)
@@ -42,7 +42,7 @@ save_window_.addvar("Ia_fibE_fiber[0].soma.v( 0.5 )", 1, 1, 0.8, 0.9, 2)
 save_window_ = new Graph(0)
 save_window_.size(0,100,-80,60)
 scene_vector_[3] = save_window_
-{save_window_.view(0, -80, 100, 140, 61, 267, 1367.1, 135.1)}
+{save_window_.view(0, -80, 100, 140, 60, 264, 1367.1, 135.1)}
 graphList[0].append(save_window_)
 save_window_.save_name("graphList[0].")
 save_window_.addvar("Ia_E_int[0].soma.v( 0.5 )", 1, 1, 0.8, 0.9, 2)
@@ -51,16 +51,16 @@ save_window_.addvar("Ia_E_int[0].soma.v( 0.5 )", 1, 1, 0.8, 0.9, 2)
 save_window_ = new Graph(0)
 save_window_.size(0,110,0,1)
 scene_vector_[4] = save_window_
-{save_window_.view(0, 0, 110, 1, 54, 781, 1362.6, 35.2)}
+{save_window_.view(0, 0, 110, 1, 50, 794, 1376.1, 30.7)}
 graphList[2].append(save_window_)
 save_window_.save_name("graphList[2].")
-save_window_.addexpr("STIMON", 1, 1, 0.8, 0.9, 2)
+save_window_.addvar("STIMON.x[0]", 1, 1, 0.8, 0.9, 2)
 }
 {
 save_window_ = new Graph(0)
 save_window_.size(0,100,-80,40)
 scene_vector_[5] = save_window_
-{save_window_.view(0, -80, 100, 120, 62, 518, 1364.4, 152.2)}
+{save_window_.view(0, -80, 100, 120, 58, 506, 1368.9, 169.3)}
 graphList[0].append(save_window_)
 save_window_.save_name("graphList[0].")
 save_window_.addvar("Ib_E_int[0].soma.v( 0.5 )", 1, 1, 0.8, 0.9, 2)

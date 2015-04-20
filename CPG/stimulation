@@ -5,13 +5,6 @@ objref Ib_fibF_stim[N]
 objref II_fibE_stim[N]
 objref II_fibF_stim[N]
 
-Ia_fibE_stimval = 0
-Ia_fibF_stimval = 0
-Ib_fibE_stimval = 0
-Ib_fibF_stimval = 0
-II_fibE_stimval = 0
-II_fibF_stimval = 0
-
 for i=0,N-1 {
 
 access Ia_fibE_fiber[i].soma
@@ -51,55 +44,77 @@ II_fibF_stim[i].dur = tstop
 II_fibF_stim[i].amp = 0
 }
 
-STIMON = 0
+objref STIMON
+STIMON = new Vector(6,0)
 
 proc pulses_start() {
 // START = $1
 	strdef init_str
-	sprint(init_str, "%s%4.4f%s", "pulses(", $1, ")")
+	sprint(init_str, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses(", $1, ", ", $3, ", ", $4, ", ", $5, ")")
 	//print "I am in pulses_start(), getting ready to call ", init_str
-	STIMON = 0 // stimulation off until we get to seti()
-	cvode.event(start_time, init_str)
+	STIMON.x[$1] = 0 // stimulation off until we get to seti()
+	cvode.event($2, init_str)
 }
 
 proc pulses() {
 	strdef seti_str
-	sprint(seti_str, "%s%4.4f%s", "pulses(", $1, ")")
+	sprint(seti_str, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses(", $1, ", ", $2, ", ", $3, ", ", $4, ")")
 	
-  if (STIMON==0) { // if we're at an off state,
-    STIMON = 1 // turn stimulation on
+  if (STIMON.x[$1] == 0) { // if we're at an off state,
+    STIMON.x[$1] = 1 // turn stimulation on
 	//print "I am in pulses() and amplitude is: ", $1
-    {
+	
+	if ($1 == 0) {
 	for i=0,N-1 {
-		Ia_fibE_stim[i].amp = Ia_fibE_stimval
+		Ia_fibE_stim[i].amp = $2
 		Ia_fibE_stim[i].del = t
-		Ia_fibE_stim[i].dur = dur_time
-		
-		Ia_fibF_stim[i].amp = Ia_fibF_stimval
-		Ia_fibF_stim[i].del = t
-		Ia_fibF_stim[i].dur = dur_time
-		
-		Ib_fibE_stim[i].amp = Ib_fibE_stimval
-		Ib_fibE_stim[i].del = t
-		Ib_fibE_stim[i].dur = dur_time
-		
-		Ib_fibF_stim[i].amp = Ib_fibF_stimval
-		Ib_fibF_stim[i].del = t
-		Ib_fibF_stim[i].dur = dur_time
-		
-		II_fibE_stim[i].amp = II_fibE_stimval
-		II_fibE_stim[i].del = t
-		II_fibE_stim[i].dur = dur_time
-		
-		II_fibF_stim[i].amp = II_fibF_stimval
-		II_fibF_stim[i].del = t
-		II_fibF_stim[i].dur = dur_time
+		Ia_fibE_stim[i].dur = $3
 		}
-	} // set the extracellular voltage to the values calculated in matlab
-    cvode.event(t + dur_time, seti_str) // call seti() after DUR milliseconds have elapsed
+	}
+	
+	if ($1 == 1) {
+	for i=0,N-1 {
+		Ia_fibF_stim[i].amp = $2
+		Ia_fibF_stim[i].del = t
+		Ia_fibF_stim[i].dur = $3
+		}
+	}
+	
+	if ($1 == 2) {
+	for i=0,N-1 {	
+		Ib_fibE_stim[i].amp = $2
+		Ib_fibE_stim[i].del = t
+		Ib_fibE_stim[i].dur = $3
+		}
+	}
+	
+	if ($1 == 3) {
+	for i=0,N-1 {
+		Ib_fibF_stim[i].amp = $2
+		Ib_fibF_stim[i].del = t
+		Ib_fibF_stim[i].dur = $3
+		}
+	}
+	
+	if ($1 == 4) {
+	for i=0,N-1 {	
+		II_fibE_stim[i].amp = $2
+		II_fibE_stim[i].del = t
+		II_fibE_stim[i].dur = $3
+		}
+	}
+	
+	if ($1 == 5) {
+	for i=0,N-1 {
+		II_fibF_stim[i].amp = $2
+		II_fibF_stim[i].del = t
+		II_fibF_stim[i].dur = $3
+		}
+	}
+    cvode.event(t + $3, seti_str) // call pulses() after DUR milliseconds have elapsed
   } else { // if we're at an on state,
-    STIMON = 0 // turn stimulation off
-    cvode.event(t + interval_time, seti_str) // call seti() again after INTERVAL milliseconds have elapsed
+    STIMON.x[$1] = 0 // turn stimulation off
+    cvode.event(t + $4, seti_str) // call pulses() again after INTERVAL milliseconds have elapsed
   }
   // we've changed a parameter abruptly
   // so we really should re-initialize cvode
