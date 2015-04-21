@@ -13,6 +13,8 @@ xopen("stimulation")
 
 xopen("preparation")
 
+Ia_fibE_stimval = 59e-4
+Ib_fibE_stimval = 59e-4
 
 strdef stim_str
 	sprint(stim_str, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses_start(", 0, ", ", start_time, ", ", Ia_fibE_stimval, ", ", dur_time, ", ", interval_time, ")")
