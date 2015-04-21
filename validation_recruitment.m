@@ -8,12 +8,15 @@ which_muscle = 8;
 count = 1;
 
 for a = 1:8
+    
     for b = 1:4
+        
         EMG_trace = info.windoweddata{which_muscle};
         EMG_time = info.windowedtime{which_muscle};
         EMG_amp(b,a) = trapz(EMG_time(count,:),abs(EMG_trace(count,:)));
         count = count + 1;
     end
+    
 end
 
 EMG_amp = 100 .* EMG_amp ./ (max(max(EMG_amp)));

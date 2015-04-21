@@ -1,5 +1,5 @@
-function plot_population(pop_name,dt,tstop)
-system_id;
+function plot_population(fold_name, pop_name,dt,tstop)
+
 
 plot_colors = {...
     [0    0.4470    0.7410],...
@@ -9,7 +9,7 @@ plot_colors = {...
     [0.4940    0.1840    0.5560]
 };
 
-load([tempdata_address pop_name]);
+load([fold_name pop_name]);
 
 dec_factor = 100;
 
@@ -50,6 +50,6 @@ for a = 1:length(RG_E_v)
 end
 
 xlabel('Time(s)');
-print('-dpng', [pop_name(1:end-4) '_traces.png']);
+print('-dpng', [fold_name pop_name(1:end-4) '_traces.png']);
 close all;
 end

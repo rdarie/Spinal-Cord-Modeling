@@ -5,7 +5,8 @@ xopen("get_mat_vars")
 N = 1
 //Multiply conductance to simulate many neurons
 mult_factor = 20
-
+d_ibe= 5
+d_ibf= 5
 xopen("netbuild_final")
 
 xopen("stimulation")

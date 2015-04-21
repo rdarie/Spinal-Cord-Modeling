@@ -1,6 +1,5 @@
-function plot_pf_motoneurons(pop_name,dt,tstop)
+function plot_pf_motoneurons(fold_name, pop_name,dt,tstop)
 
-system_id;
 
 plot_colors = {...
     [0    0.4470    0.7410],...
@@ -10,7 +9,7 @@ plot_colors = {...
     [0.4940    0.1840    0.5560]
 };
 
-load([tempdata_address pop_name]);
+load([fold_name pop_name]);
 
 dec_factor = 5;
 
@@ -52,6 +51,6 @@ for a = 1:length(MN_E_v)
     view([5 45]);
 end
 
-print('-dpng', [pop_name(1:end-4) '_traces_MN.png']);
+print('-dpng', [fold_name pop_name(1:end-4) '_traces_MN.png']);
 close all;
 end

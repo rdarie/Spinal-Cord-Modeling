@@ -13,5 +13,5 @@ xopen("preparation")
 objref fih
 	fih = new FInitializeHandler("preparation()")
 
-tstop = 15000
+tstop = 30000
 xopen("save_all_run")
