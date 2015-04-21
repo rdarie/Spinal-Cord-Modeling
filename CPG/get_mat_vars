@@ -58,6 +58,12 @@ g_Ib_Ib = mat_g_Ib_Ib
 g_Ib_Ib = 0.1
 }
 
+if (name_declared("mat_g_Ib_Mn") == 5) {
+g_Ib_Mn = mat_g_Ib_Mn
+} else {
+g_Ib_Mn = 0.6
+}
+
 if (name_declared("mat_g_Ibfib_Ib") == 5) {
 g_Ibfib_Ib = mat_g_Ibfib_Ib
 } else {
@@ -85,13 +91,61 @@ dur_time = 1000
 if (name_declared("mat_start_time") == 5) {
 start_time = mat_mn_el
 } else {
-start_time = 250
+start_time = 0
+}
+
+if (name_declared("mat_d_ibe") == 5) {
+d_ibe = mat_d_ibe
+} else {
+d_ibe = 0
+}
+
+if (name_declared("mat_d_ibf") == 5) {
+d_ibf = mat_d_ibf
+} else {
+d_ibf = 0
+}
+
+if (name_declared("mat_d_pf") == 5) {
+d_pf = mat_d_pf
+} else {
+d_pf = 0.5
+}
+
+if (name_declared("mat_d_ine") == 5) {
+d_ine = mat_d_ine
+} else {
+d_ine = 1
 }
 
 if (name_declared("mat_ib_el") == 5) {
 ib_el = mat_ib_el
 } else {
 ib_el = -64
+}
+
+if (name_declared("mat_Ia_fibF_stimval") == 5) {
+Ia_fibF_stimval = mat_Ia_fibF_stimval
+} else {
+Ia_fibF_stimval = 61e-4
+}
+
+if (name_declared("mat_Ia_fibE_stimval") == 5) {
+Ia_fibE_stimval = mat_Ia_fibE_stimval
+} else {
+Ia_fibE_stimval = 61e-4
+}
+
+if (name_declared("mat_Ib_fibE_stimval") == 5) {
+Ib_fibE_stimval = mat_Ib_fibE_stimval
+} else {
+Ib_fibE_stimval = 61e-4
+}
+
+if (name_declared("mat_Ib_fibF_stimval") == 5) {
+Ib_fibF_stimval = mat_Ib_fibF_stimval
+} else {
+Ib_fibF_stimval = 61e-4
 }
 
 ge_bar = 0.05e-3

@@ -12,14 +12,17 @@ xopen("stimulation")
 
 xopen("preparation")
 
-Ia_fibE_stimval = 1e-2
 
 strdef stim_str
 	sprint(stim_str, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses_start(", 0, ", ", start_time, ", ", Ia_fibE_stimval, ", ", dur_time, ", ", interval_time, ")")
 
-objref fih,fih2
+strdef stim_str2
+	sprint(stim_str2, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses_start(", 2, ", ", start_time+500, ", ", Ib_fibE_stimval, ", ", dur_time, ", ", interval_time, ")")
+
+objref fih,fih2,fih3
 	fih	= new FInitializeHandler(stim_str)
-	fih2 = new FInitializeHandler("preparation()")
+    fih2 = new FInitializeHandler(stim_str2)
+	fih3 = new FInitializeHandler("preparation()")
 
 load_file("testing_Ia_stim.ses")
 

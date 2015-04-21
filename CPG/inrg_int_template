@@ -52,6 +52,10 @@ proc biophys() {
     gl_hh3 = 0.51 * 1e-3
     el_hh3 = -57.5
 	
+	insert pas
+	g_pas = 0
+	e_pas = -70
+	
 	ena = 55
 	ek = -80
   }

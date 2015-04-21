@@ -51,7 +51,6 @@ proc biophys() {
       gkbar_hh3 = 100 * 1e-3
       gl_hh3 = 0.51 * 1e-3
       el_hh3 = -64
-	  
 	ena = 55
 	ek = -80
   }

@@ -40,41 +40,33 @@ proc geom_nseg() {
 }
 proc biophys() {
   forsec all {
-  
 	nseg = 1
 	L = 5.64
 	diam = 5.64
     Ra = 1
     cm = 1
 	
-	insert nap
-	  gbar_nap = 0.25* 1e-3
-	  
-    insert hh3
-      gnabar_hh3 = 30 * 1e-3
-      gkbar_hh3 = 1 * 1e-3
-      gl_hh3 = .1 * 1e-3
-      el_hh3 = -64
-	
+	insert hh3
+    gnabar_hh3 = 120 * 1e-3
+    gkbar_hh3 = 100 * 1e-3
+    gl_hh3 = 0.51 * 1e-3
+    el_hh3 = -64
 	
 	insert pas
-	  g_pas  = 0.05 * 1e-3
-	  e_pas = -10
+	g_pas = 0
+	e_pas = -10
 	
 	ena = 55
 	ek = -80
   }
 }
-
 proc biophys_inhomo(){}
-
 proc position() { local i
   soma for i = 0, n3d()-1 {
     pt3dchange(i, $1-x+x3d(i), $2-y+y3d(i), $3-z+z3d(i), diam3d(i))
   }
   x = $1  y = $2  z = $3
 }
-
 proc setv() {
 forsec all {
 v = $1
@@ -89,7 +81,7 @@ el_hh3 = $1
 
 obfunc connect2target() { localobj nc //$o1 target point process, optional $o2 returned NetCon
   soma nc = new NetCon(&v(1), $o1)
-  nc.threshold = -20
+  nc.threshold = -10
   if (numarg() == 2) { $o2 = nc } // for backward compatibility
   return nc
 }

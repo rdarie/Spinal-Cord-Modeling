@@ -348,7 +348,7 @@ endtemplate Iab_E_int
 
 begintemplate In_E_int
 
-xopen("int_template")
+xopen("ine_int_template")
 objref syn_
 proc synapses() {
   /* SynI0 */   soma syn_ = new ExpSynR(0.5)  synlist.append(syn_)
@@ -417,6 +417,9 @@ proc synapses() {
   /* SynI4 */   dend syn_ = new ExpSynR(0.5)  synlist.append(syn_)
     syn_.tau = 5
     syn_.e = -70
+  /* SynI5 */   dend syn_ = new ExpSynR(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
 }
 func is_art() { return 0 }
 
@@ -437,6 +440,9 @@ proc synapses() {
     syn_.tau = 5
     syn_.e = -70
   /* SynI3 */   dend syn_ = new ExpSynR(0.5)  synlist.append(syn_)
+    syn_.tau = 5
+    syn_.e = -70
+  /* SynI4 */   dend syn_ = new ExpSynR(0.5)  synlist.append(syn_)
     syn_.tau = 5
     syn_.e = -70
 }
@@ -619,10 +625,12 @@ for j=0,N-1 {
   /* Ia_fibE22 -> Mn_E18.SynE2 */  nc_append(22+28*j,   18+28*i, 2,  0.01*ge_bar*mult_factor,1)
   /* Ia_F17 -> Mn_E18.SynI3 */     nc_append(17+28*j,   18+28*i, 3,  0.6*gi_bar*mult_factor,1)
   /* R_E20 -> Mn_E18.SynI4 */      nc_append(20+28*j,   18+28*i, 4,  0.2*gi_bar*mult_factor,1)
+  /* Ib_F15 -> Mn_E18.SynI4 */     nc_append(15+28*j,   18+28*i, 5,  g_Ib_Mn*gi_bar*mult_factor,1)
   /* Ia_fibF25 -> Mn_F19.SynE0 */  nc_append(25+28*j,   19+28*i, 0,  0.01*ge_bar*mult_factor,1)
   /* PF_F3 -> Mn_F19.SynE1 */      nc_append(3+28*j ,   19+28*i, 1,  0.5*ge_bar*mult_factor,1)
   /* R_F21 -> Mn_F19.SynI2 */      nc_append(21+28*j,   19+28*i, 2,  0.2*gi_bar*mult_factor,1)
   /* Ia_E16 -> Mn_F19.SynI3 */     nc_append(16+28*j,   19+28*i, 3,  0.6*gi_bar*mult_factor,1)
+  /* Ib_E14 -> Mn_F19.SynI4 */     nc_append(14+28*j,   19+28*i, 4,  g_Ib_Mn*gi_bar*mult_factor,1)
   /* Mn_E18 -> R_E20.SynE0 */      nc_append(18+28*j,   20+28*i, 0,  0.25*ge_bar*mult_factor,1)
   /* R_F21 -> R_E20.SynI1 */       nc_append(21+28*j,   20+28*i, 1,  0.1*gi_bar*mult_factor,1)
   /* Mn_F19 -> R_F21.SynE0 */      nc_append(19+28*j,   21+28*i, 0,  0.25*ge_bar*mult_factor,1)
