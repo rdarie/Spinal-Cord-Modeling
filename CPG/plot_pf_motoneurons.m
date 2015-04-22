@@ -31,7 +31,7 @@ for a = 1:length(MN_E_v)
     ylabel('Neuron #');
     zlabel('Membrane Voltage (MV)');
     
-    xlim([10 15]);
+xlim([tstop*1e-3-10 tstop*1e-3]);
     view([5 45]);
     
     subplot(2,1,2);
@@ -47,7 +47,7 @@ for a = 1:length(MN_E_v)
     ylabel('Neuron #');
     zlabel('Membrane Voltage (MV)');
     
-    xlim([10 15]);
+xlim([tstop*1e-3-10 tstop*1e-3]);
     view([5 45]);
 end
 

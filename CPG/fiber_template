@@ -1,5 +1,5 @@
 
-public init, topol, basic_shape,setv, subsets, geom, biophys, geom_nseg, biophys_inhomo
+public init, topol, basic_shape,setv,setel, subsets, geom, biophys, geom_nseg, biophys_inhomo
 public synlist, x, y, z, position, connect2target
 
 public soma, axon

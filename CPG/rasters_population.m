@@ -39,7 +39,7 @@ end
 
 
 xlabel('Time(s)');
-xlim([10 15]);
+xlim([tstop*1e-3-10 tstop*1e-3]);
 ylim([1 a]);
 print('-dpng', [fold_name pop_name(1:end-4), '.png']);
 
