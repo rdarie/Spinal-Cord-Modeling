@@ -53,7 +53,7 @@ for b = 0:19
 
 end
 
-pop_name = sprintf('pop_test_tau1200.mat');
+pop_name = sprintf('pop_test_tau12-.mat');
 save([tempdata_address pop_name]);
 
 rasters_population(tempdata_address, pop_name, 0.025, 15000);

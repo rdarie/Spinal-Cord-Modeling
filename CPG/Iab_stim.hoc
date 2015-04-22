@@ -14,7 +14,7 @@ xopen("preparation")
 
 strdef stim_str0,stim_str1,stim_str2,stim_str3
 	sprint(stim_str0, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses_start(", 0, ", ", start_time, ", ", Ia_fibE_stimval, ", ", dur_time, ", ", interval_time, ")")
-	sprint(stim_str1, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses_start(", 2, ", ", start_time, ", ", Ia_fibE_stimval, ", ", dur_time, ", ", interval_time, ")")
+	sprint(stim_str1, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses_start(", 2, ", ", start_time, ", ", Ib_fibE_stimval, ", ", dur_time, ", ", interval_time, ")")
 	
 	sprint(stim_str2, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses_start(", 1, ", ", start_time+interval_time, ", ", Ia_fibF_stimval, ", ", dur_time, ", ", interval_time, ")")
 	sprint(stim_str3, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses_start(", 3, ", ", start_time+interval_time, ", ", Ib_fibF_stimval, ", ", dur_time, ", ", interval_time, ")")
@@ -29,4 +29,5 @@ objref fih[5]
 //load_file("testing_Ia_stim.ses")
 
 tstop = 15000
+
 xopen("save_all_run")
