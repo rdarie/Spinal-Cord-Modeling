@@ -30,7 +30,7 @@ for a = 1:length(RG_E_v)
     ylabel('Neuron #');
     zlabel('Membrane Voltage (MV)');
     
-    xlim([10 15]);
+xlim([tstop*1e-3-10 tstop*1e-3]);
     view([5 45]);
     subplot(2,1,2);
     h = plot3(t,t.^0.*a,INRG_E_v{a}(1:dec_factor:length(INRG_E_v{a})),'b-');
@@ -45,7 +45,7 @@ for a = 1:length(RG_E_v)
     ylabel('Neuron #');
     zlabel('Membrane Voltage (MV)');
     
-    xlim([10 15]);
+xlim([tstop*1e-3-10 tstop*1e-3]);
     view([5 45]);
 end
 

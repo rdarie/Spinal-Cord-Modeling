@@ -1,4 +1,4 @@
-function plot_envelope(fold_name, pop_name,dt,tstop)
+function burst_times = plot_envelope(fold_name, pop_name,dt,tstop)
 
 close all;
 
@@ -108,17 +108,13 @@ ylim([0 40]);
 %     a = a + 1;
 % end
 [~,burst_times] = findpeaks(mean(F_fr),t(1:end-1),...
-    'MinPeakDistance',0.6, 'MinPeakHeight', 20);
+    'MinPeakDistance',0.2, 'MinPeakHeight', 20);
 figure(f1);
 plot(burst_times,-40.*burst_times.^0,'gd');
 
 rfig();
-burst_isi = diff(burst_times);
+burst_isi = diff(burst_times(burst_times > tstop.*1e-3./2));
 histogram(burst_isi,5);
 [~,edges] = histcounts(burst_isi,5);
 hold on;
-fprintf('Burst Occurence Rate');
-pd = fitdist(burst_isi','Normal')
-y = pdf(pd,edges);
-plot(edges,y);
 end
