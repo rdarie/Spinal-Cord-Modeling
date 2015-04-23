@@ -1,9 +1,9 @@
 function recruitment(data_file)
-start_time = 15;
+start_time = 0;
 % when to start stimulation (ms)
-dur_time = 0.5;
+dur_time = 5;
 % how long is the stimulation on (ms)
-interval_time = 5;
+interval_time = 10;
 
 ampstart = 0.5;
 ampmax = 8;
@@ -31,9 +31,8 @@ for a = 1:n_cells
     tic
     fprintf('cell %d\n', a);
     
-    n_nodes = floor(length(V_extra{a})./2);
     
-    points_per_node = 1;
+    points_per_node = 2;
     nrn_geom(coords{a}, diams(a), n_nodes, points_per_node);
     
     dlmwrite(v_dir, V_extra{a},' '); %v from comsol to text

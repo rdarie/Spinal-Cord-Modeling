@@ -19,9 +19,9 @@ proc init() {
   topol()
   subsets()
   geom()
-  biophys()
   geom_nseg()
   basic_shape()
+  biophys()
   synlist = new List()
   synapses()
   x = y = z = 0 // only change via position
@@ -109,8 +109,9 @@ proc biophys() {
   }
 }
 }
+
 proc basic_shape() {
-xopen(geom_file)
+//xopen(geom_file)
 }
 proc setv() {
 forall {
