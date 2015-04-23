@@ -12,7 +12,7 @@ strdef tempdata_address
 strdef geom_file
 objref fih
 
-fudge_factor = 100
+fudge_factor = 25
 
 if (systype == 3) { //if windows
 	tempdata_address = ".\\tempdata\\"
@@ -44,7 +44,7 @@ results = new Vector()
 func plzwrk(){ localobj apc_term, stimvec
 
 	wait = pc.wait_time()
-	amplitude = -fudge_factor*$1
+	amplitude = fudge_factor*$1
 	key = $1
 	
 	fih	= new FInitializeHandler("initi(amplitude)")
@@ -56,7 +56,7 @@ func plzwrk(){ localobj apc_term, stimvec
   		apc_term.thresh = 10
  	}
 	
-	tstop = 4000
+	tstop = 2000
 	run()
 	
 	strdef shost

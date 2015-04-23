@@ -77,7 +77,7 @@ proc biophys() {
 	Ia_node[ii] {
     Ra = Base_Ra
     cm = 2
-    //insert axnode
+    insert axnode
     
     insert extracellular{
       xg[0]=1e10
@@ -110,7 +110,7 @@ proc biophys() {
 }
 }
 proc basic_shape() {
-xopen(geom_file)
+//xopen(geom_file)
 }
 proc setv() {
 forall {

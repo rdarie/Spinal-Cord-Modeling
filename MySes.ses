@@ -34,42 +34,42 @@ steps_per_ms = 40
 xvalue("Points plotted/ms","steps_per_ms", 1,"setdt()", 0, 1 )
 screen_update_invl = 0.05
 xvalue("Scrn update invl","screen_update_invl", 1,"", 0, 1 )
-realtime = 36.16
+realtime = 17.22
 xvalue("Real Time","realtime", 0,"", 0, 1 )
 xpanel(1074,66)
 }
 {
 save_window_ = new Graph(0)
-save_window_.size(0,50,-110,30)
+save_window_.size(0,400,-80,-45)
 scene_vector_[3] = save_window_
-{save_window_.view(0, -110, 50, 140, 60, 492, 1142.1, 446.5)}
+{save_window_.view(0, -80, 400, 35, 60, 492, 1142.1, 446.5)}
 graphList[0].append(save_window_)
 save_window_.save_name("graphList[0].")
 save_window_.addvar("Motoneuron_Cell[0].soma.v( 0.5 )", 5, 1, 0.8, 0.9, 2)
 save_window_.addvar("Motoneuron_Cell[0].dend[1].v( 0.166667 )", 1, 1, 0.8, 0.9, 2)
 save_window_.addexpr("NetCon[0].x", 2, 8, 0.8, 0.9, 2)
-save_window_.addexpr("Ia_axon_Cell[0].Ia_node[50].v( 0.5 )", 3, 3, 0.8, 0.9, 2)
+save_window_.addexpr("Ia_axon_Cell[0].Ia_node[4].v( 0.5 )", 3, 3, 0.8, 0.9, 2)
 }
 {
 save_window_ = new Graph(0)
-save_window_.size(0,400,-1,1)
+save_window_.size(-10,400,-1,1)
 scene_vector_[4] = save_window_
-{save_window_.view(0, -1, 400, 2, 1512, 84, 300.6, 200.8)}
+{save_window_.view(-10, -1, 410, 2, 1512, 84, 300.6, 200.8)}
 graphList[1].append(save_window_)
 save_window_.save_name("graphList[1].")
 save_window_.addvar("ExpSyn[0].i", 5, 4, 0.8, 0.9, 2)
 }
 {
 save_window_ = new Graph(0)
-save_window_.size(0,50,0.01,0.84)
+save_window_.size(0,410,0.01,0.71)
 scene_vector_[5] = save_window_
-{save_window_.view(0, 0.01, 50, 0.83, 236, 87, 1053, 221.5)}
+{save_window_.view(0, 0.01, 410, 0.7, 234, 85, 1053, 221.5)}
 graphList[2].append(save_window_)
 save_window_.save_name("graphList[2].")
-save_window_.addexpr("Ia_axon_Cell[0].Ia_node[50].m_axnode( 0.5 )", 2, 3, 0.8, 0.9, 2)
-save_window_.addexpr("Ia_axon_Cell[0].Ia_node[50].s_axnode( 0.5 )", 3, 3, 0.8, 0.9, 2)
-save_window_.addexpr("Ia_axon_Cell[0].Ia_node[50].h_axnode( 0.5 )", 4, 3, 0.8, 0.9, 2)
-save_window_.addexpr("Ia_axon_Cell[0].Ia_node[50].mp_axnode( 0.5 )", 5, 3, 0.8, 0.9, 2)
+save_window_.addexpr("Ia_axon_Cell[0].Ia_node[4].m_axnode( 0.5 )", 2, 3, 0.8, 0.9, 2)
+save_window_.addexpr("Ia_axon_Cell[0].Ia_node[4].s_axnode( 0.5 )", 3, 3, 0.8, 0.9, 2)
+save_window_.addexpr("Ia_axon_Cell[0].Ia_node[4].h_axnode( 0.5 )", 4, 3, 0.8, 0.9, 2)
+save_window_.addexpr("Ia_axon_Cell[0].Ia_node[4].mp_axnode( 0.5 )", 5, 3, 0.8, 0.9, 2)
 }
 objectvar scene_vector_[1]
 {doNotify()}

@@ -1,0 +1,33 @@
+//Net Params
+
+xopen("get_mat_vars")
+
+N = 20
+//Multiply conductance to simulate many neurons
+mult_factor = 1
+
+xopen("netbuild_final")
+
+xopen("stimulation")
+
+xopen("preparation")
+
+strdef stim_str0,stim_str1,stim_str2,stim_str3
+	sprint(stim_str0, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses_start(", 0, ", ", 0, ", ", Ia_fibE_stimval, ", ", 1e6, ", ", 1, ")")
+	sprint(stim_str1, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses_start(", 2, ", ", 0, ", ", Ib_fibE_stimval, ", ", 1e6, ", ", 1, ")")
+	
+	sprint(stim_str2, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses_start(", 1, ", ", 0, ", ", Ia_fibF_stimval, ", ", 1e6, ", ", 1, ")")
+	sprint(stim_str3, "%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s%4.4f%s", "pulses_start(", 3, ", ", 0, ", ", Ib_fibF_stimval, ", ", 1e6, ", ", 1, ")")
+
+objref fih[5]
+	fih[0]	= new FInitializeHandler(stim_str0)
+	fih[1]	= new FInitializeHandler(stim_str1)
+	fih[2]	= new FInitializeHandler(stim_str2)
+	fih[3]	= new FInitializeHandler(stim_str3)
+	fih[4] = new FInitializeHandler("preparation()")
+
+//load_file("testing_Ia_stim.ses")
+
+tstop = 15000
+
+xopen("save_all_run")

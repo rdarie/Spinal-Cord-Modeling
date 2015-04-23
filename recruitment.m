@@ -14,7 +14,6 @@ stepsize = 0.5;
 
 system_id_old;
 
-
 comsol_file = strcat(tempdata_address, data_file);
 v_dir = strcat(tempdata_address, 'matlab_v_extra');
 cellparam_dir = strcat(tempdata_address, 'cell_params');

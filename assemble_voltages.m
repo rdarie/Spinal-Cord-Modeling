@@ -3,20 +3,11 @@ clear;clc;close all;
 inl = 100;
 % how many times longer is a paranode than a node?
 
-comsol_file = 'A:\CSN - Corticospinal Neuroprosthetics\CSP Model\Spinal cord models\Spinal cord models\No root\no_root';
+comsol_file = 'A:\CSN - Corticospinal Neuroprosthetics\CSP Model\Spinal cord models\No root\no_root';
 fem = mphload([comsol_file '.mph']);
 geom = 'geom1';
 
-os = ispc;
-%code for system agnosticism in opening directory
-if os == 1
-    tempdata_address = '.\tempdata\' ;
-    nrniv_dir = 'C:\nrn73w64\bin64\nrniv.exe' ;
-else 
-    tempdata_address = 'tempdata/' ;
-    %nrniv_dir = '/Applications/NEURON-7.3/nrn/x86_64/bin/nrniv';
-    nrniv_dir = '/Applications/NEURON-7.3/nrngui';
-end 
+system_id_old;
 
 n_diam = 50;
 diams = zeros(1,n_diam);

@@ -66,10 +66,10 @@ Ib_F_v = cell(1,20);
     
     pop_name = sprintf('pop_Iab_stim_no_MLR_PW_%4.4f.mat',AMPS(a));
     save([tempdata_address pop_name]);
-	rasters_population(pop_name, 0.025, 15000);
-    plot_population(pop_name, 0.025, 15000);
+	rasters_population(tempdata_address,pop_name, 0.025, 15000);
+    plot_population(tempdata_address,pop_name, 0.025, 15000);
 
-    rasters_pf_motoneurons(pop_name, 0.025, 15000);
-    plot_pf_motoneurons(pop_name, 0.025, 15000);
+    rasters_pf_motoneurons(tempdata_address,pop_name, 0.025, 15000);
+    plot_pf_motoneurons(tempdata_address,pop_name, 0.025, 15000);
 	toc
 end

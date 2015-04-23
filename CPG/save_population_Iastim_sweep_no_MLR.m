@@ -3,24 +3,23 @@ format long
 
 system_id;
 
-AMPS = [61e-4 63e-4];
+AMPS = [0 61e-4];
+AMPS2 = [61e-4 0];
 
 for a = 1:length(AMPS)
-    
-for b = 1:length(AMPS)
     tic
     fprintf('cell %d',a);
     
         nrncommand = [nrniv_dir...
             ' -nobanner '...
-            ' -c mat_Ib_fibF_stimval=' sprintf('%4.4f', 59e-4)...
-            ' -c mat_Ib_fibE_stimval=' sprintf('%4.4f', AMPS(b))...
+            ' -c mat_Ib_fibF_stimval=' sprintf('%4.4f', 0)...
+            ' -c mat_Ib_fibE_stimval=' sprintf('%4.4f', AMPS2(a))...
             ' -c mat_Ia_fibF_stimval=' sprintf('%4.4f', 61e-4)...
             ' -c mat_Ia_fibE_stimval=' sprintf('%4.4f', AMPS(a))...
             ' -c mat_d_rge=' sprintf('%4.4f', 0)...
             ' -c mat_d_rgf=' sprintf('%4.4f', 0)...
             ' -c mat_d_pf=' sprintf('%4.4f', 0)...
-            ' Iab_stim.hoc -c quit()'];
+            ' Iab_stim2.hoc -c quit()'];
     system(nrncommand);
     
     RG_E_v = cell(1,20);
@@ -67,13 +66,12 @@ for b = 1:length(AMPS)
     
     end
     
-    pop_name = sprintf('pop_Ia_stim_no_MLR_ampIa_%4.4f_ampIb_%4.4f.mat',AMPS(a),AMPS(b));
+    pop_name = sprintf('pop_IaE_stim_no_MLR_ampIa_%4.4f_ampIb_%4.4f.mat',AMPS(a),AMPS2(a));
     save([tempdata_address pop_name]);
-	rasters_population(pop_name, 0.025, 15000);
-    plot_population(pop_name, 0.025, 15000);
+	rasters_population(tempdata_address,pop_name, 0.025, 15000);
+    plot_population(tempdata_address,pop_name, 0.025, 15000);
 
-    rasters_pf_motoneurons(pop_name, 0.025, 15000);
-    plot_pf_motoneurons(pop_name, 0.025, 15000);
+    rasters_pf_motoneurons(tempdata_address,pop_name, 0.025, 15000);
+    plot_pf_motoneurons(tempdata_address,pop_name, 0.025, 15000);
 	toc
-end
 end
