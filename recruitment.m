@@ -6,7 +6,7 @@ dur_time = 5;
 interval_time = 10;
 
 ampstart = 0.5;
-ampmax = 8;
+ampmax = 10;
 stepsize = 0.5;
 % how long is the stimulation off (ms)
 % together, these last two determine the waveform/duty cycle of the square
@@ -31,8 +31,6 @@ for a = 1:n_cells
     tic
     fprintf('cell %d\n', a);
     
-    
-    points_per_node = 2;
     nrn_geom(coords{a}, diams(a), n_nodes, points_per_node);
     
     dlmwrite(v_dir, V_extra{a},' '); %v from comsol to text
@@ -69,7 +67,7 @@ for a = 1:n_cells
             keyboard;
         end
         
-        rec_curve(a,:) = numap > 2;
+        rec_curve(a,:) = numap > 50;
         toc
 end
 
