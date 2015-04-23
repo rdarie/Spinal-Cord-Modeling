@@ -110,7 +110,7 @@ proc biophys() {
 }
 }
 proc basic_shape() {
-//xopen(geom_file)
+xopen(geom_file)
 }
 proc setv() {
 forall {
