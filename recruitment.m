@@ -27,10 +27,10 @@ AMPS = ampstart:stepsize:ampmax;
 rec_curve = zeros(n_cells, length(AMPS));
 
 
-for a = 1:n_cells
+for a = 1:20
     tic
     fprintf('cell %d\n', a);
-    
+    n_nodes = length(V_extra{a})./points_per_node;
     nrn_geom(coords{a}, diams(a), n_nodes, points_per_node);
     
     dlmwrite(v_dir, V_extra{a},' '); %v from comsol to text
@@ -74,7 +74,7 @@ end
 rec_curve = sum(rec_curve, 1);
 rec_curve = rec_curve./max(rec_curve).*100;
 plot(AMPS, rec_curve);
-title('Recruitment curve for 50 random diameters');
+title('Recruitment curve for 20 random diameters');
 ylabel('Percent recruited');
 xlabel('Stimulation amplitude (V)');
 ylim([-10 110]);

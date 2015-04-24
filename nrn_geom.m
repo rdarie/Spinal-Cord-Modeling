@@ -6,16 +6,7 @@ function nrn_geom(spl, diam, n_nodes, points_per_node )
 %n_nodes: number of nodes
 %points_per_node
 
-os = ispc; 
-%code for system agnosticism in opening directory
-if os == 1
-    tempdata_address = '.\tempdata\' ;
-    nrniv_dir = 'C:\nrn73w64\bin64\nrniv.exe' ;
-else 
-    tempdata_address = 'tempdata/' ;
-    %nrniv_dir = '/Applications/NEURON-7.3/nrn/x86_64/bin/nrniv';
-    nrniv_dir = '/Applications/NEURON-7.3/nrngui';
-end 
+system_id_old;
 
 fname = strcat(tempdata_address, 'Ia_geometry');
 fid = fopen(fname,'w');
