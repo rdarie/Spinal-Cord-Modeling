@@ -12,7 +12,7 @@ strdef tempdata_address
 strdef geom_file
 objref fih
 
-fudge_factor = 200
+fudge_factor = 225
 
 if (systype == 3) { //if windows
 	tempdata_address = ".\\tempdata\\"

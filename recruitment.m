@@ -7,7 +7,7 @@ interval_time = 10;
 
 ampstart = 0.5;
 ampmax = 10;
-stepsize = 0.5;
+stepsize = 8;
 % how long is the stimulation off (ms)
 % together, these last two determine the waveform/duty cycle of the square
 % wave that stimulates the fiber.
