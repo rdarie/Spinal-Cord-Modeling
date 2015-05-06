@@ -29,6 +29,12 @@ Ib_F_int[i].setel(ib_el+3.2*r.repick())
 Ia_E_int[i].setel(-64+3.2*r.repick())
 Ia_F_int[i].setel(-64+3.2*r.repick())
 
+Ib_fibE_fiber[i].setel(-64+3.2*r.repick())
+Ib_fibF_fiber[i].setel(-64+3.2*r.repick())
+
+Ia_fibE_fiber[i].setel(-64+3.2*r.repick())
+Ia_fibF_fiber[i].setel(-64+3.2*r.repick())
+
 Mn_E_motoneuron[i].setel(mn_el+0.5*r.repick())
 Mn_F_motoneuron[i].setel(mn_el+0.5*r.repick())
 

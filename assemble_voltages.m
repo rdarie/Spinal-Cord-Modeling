@@ -13,12 +13,13 @@ n_diam = 50;
 diams = zeros(1,n_diam);
 
 for a = 1:n_diam
-    [temp_V, temp_coords, n_nodes, diam] = ...
+    [temp_V, temp_domain, temp_coords, n_nodes, diam] = ...
         get_spline_voltages(fem,tempdata_address, inl);
     diams(a) = diam;
     coords{a} = temp_coords;
     V_extra{a,:} = temp_V;
+    domain{a,:} = temp_domain;
 end
 %save to matlab variables
-save([tempdata_address 'comsol_solution.mat'], 'V_extra', 'coords', 'diams', 'n_nodes', 'inl');
+save([tempdata_address 'comsol_solution.mat'], 'V_extra', 'domain', 'coords', 'diams', 'n_nodes', 'inl');
 fprintf('Done!');

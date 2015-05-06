@@ -1,4 +1,4 @@
-function [V_extra, spl, n_nodes,diam] = get_spline_voltages(fem,datadir,inl)
+function [V_extra, domain, spl, n_nodes,diam] = get_spline_voltages(fem,datadir,inl)
 %get_line_voltages.m Generate text file list of voltage values for NEURON communication
 % fem is the comsol model object
 % N is the number of diameters to simulate
@@ -42,5 +42,6 @@ spl = fnval(spl_func,s);
 
 V_extra=mphinterp(fem,'V','coord',spl);
 % interpolate voltages from the COMSOL solution
+domain = mphinterp(fem,'dom','coord',spl);
 
 end

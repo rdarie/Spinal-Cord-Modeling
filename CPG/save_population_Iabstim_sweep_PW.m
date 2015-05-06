@@ -3,11 +3,11 @@ format long
 
 system_id;
 
-AMPS = [500 750 1000];
+AMPS = [1000];
 
 for a = 1:length(AMPS)
     tic
-    fprintf('cell %d',a);
+    fprintf('cell %d\n',a);
     
         nrncommand = [nrniv_dir...
             ' -nobanner -c mat_dur_time=' sprintf('%4.4f', AMPS(a))...
