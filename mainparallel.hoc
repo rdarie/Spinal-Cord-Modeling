@@ -15,7 +15,7 @@ objref fih
 fudge_factor = 225
 
 if (systype == 3) { //if windows
-	tempdata_address = ".\\tempdata\\"
+	tempdata_address = ".\\.\\tempdata\\"
 	} else {
  	tempdata_address = "tempdata/"
  	}

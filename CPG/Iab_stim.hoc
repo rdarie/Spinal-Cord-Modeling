@@ -29,6 +29,6 @@ objref fih[5]
 
 //load_file("testing_Ia_stim.ses")
 
-tstop = 15000
+tstop = 2
 
 xopen("save_all_run")

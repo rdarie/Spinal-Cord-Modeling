@@ -85,84 +85,95 @@ objref Ia_F_v_file
 objref Ib_E_v_file
 objref Ib_F_v_file
 
+
+systype = unix_mac_pc()
+strdef tempdata_address
+
+if (systype == 3) { //if windows
+	tempdata_address = "..\\..\\tempdata\\"
+	} else {
+ 	tempdata_address = "tempdata/"
+ 	}
+
+
 strdef filename
 
 for i=0,N-1 {
 
 RG_E_v_file = new File()
-sprint(filename, "%s%d%s", "RG_E_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address,"RG_E_v_", i,".txt")
 RG_E_v_file.wopen(filename)
 RG_E_v_vec[i].printf(RG_E_v_file)
 RG_E_v_file.close
 
 RG_F_v_file = new File()
-sprint(filename, "%s%d%s", "RG_F_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address, "RG_F_v_", i,".txt")
 RG_F_v_file.wopen(filename)
 RG_F_v_vec[i].printf(RG_F_v_file)
 RG_F_v_file.close
 
 PF_E_v_file = new File()
-sprint(filename, "%s%d%s", "PF_E_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address, "PF_E_v_", i,".txt")
 PF_E_v_file.wopen(filename)
 PF_E_v_vec[i].printf(PF_E_v_file)
 PF_E_v_file.close
 
 PF_F_v_file = new File()
-sprint(filename, "%s%d%s", "PF_F_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address, "PF_F_v_", i,".txt")
 PF_F_v_file.wopen(filename)
 PF_F_v_vec[i].printf(PF_F_v_file)
 PF_F_v_file.close
 
 Inrg_E_v_file = new File()
-sprint(filename, "%s%d%s", "INRG_E_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address, "INRG_E_v_", i,".txt")
 Inrg_E_v_file.wopen(filename)
 Inrg_E_v_vec[i].printf(Inrg_E_v_file)
 Inrg_E_v_file.close
 
 Inrg_F_v_file = new File()
-sprint(filename, "%s%d%s", "INRG_F_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address, "INRG_F_v_", i,".txt")
 Inrg_F_v_file.wopen(filename)
 Inrg_F_v_vec[i].printf(Inrg_F_v_file)
 Inrg_F_v_file.close
 
 MN_E_v_file = new File()
-sprint(filename, "%s%d%s", "MN_E_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address, "MN_E_v_", i,".txt")
 MN_E_v_file.wopen(filename)
 MN_E_v_vec[i].printf(MN_E_v_file)
 MN_E_v_file.close
 
 MN_F_v_file = new File()
-sprint(filename, "%s%d%s", "MN_F_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address, "MN_F_v_", i,".txt")
 MN_F_v_file.wopen(filename)
 MN_F_v_vec[i].printf(MN_F_v_file)
 MN_F_v_file.close
 
 Iab_E_v_file = new File()
-sprint(filename, "%s%d%s", "Iab_E_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address, "Iab_E_v_", i,".txt")
 Iab_E_v_file.wopen(filename)
 Iab_E_v_vec[i].printf(Iab_E_v_file)
 Iab_E_v_file.close
 
 Ia_E_v_file = new File()
-sprint(filename, "%s%d%s", "Ia_E_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address, "Ia_E_v_", i,".txt")
 Ia_E_v_file.wopen(filename)
 Ia_E_v_vec[i].printf(Ia_E_v_file)
 Ia_E_v_file.close
 
 Ia_F_v_file = new File()
-sprint(filename, "%s%d%s", "Ia_F_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address, "Ia_F_v_", i,".txt")
 Ia_F_v_file.wopen(filename)
 Ia_F_v_vec[i].printf(Ia_F_v_file)
 Ia_F_v_file.close
 
 Ib_E_v_file = new File()
-sprint(filename, "%s%d%s", "Ib_E_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address, "Ib_E_v_", i,".txt")
 Ib_E_v_file.wopen(filename)
 Ib_E_v_vec[i].printf(Ib_E_v_file)
 Ib_E_v_file.close
 
 Ib_F_v_file = new File()
-sprint(filename, "%s%d%s", "Ib_F_v_", i,".txt")
+sprint(filename, "%s%s%d%s", tempdata_address, "Ib_F_v_", i,".txt")
 Ib_F_v_file.wopen(filename)
 Ib_F_v_vec[i].printf(Ib_F_v_file)
 Ib_F_v_file.close
