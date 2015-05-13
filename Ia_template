@@ -18,8 +18,8 @@ objref synlist
 proc init() {
   topol()
   subsets()
-  geom()
   geom_nseg()
+  geom()
   basic_shape()
   biophys()
   synlist = new List()
@@ -111,7 +111,7 @@ proc biophys() {
 }
 
 proc basic_shape() {
-//xopen(geom_file)
+xopen(geom_file)
 }
 proc setv() {
 forall {

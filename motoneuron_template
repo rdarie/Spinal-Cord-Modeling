@@ -1,4 +1,3 @@
-public is_art
 public init, topol, basic_shape, subsets, geom, biophys, geom_nseg, biophys_inhomo, setv
 public synlist, x, y, z, position, connect2target
 

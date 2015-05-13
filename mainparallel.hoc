@@ -2,22 +2,16 @@
 
 load_file("noload.hoc") // Does not bring up the GUI, but loads certain function dependencies
 
-
-//objref apc_term  
-//objref apc_file_obj  
-
+fudge_factor = 1
 
 systype = unix_mac_pc()
 strdef tempdata_address
 strdef geom_file
-objref fih
-
-fudge_factor = 225
 
 if (systype == 3) { //if windows
-	tempdata_address = ".\\.\\tempdata\\"
+	tempdata_address = "..\\tempdata\\"
 	} else {
- 	tempdata_address = "tempdata/"
+ 	tempdata_address = "../tempdata/"
  	}
 sprint(geom_file, "%s%s", tempdata_address, "Ia_geometry")
 
@@ -26,13 +20,13 @@ pc = new ParallelContext()
 
 {xopen("net_params")}
 
-// Debugging: override stim params manually set amplitude
-//start_time = 15 // save the second number...
-//dur_time = 0.5
-//interval_time = 20
-
 {xopen("netbuild")}
 
+// Debugging: override stim params manually set amplitude
+
+//start_time = 15
+//dur_time = 0.5
+//interval_time = 20
 load_file("MySes.ses")
 
 {xopen("vextandinit")}
@@ -40,8 +34,7 @@ load_file("MySes.ses")
 objref results
 results = new Vector()
 
-
-func plzwrk(){ localobj apc_term, stimvec
+func simulate(){ localobj apc_term, stimvec, fih
 
 	wait = pc.wait_time()
 	amplitude = fudge_factor*$1
@@ -56,7 +49,9 @@ func plzwrk(){ localobj apc_term, stimvec
   		apc_term.thresh = 10
  	}
 	
-	tstop = 2000
+	cells.object(0).topology()
+	
+	tstop = 500
 	run()
 	
 	strdef shost
@@ -64,7 +59,6 @@ func plzwrk(){ localobj apc_term, stimvec
 	system("hostname", shost)
 	printf("There are %d processes. My rank is %d and I am on %s\n", pc.nhost, pc.id, shost)
 	}
-	
 	
 	stimvec = new Vector() //strange method of returning two values -- pack in a vector, then unpack after function call
 	stimvec.append($1)
@@ -80,9 +74,9 @@ func plzwrk(){ localobj apc_term, stimvec
 objref vecReturned 
 vecReturned = new Vector()
 
-proc par_test(){
+proc par_run(){
 	
-	for(ii=mat_start_amp; ii <= $1; ii+=mat_step)  pc.submit("plzwrk", ii)  //has to be on same line? print pc.id
+	for(ii=mat_start_amp; ii <= $1; ii+=mat_step)  pc.submit("simulate", ii)  //has to be on same line? print pc.id
 	   while(pc.working){
 		key = pc.retval()
 		pc.look_take(key) //find package
@@ -97,7 +91,8 @@ proc par_test(){
 	}
 }
 
-par_test(mat_amp) // max amp val passed in from le matlab
+//
+par_run(mat_amp) // max amp val passed in from le matlab
 {pc.done()}
 
 objref apc_file_obj

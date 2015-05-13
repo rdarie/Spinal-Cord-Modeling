@@ -1,0 +1,16 @@
+<NotepadPlus>
+    <Session activeView="0">
+        <mainView activeIndex="1">
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1116" startPos="147" endPos="147" selMode="0" lang="Neuron" encoding="-1" filename="C:\Users\Radu Darie\Documents\GitHub\Spinal-Cord-Modeling\mainparallel.hoc" backupFilePath="" originalFileLastModifTimestamp="1430936692" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="638" startPos="0" endPos="0" selMode="0" lang="Neuron" encoding="-1" filename="C:\Users\Radu Darie\Documents\GitHub\Spinal-Cord-Modeling\motoneuron_geometry" backupFilePath="" originalFileLastModifTimestamp="1423524568" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1176" startPos="0" endPos="0" selMode="0" lang="Neuron" encoding="-1" filename="C:\Users\Radu Darie\Documents\GitHub\Spinal-Cord-Modeling\Ia_template" backupFilePath="" originalFileLastModifTimestamp="1429907201" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1740" startPos="0" endPos="0" selMode="0" lang="Neuron" encoding="-1" filename="C:\Users\Radu Darie\Documents\GitHub\Spinal-Cord-Modeling\vextandinit" backupFilePath="" originalFileLastModifTimestamp="1425593601" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1764" startPos="0" endPos="0" selMode="0" lang="Neuron" encoding="-1" filename="C:\Users\Radu Darie\Documents\GitHub\Spinal-Cord-Modeling\netbuild" backupFilePath="" originalFileLastModifTimestamp="1429907201" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1116" startPos="0" endPos="0" selMode="0" lang="Neuron" encoding="-1" filename="C:\Users\Radu Darie\Documents\GitHub\Spinal-Cord-Modeling\motoneuron_template" backupFilePath="" originalFileLastModifTimestamp="1431540992" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="720" startPos="0" endPos="0" selMode="0" lang="NMODL" encoding="-1" filename="C:\Users\Radu Darie\Documents\GitHub\Spinal-Cord-Modeling\MOTONEURON.mod" backupFilePath="" originalFileLastModifTimestamp="1358158136" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="576" startPos="0" endPos="0" selMode="0" lang="NMODL" encoding="-1" filename="C:\Users\Radu Darie\Documents\GitHub\Spinal-Cord-Modeling\INITIAL.mod" backupFilePath="" originalFileLastModifTimestamp="1361953835" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="864" startPos="0" endPos="0" selMode="0" lang="NMODL" encoding="-1" filename="C:\Users\Radu Darie\Documents\GitHub\Spinal-Cord-Modeling\AXNODE.mod" backupFilePath="" originalFileLastModifTimestamp="1358158136" />
+        </mainView>
+        <subView activeIndex="0" />
+    </Session>
+</NotepadPlus>
