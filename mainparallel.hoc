@@ -22,13 +22,17 @@ pc = new ParallelContext()
 
 {xopen("netbuild")}
 
+//////////////////////////////////////////////////////////////////
 // Debugging: override stim params manually set amplitude
 
 //start_time = 15
 //dur_time = 0.5
 //interval_time = 20
 load_file("MySes.ses")
-
+objref s
+topology()
+s = new Shape()
+///////////////////////////////////////////////////////////////
 {xopen("vextandinit")}
 
 objref results
@@ -48,9 +52,7 @@ func simulate(){ localobj apc_term, stimvec, fih
   		apc_term = new APCount(0.5)
   		apc_term.thresh = 10
  	}
-	
-	cells.object(0).topology()
-	
+		
 	tstop = 500
 	run()
 	

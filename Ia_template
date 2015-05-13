@@ -10,7 +10,6 @@ public soma, Ia_node, Ia_paranode
 public all
 
 objref synlist
-	create soma
 	//print "Going to make ", n_nodes(), "sections"
 	create Ia_node[n_nodes()]
 	create Ia_paranode[n_nodes()]
@@ -18,9 +17,9 @@ objref synlist
 proc init() {
   topol()
   subsets()
-  geom_nseg()
-  geom()
   basic_shape()
+  geom_nseg()
+  //geom()
   biophys()
   synlist = new List()
   synapses()
@@ -28,25 +27,20 @@ proc init() {
 }
 
   
-proc topol() { local i
-  //soma {pt3dclear() pt3dadd(0, 0, 0, 1) pt3dadd(15, 0, 0, 1)}
-  { connect soma(1), Ia_node[0](0)}
+proc topol() { local ii
   //count = 0
-	for ii = 0, n_nodes()-1 {
-		//Ia_node[ii] {pt3dclear() pt3dadd(15+count, 0, 0, 1) pt3dadd(16+count, 0, 0, 1)}
-		//Ia_paranode[ii] {pt3dclear() pt3dadd(15+count, 0, 0, 1) pt3dadd(16+count, 0, 0, 1)}
+	for (ii = 0; ii<= n_nodes()-1;ii = ii+1){
 		//print "Connecting node ", ii
-		connect Ia_node[ii](1), Ia_paranode[ii](0)
-		if (ii != n_nodes()-1) {connect Ia_paranode[ii](1), Ia_node[ii+1](0)}
+		connect Ia_paranode[ii](0), Ia_node[ii](1)
+		if (ii != n_nodes()-1) {connect Ia_node[ii+1](0), Ia_paranode[ii](1)}
 		//count = count+1
 	}
 }
 
 objref all
-proc subsets() { local i
+proc subsets() { local ii
   objref all
   all = new SectionList()
-    soma all.append()
 	for ii = 0, n_nodes()-1 {
     Ia_node[ii] all.append()
     Ia_paranode[ii] all.append()
@@ -55,7 +49,6 @@ proc subsets() { local i
 }
 
 proc geom() {
-  soma {  L = 30  diam = 30  }
 	for ii = 0, n_nodes()-1 {
     Ia_node[ii] {  diam = get_diam()  L = get_L()  }
     Ia_paranode[ii] {  diam = get_diam()  L = get_INL()*get_L()  }
@@ -63,7 +56,6 @@ proc geom() {
 }
 
 proc geom_nseg() {
-  soma { nseg = int((L/(0.1*lambda_f(100))+.999)/2)*2 + 1  }
 	for ii = 0, n_nodes()-1 {
     Ia_node[ii] { nseg = int((L/(0.1*lambda_f(100))+.999)/2)*2 + 1  }
     Ia_paranode[ii] { nseg = int((L/(0.1*lambda_f(100))+.999)/2)*2 + 1 }
@@ -79,6 +71,7 @@ proc biophys() {
     cm = 2
     insert axnode
     
+	/*
     insert extracellular{
       xg[0]=1e10
       xg[1]=1e10
@@ -88,15 +81,20 @@ proc biophys() {
       xraxial[1]=1e20
       e_extracellular=0
       }
+	 */
+	 insert extracellular
+	  
   }
   
   Ia_paranode[ii] {
     Ra = Base_Ra
-    cm = 0.1/(2*9.15*diam+2*30)
+    cm = 2
+	//cm = 0.1/(2*9.15*diam+2*30)
 	insert pas
       g_pas=0.001/(2*9.15*diam+2*30)
       e_pas=-80
-	  
+	
+	/*
     insert extracellular{
       xg[0]=1e10
       xg[1]=1e10
@@ -106,6 +104,8 @@ proc biophys() {
       xraxial[1]=1e20
       e_extracellular=0
       }
+	*/
+	insert extracellular
   }
 }
 }
@@ -120,7 +120,7 @@ v = $1
 }
 
 proc position() { local i
-  soma for i = 0, n3d()-1 {
+  Ia_node[0] for i = 0, n3d()-1 {
     pt3dchange(i, $1-x+x3d(i), $2-y+y3d(i), $3-z+z3d(i), diam3d(i))
   }
   x = $1  y = $2  z = $3

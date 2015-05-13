@@ -14,11 +14,11 @@ dur_time = c_file.scanvar()
 interval_time = c_file.scanvar()
 mat_diam = c_file.scanvar()
 mat_l = mat_diam // nodes are as long as they are wide
-mat_inl = c_file.scanvar()
-
-mat_amp = c_file.scanvar() //max amplitude input from matlab
+mat_inl = c_file.scanvar() // internodes are inl times the size of nodes
+mat_ppn = c_file.scanvar() // points per node
+mat_start_amp = c_file.scanvar() //init amp input from matlab
 mat_step = c_file.scanvar() //step size input from matlab
-mat_start_amp = c_file.scanvar() //step size input from matlab
+mat_amp = c_file.scanvar() //max amplitude input from matlab
 
 // Close the file
 c_file.close

@@ -4,7 +4,7 @@ It holds values for both nodes and paranodes, so it is 2*n_nodes long.
 */
 
 objref V_extra
-V_extra = new Vector(2*n_nodes(),0)
+V_extra = new Vector(mat_ppn*n_nodes(),0)
 objref v_file
 v_file = new File()
 strdef voltage_file 
@@ -12,7 +12,7 @@ sprint(voltage_file, "%s%s", tempdata_address, "matlab_v_extra")
 
 v_file.ropen(voltage_file) // give it the name of the file and open for reading
 
-for ii = 0, (2*n_nodes()-1) {
+for ii = 0, (mat_ppn*n_nodes()-1) {
 	V_extra.x[ii] = v_file.scanvar()
 }
 v_file.close
@@ -24,11 +24,13 @@ proc set_extracellular(){
 /* set_extracellular(cell, extracellular V, amp) */
    k = 0 // count through the vector
    for ii= 0, n_nodes()-1 {
-       $o1.Ia_node[ii].e_extracellular=$o2.x[k]*$3
+       $o1.Ia_node[ii].e_extracellular(0.5)=$o2.x[k]*$3
 	   k = k + 1
-	   $o1.Ia_paranode[ii].e_extracellular=$o2.x[k]*$3
+	   for jj= 0, mat_ppn-2 { // -2 because of the ppn values, ppn-1 are paranodes
+	   $o1.Ia_paranode[ii].e_extracellular(jj/(mat_ppn-1))=$o2.x[k]*$3
 	   // same explanation as above, except this is the paranode.
 	   k = k + 1
+	   }
    }
 }
 
@@ -42,7 +44,7 @@ step in the simulation. When, finally, t = START, the cvode listener launches th
 proc initi() {
 	//intracellular v
 	cells.object(0).setv(-69) //motor neuron
-	cells.object(1).setv(-87) //Ia fiber axon
+	cells.object(1).setv(-80) //Ia fiber axon
 	
 	// START = $1
 	strdef init_str

@@ -1,9 +1,9 @@
 function recruitment(data_file)
 start_time = 0;
 % when to start stimulation (ms)
-dur_time = 5;
+dur_time = 1;
 % how long is the stimulation on (ms)
-interval_time = 10;
+interval_time = 100;
 
 ampstart = 0.5;
 ampmax = 10;
@@ -15,10 +15,9 @@ stepsize = 8;
 system_id_old;
 
 comsol_file = strcat(tempdata_address, data_file);
-v_dir = strcat(tempdata_address, 'matlab_v_extra');
-cellparam_dir = strcat(tempdata_address, 'cell_params');
-curr_apcount_dir = strcat(tempdata_address, 'curr_ap_count.txt');
-
+v_file = strcat(tempdata_address, 'matlab_v_extra');
+cellparam_file = strcat(tempdata_address, 'cell_params');
+curr_apcount_file = strcat(tempdata_address, 'curr_ap_count.txt');
 
 load(comsol_file);
 
@@ -27,15 +26,16 @@ AMPS = ampstart:stepsize:ampmax;
 rec_curve = zeros(n_cells, length(AMPS));
 
 
-for a = 1:20
+for a = 1:n_cells
     tic
     fprintf('cell %d\n', a);
     n_nodes = length(V_extra{a})./points_per_node;
-    nrn_geom(coords{a}, diams(a), n_nodes, points_per_node);
+    nrn_geom(coords{a}, diams(a), n_nodes, points_per_node,inl,1);
     
-    dlmwrite(v_dir, V_extra{a},' '); %v from comsol to text
-    dlmwrite(cellparam_dir,...
-        [n_nodes start_time dur_time interval_time diams(a) inl ampmax stepsize ampstart],...
+    dlmwrite(v_file, V_extra{a},' '); %v from comsol to text
+    dlmwrite(cellparam_file,...
+        [n_nodes start_time dur_time interval_time diams(a)...
+        inl points_per_node  ampstart stepsize ampmax],...
             ' ');
         if os == 1
             %nrncommand = [nrniv_dir...
@@ -47,7 +47,7 @@ for a = 1:20
         end
         system(nrncommand);
         
-        fID = fopen(curr_apcount_dir);
+        fID = fopen(curr_apcount_file);
         apcount = textscan(fID,'%f'); %reads apcount from neuron
         fclose(fID);
         

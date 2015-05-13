@@ -11,10 +11,10 @@ spl_func = cscvn(pts(:,1:end));
 % how many times longer is a paranode than a node?
 diam = log(random('logn', 9, 0.2, 1, 1));
 fib_len = arclength(pts(1,:),pts(2,:),pts(3,:),'spline');
-n_nodes = floor((fib_len)./(diam*inl));
+n_nodes = floor((fib_len)./(diam*(inl+1)));
 % how many nodes and paranodes does the axon have.
 
-points_per_node = 1;
+points_per_node = 21;
 s = linspace(spl_func.breaks(1),spl_func.breaks(end),points_per_node*n_nodes);
 spl = fnval(spl_func,s);
 % 
