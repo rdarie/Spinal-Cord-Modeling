@@ -9,17 +9,31 @@ c_file.ropen(params_file) // give it the name of the file and open for reading
 //note that all parameters are in tempdata directory!!
 
 mat_n_nodes = c_file.scanvar() // save the first number to a variable
+
 start_time = c_file.scanvar() // save the second number...
 dur_time = c_file.scanvar()
 interval_time = c_file.scanvar()
+
 mat_diam = c_file.scanvar()
 mat_l = mat_diam // nodes are as long as they are wide
 mat_inl = c_file.scanvar() // internodes are inl times the size of nodes
+
 mat_ppn = c_file.scanvar() // points per node
+
 mat_start_amp = c_file.scanvar() //init amp input from matlab
 mat_step = c_file.scanvar() //step size input from matlab
 mat_amp = c_file.scanvar() //max amplitude input from matlab
 
+n_amps = (mat_amp - mat_start_amp)/mat_step + 1
+
+objref stim_amps
+stim_amps = new Vector(n_amps)
+stim_amps.x[0] = mat_start_amp
+if (n_amps > 1) {
+	for(ii=1; ii < n_amps; ii+=1)  {
+		stim_amps.x[ii] = stim_amps.x[ii-1] + mat_step
+	}
+}
 // Close the file
 c_file.close
 

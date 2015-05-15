@@ -29,19 +29,26 @@ pc = new ParallelContext()
 //dur_time = 0.5
 //interval_time = 20
 load_file("MySes.ses")
-objref s
-topology()
-s = new Shape()
+//objref s
+//topology()
+//s = new Shape()
 ///////////////////////////////////////////////////////////////
 {xopen("vextandinit")}
 
 objref results
 results = new Vector()
 
+objref Ia_v[n_amps][mat_n_nodes]
+objref Mn_v[n_amps]
+
+objref save_file
+save_file = new File()
+strdef save_filename
+
 func simulate(){ localobj apc_term, stimvec, fih
 
 	wait = pc.wait_time()
-	amplitude = fudge_factor*$1
+	amplitude = fudge_factor*stim_amps.x[$1]
 	key = $1
 	
 	fih	= new FInitializeHandler("initi(amplitude)")
@@ -52,9 +59,9 @@ func simulate(){ localobj apc_term, stimvec, fih
   		apc_term = new APCount(0.5)
   		apc_term.thresh = 10
  	}
-		
-	tstop = 500
-	run()
+	
+	tstop = 10
+	{xopen("save_simulate")}
 	
 	strdef shost
 	{
@@ -78,7 +85,7 @@ vecReturned = new Vector()
 
 proc par_run(){
 	
-	for(ii=mat_start_amp; ii <= $1; ii+=mat_step)  pc.submit("simulate", ii)  //has to be on same line? print pc.id
+	for(ii=0; ii < n_amps; ii+=1)  pc.submit("simulate", ii)  //has to be on same line? print pc.id
 	   while(pc.working){
 		key = pc.retval()
 		pc.look_take(key) //find package
@@ -93,8 +100,8 @@ proc par_run(){
 	}
 }
 
-//
-par_run(mat_amp) // max amp val passed in from le matlab
+
+par_run() // max amp val passed in from le matlab
 {pc.done()}
 
 objref apc_file_obj

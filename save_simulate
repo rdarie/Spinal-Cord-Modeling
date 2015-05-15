@@ -1,0 +1,22 @@
+for jj=0,mat_n_nodes-1 {
+	Ia_v[key][jj] = new Vector()
+	Ia_v[key][jj].record(&Ia_axon_Cell[0].Ia_node[jj].v(0.5))
+	}
+
+Mn_v[key] = new Vector()
+Mn_v[key].record(&Motoneuron_Cell[0].soma.v(0.5))
+
+init()
+run()
+	
+for jj=0,mat_n_nodes-1 {
+	sprint(save_filename, "%s%s%d%s%d%s", tempdata_address,"Ia_v_", key, "_node_", jj,".dat")
+	save_file.wopen(save_filename)
+	Ia_v[key][jj].vwrite(save_file)
+	save_file.close
+	}
+	
+sprint(save_filename, "%s%s%d%s", tempdata_address,"Mn_v_", key, ".dat")
+save_file.wopen(save_filename)
+Mn_v[key].vwrite(save_file)
+save_file.close
