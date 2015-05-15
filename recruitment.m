@@ -5,21 +5,26 @@ dur_time = 1;
 % how long is the stimulation on (ms)
 interval_time = 100;
 
-ampstart = 0.5;
+ampstart = 8;
 ampmax = 10;
-stepsize = 8;
+stepsize = 0.5;
 % how long is the stimulation off (ms)
 % together, these last two determine the waveform/duty cycle of the square
 % wave that stimulates the fiber.
 
 system_id_old;
 
-comsol_file = strcat(tempdata_address, data_file);
-v_file = strcat(tempdata_address, 'matlab_v_extra');
-cellparam_file = strcat(tempdata_address, 'cell_params');
-curr_apcount_file = strcat(tempdata_address, 'curr_ap_count.txt');
+comsol_filename = strcat(tempdata_address, data_file);
 
-load(comsol_file);
+v_filename = strcat(tempdata_address, 'matlab_v_extra');
+v_file = fopen(v_filename,'w');
+
+cellparam_filename = strcat(tempdata_address, 'cell_params');
+cellparam_file = fopen(cellparam_filename,'w');
+
+curr_apcount_filename = strcat(tempdata_address, 'curr_ap_count.txt');
+
+load(comsol_filename);
 
 n_cells = length(diams);
 AMPS = ampstart:stepsize:ampmax;
@@ -32,11 +37,11 @@ for a = 1:n_cells
     n_nodes = length(V_extra{a})./points_per_node;
     nrn_geom(coords{a}, diams(a), n_nodes, points_per_node,inl,1);
     
-    dlmwrite(v_file, V_extra{a},' '); %v from comsol to text
-    dlmwrite(cellparam_file,...
+    fwrite(v_file, V_extra{a},'double'); %v from comsol to text
+    fwrite(cellparam_file,...
         [n_nodes start_time dur_time interval_time diams(a)...
-        inl points_per_node  ampstart stepsize ampmax],...
-            ' ');
+        inl points_per_node ampstart stepsize ampmax],...
+            'double');
         if os == 1
             %nrncommand = [nrniv_dir...
             %' -nobanner mainparallel.hoc -c quit()'];
@@ -47,7 +52,7 @@ for a = 1:n_cells
         end
         system(nrncommand);
         
-        fID = fopen(curr_apcount_file);
+        fID = fopen(curr_apcount_filename);
         apcount = textscan(fID,'%f'); %reads apcount from neuron
         fclose(fID);
         
