@@ -22,7 +22,7 @@ v_file = fopen(v_filename,'w');
 cellparam_filename = strcat(tempdata_address, 'cell_params');
 cellparam_file = fopen(cellparam_filename,'w');
 
-curr_apcount_filename = strcat(tempdata_address, 'curr_ap_count.txt');
+curr_apcount_filename = strcat(tempdata_address, 'curr_ap_count.dat');
 
 load(comsol_filename);
 
@@ -52,22 +52,11 @@ for a = 1:n_cells
         end
         system(nrncommand);
         
-        fID = fopen(curr_apcount_filename);
-        apcount = textscan(fID,'%f'); %reads apcount from neuron
-        fclose(fID);
+        [apcount,errmsg]=nrn_vread(curr_apcount_filename,'n');
         
-        apcount = apcount{1};
-        
-        amps = [];
-        numap = [];
-        
-        b = 1;
-        while b < length(apcount)
-            amps = [amps apcount(b)];
-            numap = [numap apcount(b+1)];
-            b = b+2;
-        end
-        
+        amps = apcount(1:2:end);
+        numap = apcount(2:2:end);
+                
         if sum(isnan(amps)) || sum(isnan(numap))
             keyboard;
         end

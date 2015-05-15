@@ -10,13 +10,13 @@ init()
 run()
 	
 for jj=0,mat_n_nodes-1 {
-	sprint(save_filename, "%s%s%d%s%d%s", tempdata_address,"Ia_v_", key, "_node_", jj,".dat")
+	sprint(save_filename, "%s%s%s%s%d%s%d%s", tempdata_address, "vtraces", slash,"Ia_v_", key, "_node_", jj,".dat")
 	save_file.wopen(save_filename)
 	Ia_v[key][jj].vwrite(save_file)
 	save_file.close
 	}
 	
-sprint(save_filename, "%s%s%d%s", tempdata_address,"Mn_v_", key, ".dat")
+sprint(save_filename, "%s%s%s%s%d%s", tempdata_address, "vtraces", slash,"Mn_v_", key, ".dat")
 save_file.wopen(save_filename)
 Mn_v[key].vwrite(save_file)
 save_file.close

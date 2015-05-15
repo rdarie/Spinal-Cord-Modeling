@@ -6,12 +6,15 @@ fudge_factor = 1
 
 systype = unix_mac_pc()
 strdef tempdata_address
+strdef slash
 strdef geom_file
 
 if (systype == 3) { //if windows
 	tempdata_address = "..\\tempdata\\"
+	slash = "\\"
 	} else {
  	tempdata_address = "../tempdata/"
+	slash = "/"
  	}
 sprint(geom_file, "%s%s", tempdata_address, "Ia_geometry")
 
@@ -70,7 +73,7 @@ func simulate(){ localobj apc_term, stimvec, fih
 	}
 	
 	stimvec = new Vector() //strange method of returning two values -- pack in a vector, then unpack after function call
-	stimvec.append($1)
+	stimvec.append(stim_amps.x[$1])
 	stimvec.append(apc_term.n)
 	pc.pack(stimvec)
 	pc.post($1)
@@ -104,18 +107,16 @@ proc par_run(){
 par_run() // max amp val passed in from le matlab
 {pc.done()}
 
-objref apc_file_obj
-apc_file_obj = new File()
-	strdef apc_file
-	sprint(apc_file, "%s%s", tempdata_address, "curr_ap_count.txt")
-	apc_file_obj.wopen(apc_file) // give it the name of the file and open for reading
+objref apc_file
+apc_file = new File()
+strdef apc_filename
+sprint(apc_filename, "%s%s", tempdata_address, "curr_ap_count.dat")
 	
-	for(ii=0; ii< results.size-1; ii+=2) {	 //prints amp and apc in alternating lines	
-    	apc_file_obj.printf("%f\n",results.x[ii])
-		apc_file_obj.printf("%f\n",results.x[ii+1])
-    	//print results.x[ii]
-	}
-apc_file_obj.close()
+apc_file.wopen(apc_filename) // give it the name of the file and open for reading
+
+results.vwrite(apc_file)
+
+apc_file.close()
 
 //quit()
 //cd ~/Documents/Spinal-Cord-Modeling

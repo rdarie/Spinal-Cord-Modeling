@@ -1,13 +1,15 @@
-function recruitment(data_file)
+function apcount = test_recruitment(data_file)
 start_time = 0;
 % when to start stimulation (ms)
 dur_time = 1;
 % how long is the stimulation on (ms)
 interval_time = 100;
 
-ampstart = 10;
+ampstart = 9;
 ampmax = 10;
-stepsize = 0.5;
+stepsize = 1;
+
+n_amps = floor((ampmax - ampstart)/stepsize) + 1;
 % how long is the stimulation off (ms)
 % together, these last two determine the waveform/duty cycle of the square
 % wave that stimulates the fiber.
@@ -22,7 +24,7 @@ v_file = fopen(v_filename,'w');
 cellparam_filename = strcat(tempdata_address, 'cell_params');
 cellparam_file = fopen(cellparam_filename,'w');
 
-curr_apcount_filename = strcat(tempdata_address, 'curr_ap_count.txt');
+curr_apcount_filename = strcat(tempdata_address, 'curr_ap_count.dat');
 
 load(comsol_filename);
 
@@ -30,7 +32,7 @@ n_cells = length(diams);
 AMPS = ampstart:stepsize:ampmax;
 rec_curve = zeros(n_cells, length(AMPS));
 
-a = 1
+a = 1;
 tic
 fprintf('cell %d\n', a);
 n_nodes = length(V_extra{a})./points_per_node;
@@ -44,13 +46,13 @@ fwrite(cellparam_file,...
 if os == 1
     %nrncommand = [nrniv_dir...
     %' -nobanner mainparallel.hoc -c quit()'];
-    nrncommand = [mpi_dir ' -np 12 ' nrniv_dir...
+    nrncommand = [mpi_dir ' -np 2 ' nrniv_dir...
         ' -mpi -nobanner mainparallel.hoc -c quit()'];
 else
     nrncommand = ['/Applications/NEURON-7.3/nrn/x86_64/bin/nrniv main.hoc'];
 end
 system(nrncommand);
 
-fID = fopen(curr_apcount_filename);
-apcount = textscan(fID,'%f'); %reads apcount from neuron
-fclose(fID);
+[apcount,errmsg]=nrn_vread(curr_apcount_filename,'n');
+
+end
