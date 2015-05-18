@@ -6,7 +6,8 @@ public soma, dend
 objref synlist
 
 proc init() {
-  print "Making motoneuron"
+  //print "Making motoneuron"
+  //print mn_geom_file
   topol()
   basic_shape()
   subsets()
@@ -17,9 +18,15 @@ proc init() {
   x = y = z = 0 // only change via position
 }
 
+//{xopen("motoneuron_geometry")}
 //{xopen(mn_geom_file)}
-{xopen("motoneuron_geometry")}
-print "mn_geom opened"
+
+// Cannot take mn geom location from outside template... should revisit at some point
+//strdef local_geom_file
+//sprint(local_geom_file,"%s", mn_geom_file)
+
+{xopen("mn_geometries\\burke_mn_2")}
+
 
 proc position() { local i
   soma for i = 0, n3d()-1 {
@@ -40,7 +47,7 @@ proc synapses() {
 	/* E0 */   dend[1]  syn_ = new ExpSyn(0.5)  synlist.append(syn_)
 	syn_.tau = 3
 }
-print "made it past syn_"
+//print "made it past syn_"
 
 proc setv() {
 	forsec all {
