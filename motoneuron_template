@@ -4,21 +4,21 @@ external lambda_f, mn_geom_file
 public soma, dend
 
 objref synlist
-synlist = new List()
 
 proc init() {
   print "Making motoneuron"
   topol()
   basic_shape()
   subsets()
-  geom()
   geom_nseg()
   biophys()
+  synlist = new List()
   synapses()
   x = y = z = 0 // only change via position
 }
 
-{xopen(mn_geom_file)}
+//{xopen(mn_geom_file)}
+{xopen("motoneuron_geometry")}
 print "mn_geom opened"
 
 proc position() { local i

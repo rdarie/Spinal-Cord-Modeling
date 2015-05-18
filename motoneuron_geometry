@@ -16788,14 +16788,6 @@ proc subsets() { local i
 
 }
 
-proc geom() {
-  soma {   
-  L=diam
-  nseg=5
-  cm=2
-  }
-}
-
 proc geom_nseg() {
   forsec all { 
   nseg = int((L/(0.1*lambda_f(100))+.999)/2)*2 + 1  }
@@ -16817,3 +16809,5 @@ proc biophys() {
 		e_pas = -70.0 
   }
 }
+
+print "Just left motoneuron_geometry"

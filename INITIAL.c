@@ -281,7 +281,7 @@ extern void _cvode_abstol( Symbol**, double*, int);
  	hoc_register_cvode(_mechtype, _ode_count, _ode_map, _ode_spec, _ode_matsol);
  	hoc_register_tolerance(_mechtype, _hoc_state_tol, &_atollist);
  	hoc_register_var(hoc_scdoub, hoc_vdoub, hoc_intfunc);
- 	ivoc_help("help ?1 initial C:/Users/Radu Darie/Documents/GitHub/Spinal-Cord-Modeling/November assignment/INITIAL.mod\n");
+ 	ivoc_help("help ?1 initial C:/Users/Radu Darie/Google Drive/Github/Spinal-Cord-Modeling/INITIAL.mod\n");
  hoc_register_limits(_mechtype, _hoc_parm_limits);
  hoc_register_units(_mechtype, _hoc_parm_units);
  }
