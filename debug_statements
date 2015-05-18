@@ -1,0 +1,7 @@
+//start_time = 15
+//dur_time = 0.5
+//interval_time = 20
+load_file("MySes.ses")
+objref s
+topology()
+s = new Shape()

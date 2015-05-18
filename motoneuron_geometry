@@ -16796,9 +16796,24 @@ proc geom() {
   }
 }
 
-external lambda_f
-
 proc geom_nseg() {
   forsec all { 
   nseg = int((L/(0.1*lambda_f(100))+.999)/2)*2 + 1  }
+}
+proc biophys() {
+  forsec somatic {
+    cm=2
+	Ra=200
+	insert motoneuron 
+	ena_motorneuron= 50
+	ek_motorneuron= -80
+	el_motorneuron= -70
+  }
+  forsec basal {
+		Ra = 200
+		cm = 2 
+		insert pas
+		g_pas = 0.0002
+		e_pas = -70.0 
+  }
 }

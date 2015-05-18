@@ -5,7 +5,7 @@ public synlist, x, y, z, position, connect2target
 /* a template is a class definition that doesn't have access to the functions 
 and variables defined in the main body of the script unless you specifically point it to each one.
 */
-external lambda_f, n_nodes, get_diam, get_L, get_INL, mat_n_nodes, tempdata_address, geom_file
+external lambda_f, n_nodes, get_diam, get_L, get_INL, mat_n_nodes, tempdata_address, Ia_geom_file
 public soma, Ia_node, Ia_paranode
 public all
 
@@ -111,7 +111,7 @@ proc biophys() {
 }
 
 proc basic_shape() {
-//xopen(geom_file)
+xopen(Ia_geom_file)
 }
 
 proc setv() {

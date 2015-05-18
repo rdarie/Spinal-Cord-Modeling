@@ -3,9 +3,9 @@ start_time = 0;
 % when to start stimulation (ms)
 dur_time = 1;
 % how long is the stimulation on (ms)
-interval_time = 100;
+interval_time = 10;
 
-ampstart = 9;
+ampstart = 10;
 ampmax = 10;
 stepsize = 1;
 
@@ -54,5 +54,5 @@ end
 system(nrncommand);
 
 [apcount,errmsg]=nrn_vread(curr_apcount_filename,'n');
-
+axon_vis(1,n_nodes);
 end

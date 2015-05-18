@@ -2,21 +2,27 @@
 
 load_file("noload.hoc") // Does not bring up the GUI, but loads certain function dependencies
 
-fudge_factor = 1
+fudge_factor = 100
 
 systype = unix_mac_pc()
 strdef tempdata_address
+strdef mn_geom_address
 strdef slash
-strdef geom_file
+strdef Ia_geom_file
+strdef mn_geom_file
 
 if (systype == 3) { //if windows
 	tempdata_address = "..\\tempdata\\"
+	mn_geom_address = "mn_geometries\\"
 	slash = "\\"
 	} else {
  	tempdata_address = "../tempdata/"
+	mn_geom_address = "mn_geometries/"
 	slash = "/"
  	}
-sprint(geom_file, "%s%s", tempdata_address, "Ia_geometry")
+	
+sprint(Ia_geom_file, "%s%s", tempdata_address, "Ia_geometry")
+sprint(mn_geom_file,"%s%s", mn_geom_address, "burke_mn_2")
 
 objref pc
 pc = new ParallelContext()
@@ -27,20 +33,14 @@ pc = new ParallelContext()
 
 //////////////////////////////////////////////////////////////////
 // Debugging: override stim params manually set amplitude
-
-//start_time = 15
-//dur_time = 0.5
-//interval_time = 20
-load_file("MySes.ses")
-//objref s
-//topology()
-//s = new Shape()
+{xopen("debug_statements")}
 ///////////////////////////////////////////////////////////////
 {xopen("vextandinit")}
 
 objref results
 results = new Vector()
 
+// Voltage traces
 objref Ia_v[n_amps][mat_n_nodes]
 objref Mn_v[n_amps]
 
@@ -63,7 +63,7 @@ func simulate(){ localobj apc_term, stimvec, fih
   		apc_term.thresh = 10
  	}
 	
-	tstop = 10
+	tstop = 500
 	{xopen("save_simulate")}
 	
 	strdef shost
