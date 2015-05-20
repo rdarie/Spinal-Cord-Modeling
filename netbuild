@@ -34,7 +34,6 @@ func nc_append() {//srcindex, tarcelindex, synindex
 //actual instances created
   /* Motoneuron0 */  cell_append(new Motoneuron_Cell(),-92,43, 0)
   /* Ia_axon1 */  cell_append(new Ia_axon_Cell(),33,-23, 0)
-  //Ia_axon_Cell[0].position(cell_pos_x,cell_pos_y,cell_pos_z)
   Motoneuron_Cell[0].position(mn_pos_x,mn_pos_y,mn_pos_z)
   /* Ia_axon1 -> Motoneuron0.E0 */nc_append(1,0,0,0.15,1)
   define_shape()
