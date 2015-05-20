@@ -81,13 +81,6 @@ for a = 0:n_nodes-1
             plot3(x(2),y(2),z(2),'ro')
         end
     end
-    
-    
-    %     if a ~= n_nodes-2
-    %         fprintf(fid, 'pt3dadd(%4.4f, %4.4f, %4.4f, %4.4f)\n'...
-    %             ,(spl(1,a+1)+spl(1,a+2))./2,(spl(2,a+1)+spl(2,a+2))./2,...
-    %             (spl(3,a+1)+spl(3,a+2))./2,diam);
-    %     end
     fprintf(fid, '}\n');
 end
 
