@@ -17,28 +17,28 @@ n_nodes = floor((fib_len)./(diam*(inl+1)));
 points_per_node = 21;
 s = linspace(spl_func.breaks(1),spl_func.breaks(end),points_per_node*n_nodes);
 spl = fnval(spl_func,s);
-% 
-% figure
-% hold on
-% fnplt(spl_func,'r',2)
-% mphgeom(fem,'geom1','entity','domain','selection',[1],'Facealpha',0);
-% axis([-4000 4000 -4000 4000 -4000 10000]);
-% view([0,0]);
-% xlabel('x (um)');
-% ylabel('y (um)');
-% zlabel('z (um)');
-% print('-dpng',[datadir 'axon_view1']);
-% 
-% figure;
-% hold on
-% fnplt(spl_func,'r',2)
-% mphgeom(fem,'geom1','entity','domain','selection',[1],'Facealpha',0);
-% axis([-4000 4000 -4000 4000 -4000 10000]);
-% view([90,90]);
-% xlabel('x (um)');
-% ylabel('y (um)');
-% zlabel('z (um)');
-% print('-dpng',[datadir 'axon_view2']);
+
+figure
+hold on
+fnplt(spl_func,'r',2)
+mphgeom(fem,'geom1','entity','domain','selection',[1],'Facealpha',0);
+axis([-4000 4000 -4000 4000 -4000 10000]);
+view([0,0]);
+xlabel('x (um)');
+ylabel('y (um)');
+zlabel('z (um)');
+print('-dpng',[datadir 'axon_view1']);
+
+figure;
+hold on
+fnplt(spl_func,'r',2)
+mphgeom(fem,'geom1','entity','domain','selection',[1],'Facealpha',0);
+axis([-4000 4000 -4000 4000 -4000 10000]);
+view([90,90]);
+xlabel('x (um)');
+ylabel('y (um)');
+zlabel('z (um)');
+print('-dpng',[datadir 'axon_view2']);
 
 V_extra=mphinterp(fem,'V','coord',spl);
 % interpolate voltages from the COMSOL solution
