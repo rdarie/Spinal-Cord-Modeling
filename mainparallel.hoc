@@ -10,10 +10,11 @@ strdef mn_geom_address
 strdef slash
 strdef Ia_geom_file
 strdef mn_geom_file
+strdef mod_geom_file
 
 if (systype == 3) { //if windows
 	tempdata_address = "..\\tempdata\\"
-	mn_geom_address = "mn_geometries\\\\"
+	mn_geom_address = "mn_geometries\\"
 	slash = "\\"
 	} else {
  	tempdata_address = "../tempdata/"
@@ -23,6 +24,7 @@ if (systype == 3) { //if windows
 	
 sprint(Ia_geom_file, "%s%s", tempdata_address, "Ia_geometry")
 sprint(mn_geom_file,"%s%s", mn_geom_address, "motoneuron_geometry")
+sprint(mod_geom_file,"%s%s", tempdata_address, "model_tree.neu")
 
 objref pc
 pc = new ParallelContext()

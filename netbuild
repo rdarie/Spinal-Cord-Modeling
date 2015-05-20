@@ -36,3 +36,7 @@ func nc_append() {//srcindex, tarcelindex, synindex
   /* Ia_axon1 */  cell_append(new Ia_axon_Cell(),33,-23, 0)
   Motoneuron_Cell[0].position(Ia_axon_Cell[0].x,Ia_axon_Cell[0].y,Ia_axon_Cell[0].z)
   /* Ia_axon1 -> Motoneuron0.E0 */nc_append(1,0,0,0.15,1)
+  define_shape()
+  
+  load_file("neu_tree.hoc")
+  neu_tree(mod_geom_file)
