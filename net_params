@@ -31,9 +31,9 @@ mat_start_amp = c_vars.x[7] //init amp input from matlab
 mat_step = c_vars.x[8] //step size input from matlab
 mat_amp = c_vars.x[9] //max amplitude input from matlab
 
-cell_pos_x = c_vars.x[10]
-cell_pos_y = c_vars.x[11]
-cell_pos_z = c_vars.x[12]
+mn_pos_x = c_vars.x[10]
+mn_pos_y = c_vars.x[11]
+mn_pos_z = c_vars.x[12]
 
 n_amps = (mat_amp - mat_start_amp)/mat_step + 1
 

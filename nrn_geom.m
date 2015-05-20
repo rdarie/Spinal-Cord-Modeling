@@ -11,7 +11,7 @@ system_id_old;
 fname = strcat(tempdata_address, 'Ia_geometry');
 fid = fopen(fname,'w');
 
-spl = spl - repmat(spl(:,size(spl,2)),1,size(spl,2));
+%spl = spl - repmat(spl(:,size(spl,2)),1,size(spl,2));
 
 count = 1;
 if debugging
