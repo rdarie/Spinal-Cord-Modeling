@@ -2,7 +2,7 @@
 
 load_file("noload.hoc") // Does not bring up the GUI, but loads certain function dependencies
 
-fudge_factor = 100
+fudge_factor = 1
 
 systype = unix_mac_pc()
 strdef tempdata_address
@@ -31,7 +31,7 @@ pc = new ParallelContext()
 
 {xopen("netbuild")}
 
-//////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
 // Debugging: override stim params manually set amplitude
 {xopen("debug_statements")}
 ///////////////////////////////////////////////////////////////
