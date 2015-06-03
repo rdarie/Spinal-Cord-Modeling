@@ -5,7 +5,7 @@ dur_time = 1;
 % how long is the stimulation on (ms)
 interval_time = 100;
 
-ampstart = 8;
+ampstart = 10;
 ampmax = 10;
 stepsize = 0.5;
 % how long is the stimulation off (ms)
@@ -42,14 +42,6 @@ for a = 1:n_cells
         [n_nodes start_time dur_time interval_time diams(a)...
         inl points_per_node ampstart stepsize ampmax coords{a}(1,end) coords{a}(2,end) coords{a}(3,end)],...
             'double');
-        if os == 1
-            %nrncommand = [nrniv_dir...
-            %' -nobanner mainparallel.hoc -c quit()'];
-            nrncommand = [mpi_dir ' -np 12 ' nrniv_dir...
-            ' -mpi -nobanner mainparallel.hoc -c quit()'];
-        else
-            nrncommand = ['/Applications/NEURON-7.3/nrn/x86_64/bin/nrniv main.hoc'];
-        end
         system(nrncommand);
         
         [apcount,errmsg]=nrn_vread(curr_apcount_filename,'n');
