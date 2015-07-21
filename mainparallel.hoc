@@ -21,7 +21,7 @@ if (systype == 3) { //if windows
 	mn_geom_address = "mn_geometries/"
 	slash = "/"
  	}
-	
+
 sprint(Ia_geom_file, "%s%s", tempdata_address, "Ia_geometry")
 sprint(mn_geom_file,"%s%s", mn_geom_address, "motoneuron_geometry")
 sprint(mod_geom_file,"%s%s", tempdata_address, "model_tree.neu")

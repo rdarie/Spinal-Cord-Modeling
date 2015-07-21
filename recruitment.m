@@ -35,7 +35,7 @@ for a = 1:n_cells
     tic
     fprintf('cell %d\n', a);
     n_nodes = length(V_extra{a})./points_per_node;
-    nrn_geom(coords{a}, diams(a), n_nodes, points_per_node,inl,1);
+    nrn_geom(coords{a}, diams(a), n_nodes, points_per_node,inl,0);
     
     fwrite(v_file, V_extra{a},'double'); %v from comsol to text
     fwrite(cellparam_file,...
@@ -65,4 +65,4 @@ ylabel('Percent recruited');
 xlabel('Stimulation amplitude (V)');
 ylim([-10 110]);
 
-print('-dpng', data_file);
+print('-dpng', [tempdata_address, data_file]);
