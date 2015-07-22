@@ -1,8 +1,8 @@
-%clear;clc;
+clear;clc;
 close all;
 system_id_old;
-comsol_file = 'Z:\Spinal Cord Model\COMSOL\roots_of_passage\just_cord';
-%fem = mphload([comsol_file '.mph']);
+comsol_file = 'E:\Google Drive\CSP\testbed\COMSOL Trial\pieces';
+fem = mphload([comsol_file '.mph']);
 geom = 'geom1';
 
 get_geom_names;
@@ -20,8 +20,8 @@ hold on;
 % hold on;
 % plot_tree(tree{2},[1 0 0]);
 
-mphplot(fem,'pg2');
-mphplot(fem,'pg3');
+%mphplot(fem,'pg2');
+%mphplot(fem,'pg3');
 %edges
 mphviewselection(fem,geom,el_edge, ...
     'entity', 'edge', ...
@@ -156,7 +156,7 @@ camtarget([0e3 0e3 10e3]);
 camroll(45);
 zoom(1.2);
 title('Mesh');
-xlabel('x (mm)');
-ylabel('y (mm)');
-zlabel('z (mm)');
+xlabel('x (um)');
+ylabel('y (um)');
+zlabel('z (um)');
 print('-dpng',[tempdata_address 'mesh_view']);

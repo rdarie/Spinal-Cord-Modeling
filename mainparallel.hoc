@@ -65,7 +65,7 @@ func simulate(){ localobj apc_term, stimvec, fih
   		apc_term.thresh = 10
  	}
 	
-	tstop = 500
+	tstop = 5
 	{xopen("save_simulate")}
 	
 	strdef shost

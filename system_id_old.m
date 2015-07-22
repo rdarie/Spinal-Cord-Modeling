@@ -3,9 +3,9 @@
 if ispc
     tempdata_address = '..\tempdata\' ;
     vtraces_address = [tempdata_address 'vtraces\'];
-    nrniv_dir = '"C:\nrn73w64\bin64\nrniv.exe"';
+    nrniv_dir = '"C:\nrn\bin\nrniv.exe"';
     %mpi_dir = '"C:\Program Files\MPICH2\bin\mpiexec.exe"';
-    mpi_dir = '"C:\nrn73w64\bin64\mpiexec.exe"';
+    mpi_dir = '"C:\nrn\bin\mpiexec.exe"';
     nrncommand = [mpi_dir ' -np 4 ' nrniv_dir...
         ' -mpi -nobanner mainparallel.hoc -c quit()'];
 elseif isunix

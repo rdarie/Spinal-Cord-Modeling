@@ -1,7 +1,7 @@
 clear;clc;
 close all;
 system_id_old;
-comsol_file = 'Z:\Spinal Cord Model\COMSOL\roots_of_passage\just_cord';
+comsol_file = 'E:\Google Drive\CSP\testbed\COMSOL Trial\pieces';
 fem = mphload([comsol_file '.mph']);
 geom = 'geom1';
 
@@ -160,8 +160,8 @@ mphviewselection(fem,geom,csf_dom(7:end), ...
 
 %%
 view(2);
-campos([5e3 -5e3 -50e3]);
-camtarget([0e3 0e3 10e3]);
+campos([5e6 -5e6 -50e6]);
+camtarget([0 0 10e6]);
 camroll(45);
 zoom(1.2);
 title('Model Geometric Domains');

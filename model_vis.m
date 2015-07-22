@@ -155,9 +155,9 @@ plot_tree(tree{1},[1 0 0],[],[],[],'-b -extrathick');
 plot_tree(tree{2},[1 0 0],[],[],[],'-b -extrathick');
 
 view(2);
-campos([5e3 -5e3 -50e3]);
-camtarget([0e3 0e3 10e3]);
-camroll(45);
+campos([5e6 -5e6 -50e6]);
+camtarget([0e6 0e6 10e6]);
+camroll(-45);
 zoom(1.2);
 title('Axon View');
 xlabel('x (mm)');
