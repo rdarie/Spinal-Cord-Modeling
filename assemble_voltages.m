@@ -3,7 +3,7 @@ clear;clc;close all;
 inl = 100;
 % how many times longer is a paranode than a node?
 
-comsol_file = 'Z:\Spinal Cord Model\COMSOL\roots_of_passage\just_cord';
+comsol_file = 'E:\Google Drive\CSP\testbed\COMSOL Trial\pieces_no_root';
 fem = mphload([comsol_file '.mph']);
 geom = 'geom1';
 
