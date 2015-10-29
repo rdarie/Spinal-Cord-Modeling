@@ -7,7 +7,7 @@ Mn_v[key] = new Vector()
 Mn_v[key].record(&Motoneuron_Cell[0].soma.v(0.5))
 
 init()
-//run()
+run()
 	
 for jj=0,mat_n_nodes-1 {
 	sprint(save_filename, "%s%s%s%s%d%s%d%s", tempdata_address, "vtraces", slash,"Ia_v_", key, "_node_", jj,".dat")

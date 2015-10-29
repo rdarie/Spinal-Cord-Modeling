@@ -1,7 +1,7 @@
 clear;clc;
 close all;
 system_id_old;
-comsol_file = 'E:\Google Drive\CSP\testbed\COMSOL Trial\pieces';
+comsol_file = 'E:\Google Drive\CSP\testbed\COMSOL Trial\one_root';
 fem = mphload([comsol_file '.mph']);
 geom = 'geom1';
 

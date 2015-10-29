@@ -71,7 +71,7 @@ proc biophys() {
     cm = 2
     insert axnode
     
-	/*
+
     insert extracellular{
       xg[0]=1e10
       xg[1]=1e10
@@ -81,8 +81,8 @@ proc biophys() {
       xraxial[1]=1e20
       e_extracellular=0
       }
-	 */
-	 insert extracellular
+	
+	//insert extracellular
 	  
   }
   
@@ -94,7 +94,7 @@ proc biophys() {
       g_pas=0.001/(2*9.15*diam+2*30)
       e_pas=-80
 	
-	/*
+	
     insert extracellular{
       xg[0]=1e10
       xg[1]=1e10
@@ -104,8 +104,8 @@ proc biophys() {
       xraxial[1]=1e20
       e_extracellular=0
       }
-	*/
-	insert extracellular
+	
+	//insert extracellular
   }
 }
 }

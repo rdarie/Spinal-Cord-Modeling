@@ -1,13 +1,13 @@
 function recruitment(data_file)
-start_time = 0;
+start_time = 2500;
 % when to start stimulation (ms)
-dur_time = 1;
+dur_time = 20;
 % how long is the stimulation on (ms)
-interval_time = 100;
+interval_time = 80;
 
-ampstart = 10;
-ampmax = 10;
-stepsize = 0.5;
+ampstart = 1;
+ampmax = 1;
+stepsize = 1;
 % how long is the stimulation off (ms)
 % together, these last two determine the waveform/duty cycle of the square
 % wave that stimulates the fiber.
@@ -37,7 +37,7 @@ for a = 1:n_cells
     n_nodes = length(V_extra{a})./points_per_node;
     nrn_geom(coords{a}, diams(a), n_nodes, points_per_node,inl,0);
     
-    fwrite(v_file, V_extra{a},'double'); %v from comsol to text
+    fwrite(v_file, -V_extra{a},'double'); %v from comsol to text
     fwrite(cellparam_file,...
         [n_nodes start_time dur_time interval_time diams(a)...
         inl points_per_node ampstart stepsize ampmax coords{a}(1,end) coords{a}(2,end) coords{a}(3,end)],...

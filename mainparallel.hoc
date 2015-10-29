@@ -2,8 +2,6 @@
 
 load_file("noload.hoc") // Does not bring up the GUI, but loads certain function dependencies
 
-fudge_factor = 1
-
 systype = unix_mac_pc()
 strdef tempdata_address
 strdef mn_geom_address
@@ -35,6 +33,7 @@ pc = new ParallelContext()
 
 ///////////////////////////////////////////////////////////////
 // Debugging: override stim params manually set amplitude
+fudge_factor = 3000
 {xopen("debug_statements")}
 ///////////////////////////////////////////////////////////////
 {xopen("vextandinit")}
@@ -65,7 +64,7 @@ func simulate(){ localobj apc_term, stimvec, fih
   		apc_term.thresh = 10
  	}
 	
-	tstop = 5
+	tstop = 7500
 	{xopen("save_simulate")}
 	
 	strdef shost
