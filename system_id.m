@@ -1,12 +1,25 @@
-os = ispc;
+
+comsol_folder = getenv('CSPCOMSOL');
+git_folder = getenv('CSPGIT');
+project_folder = [git_folder 'Spinal-Cord-Modeling\'];
 %code for system agnosticism in opening directory
-if os == 1
-    tempdata_address = '..\..\tempdata\' ;
-    nrniv_dir = '"C:\nrn73w64\bin64\nrniv.exe"';
-    %mpi_dir = '"C:\Program Files\MPICH2\bin\mpiexec.exe"';
-    mpi_dir = '"C:\nrn73w64\bin64\mpiexec.exe"';
-else
-    tempdata_address = 'tempdata/' ;
+if ispc
+    tempdata_address = [git_folder 'tempdata\'];
+    vtraces_address = [tempdata_address 'vtraces\'];
+    
+    nrniv_dir = ['"' getenv('NEURONHOME') '\bin\nrniv.exe"'];
+        
+    mpi_dir = ['"' getenv('NEURONHOME') '\bin\mpiexec.exe"'];
+    
+    nrncommand = [mpi_dir ' -np ' num2str(feature('numCores')) ' ' nrniv_dir...
+        ' -mpi -nobanner main.hoc -c quit()'];
+    
+elseif isunix
+    % Currently not working
+    tempdata_address = '../tempdata/';
+    vtraces_address = [tempdata_address 'vtraces/'];
     %nrniv_dir = '/Applications/NEURON-7.3/nrn/x86_64/bin/nrniv';
-    nrniv_dir = '/Applications/NEURON-7.3/nrngui';
+    nrniv_dir = '/gpfs/runtime/opt/neuron/7.3/x86_64/bin/nrniv';
+    nrncommand = [nrniv_dir ' mainparallel.hoc'];
 end
+

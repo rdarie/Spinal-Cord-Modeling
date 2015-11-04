@@ -1,29 +1,30 @@
-function assemble_voltages(fname,pointlist,diam,start_offset)
+function assemble_voltages(fname,tag,pointlist,diam,start_offset, inl, points_per_node)
 
-inl = 100;
-% how many times longer is a paranode than a node?
+system_id; %loads path location names
+plotting = 1; %for debugging
 
-comsol_file = ['E:\Google Drive\CSP\COMSOL V2\' fname];
+comsol_file = [comsol_folder fname];
+fullpointlist = [comsol_folder pointlist];
 fem = mphload([comsol_file '.mph']);
 geom = 'geom1';
 
-system_id_old;
+simulation = cell(length(diam), length(start_offset));
 
-points_per_node = 1e2+1;
-
-[temp_V, temp_domain, temp_sigma, temp_coords, n_nodes] = ...
-	get_spline_voltages(fem,pointlist,tempdata_address, inl,...
-    points_per_node,diam,start_offset);
-diams(1) = diam;
-coords{1} = temp_coords;
-V_extra{1,:} = temp_V;
-domain{1,:} = temp_domain;
-sigma{1,:} = temp_sigma;
-
+for a = 1:length(diam)
+    for b = 1:length(start_offset)
+        
+        [temp_V, temp_d2V_ds2, temp_domain, temp_sigma, temp_coords] = ...
+            get_spline_voltages(fem, 1, 1, geom, fullpointlist, tempdata_address,...
+            plotting, inl, points_per_node, diam(a), start_offset(b));
+        
+        simulation{a,b} = struct('diam', diam(a), 'coords', temp_coords,...
+            'V_extra', temp_V, 'd2V_ds2', temp_d2V_ds2, 'domain',...
+            temp_domain, 'sigma', temp_sigma, 'pointlist', pointlist, 'tag', tag);
+    end
+end
 %save to matlab variables
 
-save([tempdata_address 'comsol_solution.mat'], 'V_extra', 'domain',...
-    'sigma', 'coords', 'diams', 'n_nodes', 'inl', 'points_per_node');
+save([tempdata_address fname '_' pointlist(1:end-4) '_cs.mat'], 'simulation');
 
 fprintf('Done!');
 end
