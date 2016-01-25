@@ -1,5 +1,4 @@
-
-objref c_file // There's some sort of object called c_file
+objref c_file // an object called c_file exists
 c_file = new File() // c_file is a pointer to a file in memory
 
 strdef params_file 

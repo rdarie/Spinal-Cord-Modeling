@@ -26,6 +26,7 @@ func nc_append() {//srcindex, tarcelindex, synindex
     netcon = cells.object($1).connect2target(cells.object($2).pp)
     netcon.weight = $4   netcon.delay = $5
   }
+  
   nclist.append(netcon)
   return nclist.count - 1
 }
@@ -35,8 +36,9 @@ func nc_append() {//srcindex, tarcelindex, synindex
   /* Motoneuron0 */  cell_append(new Motoneuron_Cell(),-92,43, 0)
   /* Ia_axon1 */  cell_append(new Ia_axon_Cell(),33,-23, 0)
   Motoneuron_Cell[0].position(mn_pos_x,mn_pos_y,mn_pos_z)
-  /* Ia_axon1 -> Motoneuron0.E0 */nc_append(1,0,0,15,1)
-  define_shape()
+  /* Ia_axon1 -> Motoneuron0.E0 */nc_append(1,0,0,0.15,1) // synaptic weight is in units of uS
   
+  
+  define_shape()
   load_file("neu_tree.hoc")
   neu_tree(mod_geom_file)

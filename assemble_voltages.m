@@ -1,7 +1,7 @@
-function assemble_voltages(fname,tag,pointlist,diam,start_offset, inl, points_per_node)
+function assemble_voltages(fname, tag, pointlist, diam, start_offset,...
+    inl, points_per_node, debugging)
 
 system_id; %loads path location names
-plotting = 1; %for debugging
 
 comsol_file = [comsol_folder fname];
 fullpointlist = [comsol_folder pointlist];
@@ -15,7 +15,7 @@ for a = 1:length(diam)
         
         [temp_V, temp_d2V_ds2, temp_domain, temp_sigma, temp_coords] = ...
             get_spline_voltages(fem, 1, 1, geom, fullpointlist, tempdata_address,...
-            plotting, inl, points_per_node, diam(a), start_offset(b));
+             debugging, inl, points_per_node, diam(a), start_offset(b));
         
         simulation{a,b} = struct('diam', diam(a), 'coords', temp_coords,...
             'V_extra', temp_V, 'd2V_ds2', temp_d2V_ds2, 'domain',...

@@ -6,7 +6,7 @@ function nrn_geom(spl, diam, n_nodes, points_per_node, inl,debugging)
 %n_nodes: number of nodes
 %points_per_node
 
-system_id_old;
+system_id;
 
 fname = strcat(tempdata_address, 'Ia_geometry');
 fid = fopen(fname,'w');

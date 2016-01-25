@@ -7,9 +7,9 @@ objref V_extra
 V_extra = new Vector()
 objref v_file
 v_file = new File()
+
 strdef voltage_file 
 sprint(voltage_file, "%s%s", tempdata_address, "matlab_v_extra")
-
 v_file.ropen(voltage_file) // give it the name of the file and open for reading
 
 V_extra.fread(v_file,mat_ppn*n_nodes(),4)
@@ -42,7 +42,7 @@ step in the simulation. When, finally, t = START, the cvode listener launches th
 proc initi() {
 	//intracellular v
 	cells.object(0).setv(-69) //motor neuron
-	cells.object(1).setv(-80) //Ia fiber axon
+	cells.object(1).setv(-89) //Ia fiber axon
 	
 	// START = $1
 	strdef init_str

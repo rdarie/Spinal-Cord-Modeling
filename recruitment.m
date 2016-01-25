@@ -1,18 +1,7 @@
-function recruitment(data_file)
-start_time = 2500;
-% when to start stimulation (ms)
-dur_time = 20;
-% how long is the stimulation on (ms)
-interval_time = 80;
+function recruitment(data_file, start_time, dur_time,...
+    interval_time, ampstart, ampmax, stepsize, points_per_node, inl)
 
-ampstart = 1;
-ampmax = 1;
-stepsize = 1;
-% how long is the stimulation off (ms)
-% together, these last two determine the waveform/duty cycle of the square
-% wave that stimulates the fiber.
-
-system_id_old;
+system_id;
 
 comsol_filename = strcat(tempdata_address, data_file);
 
@@ -26,35 +15,52 @@ curr_apcount_filename = strcat(tempdata_address, 'curr_ap_count.dat');
 
 load(comsol_filename);
 
-n_cells = length(diams);
+n_cells = size(simulation,1)*size(simulation,2);
 AMPS = ampstart:stepsize:ampmax;
 rec_curve = zeros(n_cells, length(AMPS));
 
 
-for a = 1:n_cells
-    tic
-    fprintf('cell %d\n', a);
-    n_nodes = length(V_extra{a})./points_per_node;
-    nrn_geom(coords{a}, diams(a), n_nodes, points_per_node,inl,0);
-    
-    fwrite(v_file, -V_extra{a},'double'); %v from comsol to text
-    fwrite(cellparam_file,...
-        [n_nodes start_time dur_time interval_time diams(a)...
-        inl points_per_node ampstart stepsize ampmax coords{a}(1,end) coords{a}(2,end) coords{a}(3,end)],...
+for a = 1:size(simulation,1)
+    for b= 1:size(simulation,2)
+        
+        tic
+        fprintf('cell %d\n', a);
+        n_nodes = length(simulation{a,b}.V_extra)./points_per_node;
+        nrn_geom(simulation{a,b}.coords, simulation{a,b}.diam,...
+            n_nodes, points_per_node,inl,0);
+        
+        fwrite(v_file, -simulation{a,b}.V_extra,'double'); %v from comsol to text
+        fwrite(cellparam_file,...
+            [n_nodes start_time dur_time interval_time simulation{a,b}.diam ...
+            inl points_per_node ampstart stepsize ampmax...
+            simulation{a,b}.coords(1,end)...
+            simulation{a,b}.coords(2,end)...
+            simulation{a,b}.coords(3,end)],...
             'double');
+        
+        curr_folder = pwd;
+        cd(project_folder);
+        nrncommand = [mpi_dir ' -np ' num2str(feature('numCores'))...
+            ' ' nrniv_dir...
+            ' -mpi -nobanner '  'main.hoc -c quit()'];
+        
         system(nrncommand);
         
         [apcount,errmsg]=nrn_vread(curr_apcount_filename,'n');
         
         amps = apcount(1:2:end);
         numap = apcount(2:2:end);
-                
+        
         if sum(isnan(amps)) || sum(isnan(numap))
             keyboard;
         end
         
         rec_curve(a,:) = numap > 50;
+        
+        
+        cd(curr_folder);
         toc
+    end
 end
 
 rec_curve = sum(rec_curve, 1);

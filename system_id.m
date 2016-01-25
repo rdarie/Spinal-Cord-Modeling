@@ -11,9 +11,6 @@ if ispc
         
     mpi_dir = ['"' getenv('NEURONHOME') '\bin\mpiexec.exe"'];
     
-    nrncommand = [mpi_dir ' -np ' num2str(feature('numCores')) ' ' nrniv_dir...
-        ' -mpi -nobanner main.hoc -c quit()'];
-    
 elseif isunix
     % Currently not working
     tempdata_address = '../tempdata/';

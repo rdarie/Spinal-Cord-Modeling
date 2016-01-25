@@ -1,14 +1,12 @@
-//load_file("nrngui.hoc") // Brings up the GUI
+load_file("nrngui.hoc") // Brings up the GUI
 
-load_file("noload.hoc") // Does not bring up the GUI, but loads certain function dependencies
+//load_file("noload.hoc") // Does not bring up the GUI, but loads certain function dependencies
 
 systype = unix_mac_pc()
+
 strdef tempdata_address
 strdef mn_geom_address
 strdef slash
-strdef Ia_geom_file
-strdef mn_geom_file
-strdef mod_geom_file
 
 if (systype == 3) { //if windows
 	tempdata_address = "..\\tempdata\\"
@@ -20,8 +18,11 @@ if (systype == 3) { //if windows
 	slash = "/"
  	}
 
+strdef Ia_geom_file
 sprint(Ia_geom_file, "%s%s", tempdata_address, "Ia_geometry")
+strdef mn_geom_file
 sprint(mn_geom_file,"%s%s", mn_geom_address, "motoneuron_geometry")
+strdef mod_geom_file
 sprint(mod_geom_file,"%s%s", tempdata_address, "model_tree.neu")
 
 objref pc
@@ -33,7 +34,7 @@ pc = new ParallelContext()
 
 ///////////////////////////////////////////////////////////////
 // Debugging: override stim params manually set amplitude
-fudge_factor = 3000
+fudge_factor = 5e4
 {xopen("debug_statements")}
 ///////////////////////////////////////////////////////////////
 {xopen("vextandinit")}

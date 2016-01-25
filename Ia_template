@@ -94,7 +94,6 @@ proc biophys() {
       g_pas=0.001/(2*9.15*diam+2*30)
       e_pas=-80
 	
-	
     insert extracellular{
       xg[0]=1e10
       xg[1]=1e10
