@@ -3,6 +3,7 @@ c_file = new File() // c_file is a pointer to a file in memory
 
 strdef params_file 
 sprint(params_file, "%s%s", tempdata_address, "cell_params")
+
 //print params_file
 c_file.ropen(params_file) // give it the name of the file and open for reading
 
