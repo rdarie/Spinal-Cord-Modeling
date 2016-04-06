@@ -31,6 +31,7 @@ mjData* d = 0;
 
 std::vector<mjtNum> actuator_length0;
 std::vector<mjtNum> actuator_velocity0;
+Eigen::VectorXd solution_pose;
 
 char lastfile[100] = "";
 
@@ -195,10 +196,7 @@ struct site_functor : Eigen::DenseFunctor<double>
 		}
 
 	}
-
-	void reset_model() {
-	}
-
+	
 	int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 	{
 		double current_site_xpos[100];
@@ -223,11 +221,7 @@ struct site_functor : Eigen::DenseFunctor<double>
 		}
 
 		//Reset Model
-		for (int i = 0; i < inputs(); i++) {
-			_data->qpos[i] = 0;
-			_data->qvel[i] = 0;
-			_data->qacc[i] = 0;
-		}
+		mj_resetData(_model, _data);
 
 		mj_forward(_model, _data);
 
@@ -259,12 +253,9 @@ struct site_functor : Eigen::DenseFunctor<double>
 			mj_forward(_model, _data);
 			mj_jacSite(_model, _data, jacp, jacr, siteID);
 
+
 			//Reset Model
-			for (int i = 0; i < inputs(); i++) {
-				_data->qpos[i] = 0;
-				_data->qvel[i] = 0;
-				_data->qacc[i] = 0;
-			}
+			mj_resetData(_model, _data);
 
 			mj_forward(_model, _data);
 
@@ -272,7 +263,7 @@ struct site_functor : Eigen::DenseFunctor<double>
 			{
 				for (int k = 0; k < inputs(); k++) {
 
-					fjac(3*i+j, k) = jacp[inputs()*j+k];
+					fjac(3*i+j, k) = -jacp[inputs()*j+k];
 
 				}
 			}
@@ -281,7 +272,7 @@ struct site_functor : Eigen::DenseFunctor<double>
 	}
 };
 
-int testLmder1(double factor)
+Eigen::VectorXd testLmder1(double factor)
 {
 	int n = 6, info;
 
@@ -325,18 +316,7 @@ int testLmder1(double factor)
 	//std::cout << "lm.minimize info was " << info << std::endl;
 	//std::cout << "Levenberg Computed" << std::endl << x << std::endl;
 
-	return info;
-	//std::cout << "Levenberg Check 1" << (lm.nfev() == 6) << std::endl;
-	//std::cout << "Levenberg Check 1" << (lm.njev() == 5) << std::endl;
-	/*
-	// check norm
-	//std::cout << "Levenberg Check 1" << (lm.fvec().blueNorm() == 0.09063596) << std::endl;
-
-	// check x
-	Eigen::VectorXd x_ref(n);
-	x_ref << 0.08241058, 1.133037, 2.343695;
-	std::cout << "Levenberg Computed" << std::endl << x << std::endl << "Reference value: " << std::endl << x_ref << std:: endl;
-	*/
+	return x;
 }
 
 //-------------------------------- Radu Defined Functions ------------------------------------
@@ -1107,7 +1087,7 @@ int main(int argc, const char** argv)
 	mj_activate("E:\\mjpro\\mjkey.txt");
 
 	// activate python server
-	int a = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\CycleMuscleServer.py\" &");
+	int a = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\CycleGeneralizedCoordsServer.py\" &");
 	
 	// init GLFW, set multisampling
     if (!glfwInit())
@@ -1169,10 +1149,15 @@ int main(int argc, const char** argv)
 	publisher.connect("tcp://localhost:5556");
 
 	//Levenberg Test
-	for (double a = 1e-3; a < 10; a += 1e-3) {
-		int info = testLmder1(a);
-		std::cout << "Factor = " << a << " info was " << info << std::endl;
-	}
+	/*
+		solution_pose = testLmder1(200);
+		paused = true;
+		mj_resetData(m, d);
+		for (int a = 0; a < m->nq; a++) {
+			//d->qpos[a] = solution_pose[a];
+		}
+		mj_forward(m, d);
+	*/
 
 	// get a target configuration
 	/*
@@ -1207,7 +1192,8 @@ int main(int argc, const char** argv)
         render(window);
 		
 		if (update_cmd) {
-			//cycleJoint(d, m, "r_GAS", "right_ankle_x", &publisher);
+			cycleJoint(d, m, "r_GAS", "right_hip_x", &publisher);
+			Sleep(500);
 			//cycleMuscle(d, m, "r_GAS", "r_GAS", &publisher);
 		}
 		

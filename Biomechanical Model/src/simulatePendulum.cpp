@@ -131,7 +131,7 @@ struct test_functor : Eigen::DenseFunctor<double>
 	mjData* data;
 	mjtNum target_site_xpos[3];
 
-	test_functor(mjModel* m, mjData* d, mjtNum* tgt) : DenseFunctor<double>(6, 3) {
+	test_functor(mjModel* m, mjData* d, mjtNum* tgt) : DenseFunctor<double>(1, 9) {
 		model = m;
 		//std::cout << "dim(qpos) = " << model->nq << std::endl;
 		data = d;
@@ -182,7 +182,7 @@ struct site_functor : Eigen::DenseFunctor<double>
 	int _n_sites;
 	std::vector<std::string> _site_name;
 
-	site_functor(mjModel* m, mjData* d, double* tgt, std::vector<std::string> siteNames) : DenseFunctor<double>(6, 18) {
+	site_functor(mjModel* m, mjData* d, double* tgt, std::vector<std::string> siteNames) : DenseFunctor<double>(1, 9) {
 		_model = new mjModel(*m);
 		//std::cout << "inputs = " << inputs() << std::endl;
 		_data = new mjData(*d);
@@ -213,7 +213,7 @@ struct site_functor : Eigen::DenseFunctor<double>
 		mj_forward(_model,_data);
 
 		for (int i = 0; i < _n_sites; i++) {
-			int siteID = mj_name2id(m, mjOBJ_SITE, _site_name[i].c_str());
+			int siteID = mj_name2id(_model, mjOBJ_SITE, _site_name[i].c_str());
 			current_site_xpos[count] = _data->site_xpos[3 * siteID + 0];
 			count++;
 			current_site_xpos[count] = _data->site_xpos[3 * siteID + 1];
@@ -223,11 +223,8 @@ struct site_functor : Eigen::DenseFunctor<double>
 		}
 
 		//Reset Model
-		for (int i = 0; i < inputs(); i++) {
-			_data->qpos[i] = 0;
-			_data->qvel[i] = 0;
-			_data->qacc[i] = 0;
-		}
+
+		mj_resetData(m, d);
 
 		mj_forward(_model, _data);
 
@@ -257,14 +254,10 @@ struct site_functor : Eigen::DenseFunctor<double>
 			}
 
 			mj_forward(_model, _data);
+
 			mj_jacSite(_model, _data, jacp, jacr, siteID);
 
-			//Reset Model
-			for (int i = 0; i < inputs(); i++) {
-				_data->qpos[i] = 0;
-				_data->qvel[i] = 0;
-				_data->qacc[i] = 0;
-			}
+			mj_resetData(m, d);
 
 			mj_forward(_model, _data);
 
@@ -272,7 +265,7 @@ struct site_functor : Eigen::DenseFunctor<double>
 			{
 				for (int k = 0; k < inputs(); k++) {
 
-					fjac(3*i+j, k) = jacp[inputs()*j+k];
+					fjac(3*i+j, k) = -jacp[inputs()*j+k];
 
 				}
 			}
@@ -281,35 +274,30 @@ struct site_functor : Eigen::DenseFunctor<double>
 	}
 };
 
-int testLmder1(double factor)
+Eigen::VectorXd testLmder1(double factor)
 {
-	int n = 6, info;
+	int n = 1, info;
 
 	Eigen::VectorXd x;
 
 	/* the following starting values provide a rough fit. */
 	x.setConstant(n, 0);
+	x[0] = 0.785398;
 	/*
 	for (int j = 0; j < n; j++) {
 		x[j] = m->qpos0[j];
 	}
 	*/
 	// do the computation
-	double targ[18] = { -0.04343, -0.0479416, 0.932763,
-		0.04343, -0.0672373, 1.04794,
-		-0.02423, 0.074101, 0.743362,
-		0.02423, -0.2566, 0.92589,
-		-0.03433, -0.0993, 0.849,
-		0.03433, -0.150931, 1.09938
+	double targ[9] = { 0, 0, 0.06,
+		0, 0.6 -0.06,
+		0.06, 1, 0
 	};
 
 	std::vector<std::string> sites;
-	sites.push_back("r_VAS_femur");
-	sites.push_back("l_VAS_femur");
-	sites.push_back("r_TA_ankle");
-	sites.push_back("l_TA_ankle");
-	sites.push_back("r_RF_tibia");
-	sites.push_back("l_RF_tibia");
+	sites.push_back("top");
+	sites.push_back("mid");
+	sites.push_back("bot");
 	site_functor functor(m, d, targ, sites);
 	Eigen::LevenbergMarquardt<site_functor> lm(functor);
 
@@ -325,7 +313,7 @@ int testLmder1(double factor)
 	//std::cout << "lm.minimize info was " << info << std::endl;
 	//std::cout << "Levenberg Computed" << std::endl << x << std::endl;
 
-	return info;
+	return x;
 	//std::cout << "Levenberg Check 1" << (lm.nfev() == 6) << std::endl;
 	//std::cout << "Levenberg Check 1" << (lm.njev() == 5) << std::endl;
 	/*
@@ -1168,38 +1156,30 @@ int main(int argc, const char** argv)
 	std::cout << "Connecting to python server ..." << std::endl;
 	publisher.connect("tcp://localhost:5556");
 
-	//Levenberg Test
-	for (double a = 1e-3; a < 10; a += 1e-3) {
-		int info = testLmder1(a);
-		std::cout << "Factor = " << a << " info was " << info << std::endl;
-	}
-
 	// get a target configuration
+
+	//Reset Model
+	
+	mj_resetData(m, d);
+	d->qpos[0] = 90*2*M_PI/360;
+	mj_forward(m, d);
 	/*
-	std::string target = "r_VAS_femur";
+	std::string target = "top";
 	int siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
-	std::cout << "r_VAS_femur: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
+	std::cout << "top: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
 
-	target = "l_VAS_femur";
+	target = "mid";
 	siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
-	std::cout << "l_VAS_femur: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
+	std::cout << "mid: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
 
-	target = "r_TA_ankle";
+	target = "bot";
 	siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
-	std::cout << "r_TA_ankle: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
-
-	target = "l_TA_ankle";
-	siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
-	std::cout << "l_TA_ankle: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
-
-	target = "r_RF_tibia";
-	siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
-	std::cout << "r_RF_tibia: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
-
-	target = "l_RF_tibia";
-	siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
-	std::cout << "l_RF_tibia: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
+	std::cout << "bot: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
 	*/
+	//Levenberg Test
+	
+	Eigen::VectorXd x = testLmder1(200);
+		
 	// main loop
     while( !glfwWindowShouldClose(window) )
     {
@@ -1207,6 +1187,7 @@ int main(int argc, const char** argv)
         render(window);
 		
 		if (update_cmd) {
+			d->qpos[0] = x[0];
 			//cycleJoint(d, m, "r_GAS", "right_ankle_x", &publisher);
 			//cycleMuscle(d, m, "r_GAS", "r_GAS", &publisher);
 		}
