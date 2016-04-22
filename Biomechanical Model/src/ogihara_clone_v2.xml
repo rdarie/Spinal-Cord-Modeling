@@ -6,8 +6,8 @@
     <asset>
 		<!-- Sets sky rendering
 		-->
-        <texture type="skybox" builtin="gradient" width="100" height="100" rgb1=".5 .8 .5"
-            rgb2="0 0 0"/>
+        <texture type="skybox" builtin="gradient" width="100" height="100" rgb1="1 1 1"
+            rgb2="1 1 1"/>
 		<!-- Not clear to me where this is used yet
 		-->
         <texture name="texgeom" type="cube" builtin="flat" mark="cross" width="127" height="1278"
@@ -80,11 +80,16 @@
 
 		<!-- Everything pretty self explanatory, condim = 3 sets the contact type to Regular frictional contact, opposing slip in the tangent plane. see http://mujoco.org/book/modeling.html#CSchema for details
 		-->
-        <geom name='floor' pos='0 0 0' size='1 1 1' euler='15 0 0' type='plane' material="MatPlane" condim='3'/>
-
-        <body name='lower_body' pos='0 0 1' euler='15 0 0'>
-		        <geom mass='0' type='mesh' mesh='miniature_monkey' pos='0 30e-3 320e-3' axisangle = '0 0  1 0'/>
-
+        <!--<geom name='floor' pos='0 0 -1' size='1 1 1' euler='15 0 0' type='plane' material="MatPlane" condim='3'/>
+-->
+        <body name='axes' pos='1e-3 -0.5e-3 0'>
+          <geom name='x' type='cylinder' fromto='100e-3 0 0 170e-3 0 0' size='5e-3' rgba='0 0 1 1'/>
+            <geom name='y' type='cylinder' fromto='100e-3 0 0 100e-3 70e-3 0' size='5e-3' rgba='0 1 0 1'/>
+              <geom name='z' type='cylinder' fromto='100e-3 0 0 100e-3 0 70e-3' size='5e-3' rgba='1 0 0 1'/>
+        </body>
+        <body name='lower_body' pos='0 0 0' euler='0 0 0'>
+		        <!--<geom mass='0' type='mesh' mesh='miniature_monkey' pos='0 30e-3 320e-3' axisangle = '0 0  1 0'/>
+-->
             <!--<joint name='root' type='free' pos='0 0 0' limited='false' damping='0' armature='0' stiffness='0'/>-->
 
 			      <!-- Details on attributes of geoms here: http://mujoco.org/book/modeling.html
@@ -109,7 +114,7 @@
             <site name="r_BF_pelvis" pos='-14e-3 11.1e-3 -37.8e-3'/>
             <site name="l_BF_pelvis" pos='14e-3 11.1e-3 -37.8e-3'/>
 
-			      <body name='right_leg' pos='-31.43e-3 0 0' euler='-90 0 0'>
+			      <body name='right_leg' pos='-31.43e-3 0 0' euler='0 0 0'>
 
                   <site name="right_hip_x" pos='0 0 0' rgba='1 0 0 1'/>
 				          <joint name='right_hip_x' class = 'hip_joint_x' pos='0 0 0'/>
@@ -118,27 +123,27 @@
 				                   <joint name='right_hip_z' class = 'hip_joint_z' pos='0 0 0'/>
 				              -->
 
-				          <geom class="thigh" name='right_thigh' pos='0 0 -81.5e-3' euler='0 0 -180'/>
+				          <geom class="thigh" name='right_thigh' pos='0 0 -81.5e-3' euler='0 0 0'/>
 
                   <geom mass='37.14e-3' name='right_thigh_top_mass' pos='0 0 0' type='sphere' size='5e-3' />
               	  <geom mass='0' name='right_thigh_mid_mass' pos='0 0 -81.5e-3' type='sphere' size='5e-3' />
               	  <geom mass='48.27e-3' name='right_thigh_bot_mass' pos='0 0 -163e-3' type='sphere' size='5e-3' />
 
-                  <site name="r_GMED_femur" pos='0 -6.9e-3 -2.3e-3' rgba='.7 .2 .2 1'/>
+                  <site name="r_GMED_femur" pos='0 -6.9e-3 -2.3e-3'/>
 
-                  <site name="r_IL_femur" pos='16e-3 12.3e-3 -24.7e-3' rgba='.2 .2 .7 1'/>
+                  <site name="r_IL_femur" pos='16e-3 12.3e-3 -24.7e-3'/>
                   <site name="r_IL_front" pos='16e-3 12.3e-3 -34.7e-3'/>
 
-                  <site name="r_VAS_femur" pos='-12e-3 -7.9e-3 -82.2e-3' rgba='.2 .2 .7 1'/>
+                  <site name="r_VAS_femur" pos='-12e-3 -7.9e-3 -82.2e-3'/>
                   <site name="r_GAS_femur" pos='8e-3 4.9e-3 -155.3e-3'/>
 
-				              <body name='right_shin' pos='0 0 -163e-3' euler='90 0 0'>
+				              <body name='right_shin' pos='0 0 -163e-3' euler='0 0 0'>
 					                   <geom name='right_shin' pos='0 0 -91e-3' class = 'shin' euler='0 0 -180'/>
                          	  <geom mass='39.67e-3' name='right_shin_top_mass' pos='0 0 0' type='sphere' size='5e-3' />
                          	  <geom mass='25.9e-3' name='right_shin_mid_mass' pos='0 0 -91e-3' type='sphere' size='5e-3' />
                          	  <geom mass='0' name='right_shin_bot_mass' pos='0 0 -182e-3' type='sphere' size='5e-3' />
 
-                            <site name="r_VAS_tibia" pos='-3.1e-3 -16.8e-3 11e-3' rgba='.2 .2 .7 1'/>
+                            <site name="r_VAS_tibia" pos='-3.1e-3 -16.8e-3 11e-3'/>
                             <site name="r_TA_tibia" pos='0 2.2e-3 -73.3e-3'/>
                             <site name="r_SOL_tibia" pos='-13.3e-3 14.9e-3 -39.4e-3'/>
                             <site name="r_RF_tibia" pos='-2.9e-3 -17.4e-3 10.6e-3'/>
@@ -152,12 +157,13 @@
                                  	   <geom mass='33.28e-3' name='right_foot_top_mass' pos='0 0 0' euler='0 90 0'  type='cylinder' size='5e-3 10e-3' />
                                  	   <geom mass='0' name='right_foot_mid_mass' pos='0 -37e-3 0' type='sphere' size='5e-3' />
                                  	   <geom mass='57.52e-3' name='right_foot_bot_mass' pos='0 -74e-3 0' euler='0 90 0'  type='cylinder' size='5e-3 10e-3' />
+                                     <site name="right_toe" pos='0 -74e-3 0' rgba='1 0 0 1'/>
 
                                      <site name="r_TA_ankle" pos='7.2e-3 -22.2e-3 -10.5e-3'/>
                                      <site name="r_SOL_ankle" pos='-14e-3 20e-3 -3.2e-3'/>
                                      <site name="r_GAS_ankle" pos='-13.3e-3 22e-3 -2.2e-3'/>
 
-                                     <site name="right_ankle_x" pos='0 0 0' rgba='1 0 0 1'/>
+                                     <site name="right_ankle" pos='0 0 0' rgba='1 0 0 1'/>
                                      <joint name='right_ankle_x' class = 'ankle_joint_x'/>
 						                         <!--<joint name='right_ankle_y' class = 'ankle_joint_y'/>-->
 					                    </body>
@@ -170,8 +176,8 @@
 			         <!-- End leg
 			          -->
 
-			      <body name='left_leg' pos='31.43e-3 0 0'  euler='-90 0 0'>
-              <site name="left_hip_x" pos='0 0 0' rgba='1 0 0 1'/>
+			      <body name='left_leg' pos='31.43e-3 0 0'  euler='0 0 0'>
+              <site name="left_hip" pos='0 0 0' rgba='1 0 0 1'/>
               <joint name='left_hip_x' class = 'hip_joint_x'/>
 					         <!--
 				              <joint name='left_hip_y' class = 'hip_joint_y'/>
@@ -185,13 +191,13 @@
               <site name="l_GMED_femur" pos='0 -6.9e-3 -2.3e-3'/>
 
               <site name="l_IL_femur" pos='-16e-3 12.3e-3 -24.7e-3'/>
-              <site name="l_IL_front" pos='0 -30e-3 -10e-3'/>
+              <site name="l_IL_front" pos='-16e-3 12.3e-3 -34.7e-3'/>
 
               <site name="l_VAS_femur" pos='12e-3 -7.9e-3 -82.2e-3'/>
               <site name="l_GAS_femur" pos='-8e-3 4.9e-3 -155.3e-3'/>
               <!--<site name="l_VAS_front" pos='0 -30e-3 -10e-3'/>-->
 
-				      <body name='left_shin' pos='0 0 -163e-3' euler='90 0 0'>
+				      <body name='left_shin' pos='0 0 -163e-3' euler='0 0 0'>
 					          <geom name='left_shin' pos='0 0 -91e-3' class = 'shin'/>
                     <geom mass='39.67e-3' name='left_shin_top_mass' pos='0 0 0' type='sphere' size='5e-3' />
                     <geom mass='25.9e-3' name='left_shin_mid_mass' pos='0 0 -91e-3' type='sphere' size='5e-3' />
@@ -210,12 +216,13 @@
                              <geom mass='33.28e-3' name='left_foot_top_mass' pos='0 0 0' euler='0 90 0' type='cylinder'  size='5e-3 10e-3' />
                              <geom mass='0' name='left_foot_mid_mass' pos='0 -37e-3 0' type='sphere' size='5e-3' />
                              <geom mass='57.52e-3' name='left_foot_bot_mass' pos='0  -74e-3 0' euler='0 90 0' type='cylinder'  size='5e-3 10e-3' />
+                             <site name="left_toe" pos='0 -74e-3 0' rgba='1 0 0 1'/>
 
                              <site name="l_TA_ankle" pos='-7.2e-3 -22.2e-3 -10.5e-3'/>
                              <site name="l_SOL_ankle" pos='14e-3 20e-3 -3.2e-3'/>
                              <site name="l_GAS_ankle" pos='13.3e-3 22e-3 -2.2e-3'/>
 
-                             <site name="left_ankle_x" pos='0 0 0' rgba='1 0 0 1'/>
+                             <site name="left_ankle" pos='0 0 0' rgba='1 0 0 1'/>
 						                 <joint name='left_ankle_x' class = 'ankle_joint_x'/>
 						                 <!--<joint name='left_ankle_y' class = 'ankle_joint_y'/>-->
 					           </body>

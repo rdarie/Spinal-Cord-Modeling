@@ -1,10 +1,11 @@
+begintemplate Motoneuron_Cell
+
 public init, topol, basic_shape, subsets, geom, biophys, geom_nseg, biophys_inhomo, setv
 public synlist, x, y, z, position, connect2target
 external lambda_f, mn_geom_file
 public soma, dend
 
 objref synlist
-
 proc init() {
   //print "Making motoneuron"
   //print mn_geom_file
@@ -14,18 +15,22 @@ proc init() {
   geom_nseg()
   biophys()
   synlist = new List()
+  print "Synlist exists, god damnit!!!"
   synapses()
   x = y = z = 0 // only change via position
 }
 
-//{xopen("motoneuron_geometry")}
-//{xopen(mn_geom_file)}
+xopen(mn_geom_file)
 
-// Cannot take mn geom location from outside template... should revisit at some point
-//strdef local_geom_file
-//sprint(local_geom_file,"%s", mn_geom_file)
+objref syn_
 
-{xopen("motoneuron_geometry")}
+proc synapses() {
+	/* E0 */
+	dend[1] syn_ = new ExpSyn(0.5)
+	
+	synlist.append(syn_)
+	syn_.tau = 3
+}
 
 proc position() { local i
   soma for i = 0, n3d()-1 {
@@ -40,12 +45,6 @@ obfunc connect2target() { localobj nc //$o1 target point process, optional $o2 r
   if (numarg() == 2) { $o2 = nc } // for backward compatibility
   return nc
 }
-
-objref syn_
-proc synapses() {
-	/* E0 */   dend[1]  syn_ = new ExpSyn(0.5)  synlist.append(syn_)
-	syn_.tau = 3
-}
 //print "made it past syn_"
 
 proc setv() {
@@ -55,3 +54,5 @@ proc setv() {
 }
 
 func is_art() { return 0 }
+
+endtemplate Motoneuron_Cell

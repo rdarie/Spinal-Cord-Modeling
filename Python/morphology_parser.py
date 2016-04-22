@@ -21,11 +21,11 @@ def update_current_section(target_file):
         current_section_name = 'self.'
         if isinstance(tokens[0], str):
         # single section
-            current_section_name += tokens[0]  
+            current_section_name += tokens[0]
         elif isinstance(tokens[0], type(tokens)):
             current_section_name += tokens[0][0] + '['
             for a in range(1,len(tokens[0])):
-                current_section_name += tokens[0][a] 
+                current_section_name += tokens[0][a]
             current_section_name += ']'
         put_string = 'h.pt3dclear(sec = ' + current_section_name + ')\n'
         target_file.write(put_string)
@@ -64,7 +64,7 @@ def print_create(target_file):
         for a in range(len(tokens)):
             if isinstance(tokens[a], str):
                 # single section
-                put_string = 'self.' + tokens[a] + ' = h.Section(cell = self)\n'  
+                put_string = 'self.' + tokens[a] + ' = h.Section(cell = self)\n'
             elif isinstance(tokens[a], type(tokens)):
                 put_string = 'self.' + tokens[a][0] + ' = [h.Section(cell = self) for x in range(' + tokens[a][1]\
                 + ')]\n'
@@ -84,7 +84,7 @@ def connect_output_string(tokens):
     # tokens [0][1] is the location in the parent where we connect to
     parent_loc = ''
     for a in range(len(tokens[0][1])):
-        parent_loc += tokens[0][1][a]            
+        parent_loc += tokens[0][1][a]
     if isinstance(tokens[1][0], str):
         # tokens [0][0] is the name of the child section
         child = tokens[1][0]
@@ -114,13 +114,15 @@ def print_geom_define(target_file):
     return geom_define_parseaction
 
 # Resulting python file
-filename = 'morphology_parser_output.py'
+filename = 'Mn_geometry_output3.py'
 global current_section_name
 current_section_name = ''
 converted_file = open(filename, 'w')
 
 # define lists of characters for a..z and 1..9
 uppercase = lowercase.upper()
+lowercaseplus = lowercase+('_')
+lowercaseplus = lowercaseplus+(uppercase)
 nonzero = ''.join([str(i) for i in range(1, 10)])
 
 COMMA   = Literal(',')
@@ -137,9 +139,10 @@ RBRACK  = Literal(')')
 LSQUARE = Literal('[')
 RSQUARE = Literal(']')
 PTSCLEAR = Literal('{pt3dclear()').suppress()
+PTSCLEARNL = Literal('{\npt3dclear()\n').suppress()
 
 integer = Word(nums)
-single_section = Word(lowercase, min = 2)
+single_section = Word(lowercaseplus, min = 2)
 single_section.setResultsName('SINGLE')
 
 integer_var = Word(lowercase, exact = 1)
@@ -173,10 +176,10 @@ for_loop.setParseAction(print_for_loop(converted_file))
 point_add = Literal('pt3dadd(').suppress() + double + COMMA.suppress() + double + COMMA.suppress() + double + COMMA.suppress() + double + RBRACK.suppress()
 point_add.setParseAction(print_point_add(converted_file))
 
-point_style = Literal('pt3dstyle(').suppress() + double + COMMA.suppress() + double + COMMA.suppress()  + double + COMMA.suppress()  + double + RBRACK.suppress() 
+point_style = Literal('pt3dstyle(').suppress() + double + COMMA.suppress() + double + COMMA.suppress()  + double + COMMA.suppress()  + double + RBRACK.suppress()
 point_style.setParseAction(print_point_style(converted_file))
 
-geom_define_pre = section + PTSCLEAR
+geom_define_pre = section + (PTSCLEAR ^ PTSCLEARNL)
 geom_define_body = OneOrMore(point_add ^ point_style) + RCURL.suppress()
 geom_define_pre.setParseAction(update_current_section(converted_file))
 
@@ -185,7 +188,8 @@ geom_define = geom_define_pre + geom_define_body
 expression = (connect ^ for_loop ^ geom_define ^ create)
 codeblock = OneOrMore(expression)
 
-test_str = 'dend[1] {pt3dclear() pt3dadd( 47, 76, 92.5, 3.6) }'
-file_to_parse = open('../mn_geometries/burke_mn_3_modified_for_parser.hoc')
+test_str = 'Ia_node[0] {\npt3dclear()\n pt3dadd( 47, 76, 92.5, 3.6) }'
+#file_to_parse = open('../../tempdata/Ia_geometry')
+file_to_parse = open('motoneuron_geometry_preparser.txt')
 tokens = codeblock.parseString(file_to_parse.read())
 #tokens = codeblock.parseString(test_str)

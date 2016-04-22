@@ -82,7 +82,7 @@
 		-->
         <geom name='floor' pos='0 0 0' size='1 1 1' euler='15 0 0' type='plane' material="MatPlane" condim='3'/>
 
-        <body name='lower_body' pos='0 0 1' euler='15 0 0'>
+        <body name='lower_body' pos='0 0 1' euler='0 0 0'>
 		        <geom mass='0' type='mesh' mesh='miniature_monkey' pos='0 30e-3 320e-3' axisangle = '0 0  1 0'/>
 <!--
             <joint name='root' type='free' pos='0 0 0' limited='false' damping='0' armature='0' stiffness='0'/>
@@ -124,7 +124,7 @@
               	  <geom mass='0' name='right_thigh_mid_mass' pos='0 0 -81.5e-3' type='sphere' size='5e-3' />
               	  <geom mass='48.27e-3' name='right_thigh_bot_mass' pos='0 0 -163e-3' type='sphere' size='5e-3' />
 
-                  <site name="r_GMED_femur" pos='0 -6.9e-3 -2.3e-3' rgba='.7 .2 .2 1'/>
+                  <site name="r_GMED_femur" pos='0 -6.9e-3 -2.3e-3'/>
 
                   <site name="r_IL_femur" pos='16e-3 12.3e-3 -24.7e-3'/>
                   <site name="r_IL_front" pos='0 -30e-3 -10e-3'/>

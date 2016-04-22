@@ -24,12 +24,14 @@ std::mutex gui_mutex;
 //communication
 zmq::context_t context(1);
 zmq::socket_t publisher = zmq::socket_t(context, ZMQ_REQ);;
+zmq::socket_t neuron_publisher = zmq::socket_t(context, ZMQ_REQ);;
 
 // model
 mjModel* m = 0;
 mjData* d = 0;
 
 std::vector<mjtNum> actuator_length0;
+std::vector<mjtNum> tendon_length0;
 std::vector<mjtNum> actuator_velocity0;
 Eigen::VectorXd solution_pose;
 
@@ -125,7 +127,6 @@ char opt_content[1000];
 
 //-------------------------------- IK Solver Testing -----------------------------------------
 
-
 struct test_functor : Eigen::DenseFunctor<double>
 {
 	mjModel* model;
@@ -177,23 +178,33 @@ struct test_functor : Eigen::DenseFunctor<double>
 
 struct site_functor : Eigen::DenseFunctor<double>
 {
-	mjModel* _model;
-	mjData* _data;
+	mjModel* _model = new mjModel();
+	mjData* _data = new mjData();
 	double _target_site_xpos[100];
 	int _n_sites;
-	std::vector<std::string> _site_name;
 
-	site_functor(mjModel* m, mjData* d, double* tgt, std::vector<std::string> siteNames) : DenseFunctor<double>(6, 18) {
-		_model = new mjModel(*m);
+	std::vector<std::string> _site_name;
+	
+	site_functor(mjModel* m, mjData* d, double* tgt, std::vector<std::string> siteNames) : DenseFunctor<double>(6, 24) {
+		//
+		//_model = new mjModel();
+		_model = NULL;
+		_model = mj_copyModel(_model, m);
 		//std::cout << "inputs = " << inputs() << std::endl;
-		_data = new mjData(*d);
+		
+		_data = NULL;
+		_data = mj_makeData(_model);
 		//std::cout << "values = " << values() << std::endl;
 		_site_name = siteNames;
 		_n_sites = siteNames.size();
 
+		//std::cout << "tgt = [" << std::endl;
 		for (int i = 0; i < 3*_n_sites; i++) {
 			_target_site_xpos[i] = tgt[i];
+			// Radu Debugging:
+			//std::cout << tgt[i] << std::endl;
 		}
+		//std::cout << "]" << std::endl;
 
 	}
 	
@@ -221,9 +232,8 @@ struct site_functor : Eigen::DenseFunctor<double>
 		}
 
 		//Reset Model
-		mj_resetData(_model, _data);
-
-		mj_forward(_model, _data);
+		//mj_resetData(_model, _data);
+		//mj_forward(_model, _data);
 
 		//std::cout << "current_site_xpos = [" << std::endl;
 		for (int i = 0; i < values(); i++)
@@ -252,12 +262,10 @@ struct site_functor : Eigen::DenseFunctor<double>
 
 			mj_forward(_model, _data);
 			mj_jacSite(_model, _data, jacp, jacr, siteID);
-
-
+			
 			//Reset Model
-			mj_resetData(_model, _data);
-
-			mj_forward(_model, _data);
+			//mj_resetData(_model, _data);
+			//mj_forward(_model, _data);
 
 			for (int j = 0; j < values()/_n_sites; j++)
 			{
@@ -272,38 +280,16 @@ struct site_functor : Eigen::DenseFunctor<double>
 	}
 };
 
-Eigen::VectorXd testLmder1(double factor)
+Eigen::VectorXd testLmder1(double *targ, Eigen::VectorXd x, std::vector<std::string> sites)
 {
 	int n = 6, info;
 
-	Eigen::VectorXd x;
-
-	/* the following starting values provide a rough fit. */
-	x.setConstant(n, 0);
-	/*
-	for (int j = 0; j < n; j++) {
-		x[j] = m->qpos0[j];
-	}
-	*/
 	// do the computation
-	double targ[18] = { -0.04343, -0.0479416, 0.932763,
-		0.04343, -0.0672373, 1.04794,
-		-0.02423, 0.074101, 0.743362,
-		0.02423, -0.2566, 0.92589,
-		-0.03433, -0.0993, 0.849,
-		0.03433, -0.150931, 1.09938
-	};
 
-	std::vector<std::string> sites;
-	sites.push_back("r_VAS_femur");
-	sites.push_back("l_VAS_femur");
-	sites.push_back("r_TA_ankle");
-	sites.push_back("l_TA_ankle");
-	sites.push_back("r_RF_tibia");
-	sites.push_back("l_RF_tibia");
 	site_functor functor(m, d, targ, sites);
 	Eigen::LevenbergMarquardt<site_functor> lm(functor);
 
+	double factor = 200;
 	lm.setFactor(factor);
 	//lm.setEpsilon(std::numeric_limits<double>::epsilon());
 
@@ -392,49 +378,149 @@ double momentArm(std::string joint, std::string mus1, std::string mus2) {
 }
 
 void cycleJoint(mjData* d, mjModel* m, std::string tendon_name, std::string joint_name, zmq::socket_t *publisher) {
-	
+
 	double ma_model = tendonMomentArm(d, m, tendon_name, joint_name);
 
 	// protocol buffer stuff
 	mujoco2py::mujoco_msg to_msg;
 	mujoco2py::mujoco_msg from_msg;
 
-	to_msg.set_tnd_ma(ma_model);
-	to_msg.set_tnd_name(tendon_name);
-	to_msg.set_jnt_name(joint_name);
+	mujoco2py::mujoco_msg_mj_tend *tendon_msg = to_msg.add_tend();
+	(*tendon_msg).set_ma(ma_model);
+	(*tendon_msg).set_name(tendon_name);
+	mujoco2py::mujoco_msg_mj_joint *joint_msg = to_msg.add_joint();
+	(*joint_msg).set_name(joint_name);
+
 	std::string msg_str;
 	to_msg.SerializeToString(&msg_str);
-	
+
 	//  Send message to all subscribers
 	zmq::message_t message(msg_str.length());
 	memcpy(message.data(), msg_str.c_str(), msg_str.length());
 	(*publisher).send(message);
-	std::cout << "moment arm was: " << ma_model << std::endl;
+	//std::cout << "moment arm was: " << ma_model << std::endl;
 
 	//  Get the reply.
 	zmq::message_t reply;
 	(*publisher).recv(&reply);
 
 	from_msg.ParseFromArray(reply.data(), reply.size());
-	double reply_dbl = from_msg.jnt_qpos();
 
-	int jointID = mj_name2id(m, mjOBJ_JOINT, joint_name.c_str());
-	d->qpos[jointID] = reply_dbl;
+	for (int i = 0; i < from_msg.joint_size(); i++) {
+		std::string current_joint = from_msg.joint(i).name();
+		int jointID = mj_name2id(m, mjOBJ_JOINT, current_joint.c_str());
+		d->qpos[jointID] = from_msg.joint(i).qpos();
+		//std::cout << "The reply moved joint " << from_msg.joint(i).name() << " to position " << from_msg.joint(i).qpos() << std::endl;
+	}
+}
 
-	std::cout << "The reply was: " << reply_dbl << std::endl;
+void SweepMomentArms(mjData* d, mjModel* m, std::vector<std::string> *pair_names, int num_positions, double* start_pos, double* end_pos, zmq::socket_t *publisher) {
+	// protocol buffer stuff
+	mujoco2py::mujoco_msg to_msg;
+	mujoco2py::mujoco_msg from_msg;
+	mujoco2py::general_msg from_gen_msg;
+	mujoco2py::general_msg init_msg;
+	mujoco2py::general_msg end_msg;
+
+	mujoco2py::mujoco_msg_mj_tend *tendon_msg;
+	mujoco2py::mujoco_msg_mj_joint *joint_msg;
+	
+	std::vector<std::string>::iterator jnt_it = pair_names[1].begin();
+
+	init_msg.set_instruction("begin");
+	init_msg.add_value(num_positions);
+	init_msg.add_value(pair_names[1].size());
+	std::string init_msg_str;
+	init_msg.SerializeToString(&init_msg_str);
+	//  Send message to all subscribers
+	zmq::message_t init_msg_zmq(init_msg_str.length());
+	memcpy(init_msg_zmq.data(), init_msg_str.c_str(), init_msg_str.length());
+	(*publisher).send(init_msg_zmq);
+	//  Get the reply.
+	zmq::message_t reply;
+	(*publisher).recv(&reply);
+
+	int i = 0;
+	for (std::vector<std::string>::iterator tnd_it = pair_names[0].begin(); tnd_it < pair_names[0].end(); tnd_it++, jnt_it++, i++)
+	{
+		mujoco2py::general_msg next_joint_msg;
+
+		next_joint_msg.set_instruction("next");
+		next_joint_msg.add_value(start_pos[i]);
+		next_joint_msg.add_value(end_pos[i]);
+
+		std::string next_joint_msg_str;
+		next_joint_msg.SerializeToString(&next_joint_msg_str);
+
+		//  Send message to all subscriber
+
+		zmq::message_t next_joint_msg_zmq(next_joint_msg_str.length());
+		memcpy(next_joint_msg_zmq.data(), next_joint_msg_str.c_str(), next_joint_msg_str.length());
+		(*publisher).send(next_joint_msg_zmq);
+		//  Get the reply.
+		(*publisher).recv(&reply);
+
+		for (int a = 0; a < num_positions; a++){
+			double ma_model = tendonMomentArm(d, m, (*tnd_it), (*jnt_it));
+
+			tendon_msg = to_msg.add_tend();
+			(*tendon_msg).set_ma(ma_model);
+			(*tendon_msg).set_name(*tnd_it);
+			joint_msg = to_msg.add_joint();
+			(*joint_msg).set_name(*jnt_it);
+
+			std::string msg_str;
+			to_msg.SerializeToString(&msg_str);
+
+			//  Send message to all subscribers
+			zmq::message_t message(msg_str.length());
+			memcpy(message.data(), msg_str.c_str(), msg_str.length());
+			(*publisher).send(message);
+			//std::cout << "moment arm was: " << ma_model << std::endl;
+
+			//  Get the reply.
+			zmq::message_t reply;
+			(*publisher).recv(&reply);
+
+			from_msg.ParseFromArray(reply.data(), reply.size());
+
+			mj_resetData(m, d);
+			for (int b = 0; b < from_msg.joint_size(); b++) {
+				std::string current_joint = from_msg.joint(b).name();
+				int jointID = mj_name2id(m, mjOBJ_JOINT, current_joint.c_str());
+				d->qpos[jointID] = from_msg.joint(b).qpos();
+				//std::cout << "The reply moved joint " << from_msg.joint(i).name() << " to position " << from_msg.joint(i).qpos() << std::endl;
+			}
+
+			mj_inverse(m, d);
+		}
+	}
+
+	end_msg.set_instruction("end");
+	std::string end_msg_str;
+	end_msg.SerializeToString(&end_msg_str);
+	//  Send message to all subscribers
+	zmq::message_t end_msg_zmq(end_msg_str.length());
+	memcpy(end_msg_zmq.data(), end_msg_str.c_str(), end_msg_str.length());
+	(*publisher).send(end_msg_zmq);
 }
 
 void cycleMuscle(mjData* d, mjModel* m, std::string muscle_name, std::string tendon_name, zmq::socket_t *publisher) {
 	// protocol buffer stuff
 	mujoco2py::mujoco_msg to_msg;
 	mujoco2py::mujoco_msg from_msg;
+
 	int actID = mj_name2id(m, mjOBJ_ACTUATOR, muscle_name.c_str());
 	int tendID = mj_name2id(m, mjOBJ_TENDON, tendon_name.c_str());
 
-	to_msg.set_mus_name(muscle_name);
-	to_msg.set_tnd_name(tendon_name);
-	to_msg.set_mus_force(d->actuator_force[actID]);
-	to_msg.set_tnd_len(d->ten_length[tendID]);
+	mujoco2py::mujoco_msg_mj_act *act_msg = to_msg.add_act();
+	mujoco2py::mujoco_msg_mj_tend *tend_msg = to_msg.add_tend();
+
+	(*act_msg).set_name(muscle_name);
+	(*act_msg).set_force(d->actuator_force[actID]);
+
+	(*tend_msg).set_name(tendon_name);
+	(*tend_msg).set_len(d->ten_length[tendID]);
 
 	std::string msg_str;
 	to_msg.SerializeToString(&msg_str);
@@ -449,12 +535,176 @@ void cycleMuscle(mjData* d, mjModel* m, std::string muscle_name, std::string ten
 	(*publisher).recv(&reply);
 
 	from_msg.ParseFromArray(reply.data(), reply.size());
-	double reply_dbl = from_msg.mus_ctrl();
+	double reply_dbl = from_msg.act(0).ctrl();
 
 	double ext_ctrl = extended_ctrl(reply_dbl, muscle_name);
 	d->ctrl[actID] = ext_ctrl;
 
-	std::cout << "The reply was: " << reply_dbl << std::endl;
+	//std::cout << "The reply was: " << reply_dbl << std::endl;
+}
+
+void cycleSitePos(mjData* d, mjModel*  m, zmq::socket_t *publisher, std::vector<std::string> tendon_names, std::vector<std::string> joint_names) {
+	// protocol buffer stuff
+	mujoco2py::mujoco_msg to_msg;
+	mujoco2py::mujoco_msg from_msg;
+
+	mujoco2py::mujoco_msg_mj_act *act_msg = 0;
+	mujoco2py::mujoco_msg_mj_joint *joint_msg = 0;
+	mujoco2py::mujoco_msg_mj_site *site_msg = 0;
+
+	Eigen::VectorXd actuator_forces(m->nu);
+	Eigen::VectorXd joint_forces(m->nv);
+
+	int n = 6;
+	Eigen::VectorXd x;
+
+	std::vector<std::string> sites;
+	sites.push_back("right_hip");
+	sites.push_back("right_knee");
+	sites.push_back("right_ankle");
+	sites.push_back("right_toe");
+	sites.push_back("left_hip");
+	sites.push_back("left_knee");
+	sites.push_back("left_ankle");
+	sites.push_back("left_toe");
+
+	/* the following starting values provide a rough fit. */
+	x.setConstant(n, 0);
+	for (int j = 0; j < n; j++) {
+		x[j] = d->qpos[j];
+		//std::cout << "x_i[" << j << "] = " << x[j] << " ";
+	}
+	//std::cout << std::endl;
+	double targ[24];
+	//left hip:
+	targ[12] = 0.03143;
+	targ[13] = 0;
+	targ[14] = 0;
+	//left knee
+	targ[15] = 0.03143;
+	targ[16] = 0;
+	targ[17] = -0.163;
+	//left ankle
+	targ[18] = 0.03143;
+	targ[19] = 0;
+	targ[20] = -0.345;
+	//left toe
+	targ[21] = 0.03143;
+	targ[22] = -0.074;
+	targ[23] = -0.345;
+
+	int i = 0;
+	for (std::vector<std::string>::iterator it = joint_names.begin(); it < joint_names.end(); it++, i++) {
+		int jointID = mj_name2id(m, mjOBJ_JOINT, (*it).c_str());
+
+		joint_msg = to_msg.add_joint();
+		(*joint_msg).set_name(*it);
+		joint_forces(i) = d->qfrc_inverse[jointID];
+		
+		(*joint_msg).set_force(joint_forces(i));
+	}
+
+	for (std::vector<std::string>::iterator it = sites.begin(); it < sites.end(); it++) {
+		int siteID = mj_name2id(m, mjOBJ_SITE, (*it).c_str());
+
+		site_msg = to_msg.add_site();
+		(*site_msg).set_name(*it);
+		double y = d->site_xpos[3 * siteID + 1];
+		double z = d->site_xpos[3 * siteID + 2];
+
+		(*site_msg).set_y(y);
+		(*site_msg).set_z(z);
+	}
+
+
+	Eigen::MatrixXd moment_arm_matrix(m->nu, m->nv);
+
+	for (int i = 0; i < m->nu; i++) {
+		for (int j = 0; j < m->nv; j++) {
+			moment_arm_matrix(i, j) = d->actuator_moment[m->nv*i + j];
+		}
+	}
+
+	Eigen::MatrixXd inv_ma_matrix(m->nv, m->nu);
+	inv_ma_matrix = moment_arm_matrix.transpose();
+	Eigen::JacobiSVD<Eigen::MatrixXd>pinv(inv_ma_matrix);
+
+	actuator_forces = inv_ma_matrix.transpose()*joint_forces;
+	//std::cout << "Moment arm matrix: " << std::endl << moment_arm_matrix << std::endl;
+	//std::cout << "Actuator Force Vector: " << std::endl << actuator_forces << std::endl;
+
+	i = 0;
+	for (std::vector<std::string>::iterator it = tendon_names.begin(); it < tendon_names.end(); it++, i++) {
+		int actID = mj_name2id(m, mjOBJ_ACTUATOR, (*it).c_str());
+
+		act_msg = to_msg.add_act();
+		(*act_msg).set_name(*it);
+		(*act_msg).set_force(actuator_forces(i));
+	}
+
+	std::string msg_str;
+	to_msg.SerializeToString(&msg_str);
+
+	//  Send message to all subscribers
+	zmq::message_t message(msg_str.length());
+	memcpy(message.data(), msg_str.c_str(), msg_str.length());
+	(*publisher).send(message);
+	
+	//  Get the reply.
+	zmq::message_t reply;
+	(*publisher).recv(&reply);
+
+	from_msg.ParseFromArray(reply.data(), reply.size());
+
+	for (int i = 0; i < from_msg.site_size(); i++) {
+		targ[3 * i    ] = from_msg.site(i).x();
+		targ[3 * i + 1] = from_msg.site(i).y();
+		targ[3 * i + 2] = from_msg.site(i).z();
+		/*std::cout << "The reply expects site: " << from_msg.site(i).site_name()
+			<< " to be at position <" << from_msg.site(i).x() << ", "
+			<< from_msg.site(i).y() << ", " << from_msg.site(i).z() << ">" << std::endl;*/
+	}
+
+	solution_pose = testLmder1(targ,x,sites);
+	//std::cout << "solution pose: " << solution_pose.transpose() << std::endl;
+	mj_resetData(m, d);
+	for (int a = 0; a < m->nq; a++) {
+		d->qpos[a] = solution_pose[a];
+	}
+
+}
+
+void updateNeuron(mjData* d, mjModel*  m, zmq::socket_t *publisher, std::vector<std::string> tendon_names) {
+	// protocol buffer stuff
+	mujoco2py::mujoco_msg to_msg;
+	mujoco2py::mujoco_msg from_msg;
+
+	mujoco2py::mujoco_msg_mj_tend *tend_msg = 0;
+
+	for (std::vector<std::string>::iterator it = tendon_names.begin(); it < tendon_names.end(); it++) {
+		int siteID = mj_name2id(m, mjOBJ_TENDON, (*it).c_str());
+
+		tend_msg = to_msg.add_tend();
+		(*tend_msg).set_name(*it);
+		(*tend_msg).set_len(d->ten_length[siteID]);
+		(*tend_msg).set_len_dot(d->ten_velocity[siteID]);
+		//std::cout << "tendon velocity was: " << d->ten_velocity[siteID] << std::endl;
+		(*tend_msg).set_len0(tendon_length0[siteID]);
+	}
+
+	std::string msg_str;
+	to_msg.SerializeToString(&msg_str);
+
+	//  Send message to all subscribers
+	zmq::message_t message(msg_str.length());
+	memcpy(message.data(), msg_str.c_str(), msg_str.length());
+	(*publisher).send(message);
+
+	//  Get the reply.
+	zmq::message_t reply;
+	(*publisher).recv(&reply);
+
+	from_msg.ParseFromArray(reply.data(), reply.size());
 }
 //-------------------------------- utility functions ------------------------------------
 
@@ -480,20 +730,22 @@ void autoscale(GLFWwindow* window)
 }
 
 // load mjb or xml model
-void loadmodel(GLFWwindow* window, const char* filename)
+void loadmodel(GLFWwindow* window, const char* filename, const char* xmlstring)
 {
-    // load and compile
-    char error[1000] = "could not load binary model";
-    mjModel* mnew = 0;
-    if( strlen(filename)>4 && !strcmp(filename+strlen(filename)-4, ".mjb") )
-        mnew = mj_loadModel(filename, 0, 0);
-    else
-        mnew = mj_loadXML(filename, error);
-    if( !mnew )
-    {
-        printf("%s\n", error);
-        return;
-    }
+	// load and compile
+	char error[1000] = "could not load binary model";
+	mjModel* mnew = 0;
+	if (xmlstring)
+		mnew = mj_loadXML(0, xmlstring, error, 1000);
+	else if (strlen(filename)>4 && !strcmp(filename + strlen(filename) - 4, ".mjb"))
+		mnew = mj_loadModel(filename, 0, 0);
+	else
+		mnew = mj_loadXML(filename, 0, error, 1000);
+	if (!mnew)
+	{
+		printf("%s\n", error);
+		return;
+	}
 
     // delete old model, assign new
     mj_deleteData(d);
@@ -508,6 +760,7 @@ void loadmodel(GLFWwindow* window, const char* filename)
     mj_forward(m, d);
 	for (int a = 0; a < m->nu; a++) {
 		actuator_length0.push_back(d->actuator_length[a]);
+		tendon_length0.push_back(d->ten_length[a]);
 	}
 
     // save filename for reload
@@ -635,7 +888,7 @@ void keyboard(GLFWwindow* window, int key, int scancode, int act, int mods)
             if( key==GLFW_KEY_A )
                 autoscale(window);
             else if( key==GLFW_KEY_L && lastfile[0] )
-                loadmodel(window, lastfile);
+                loadmodel(window, lastfile,0);
 
             break;
         }
@@ -809,7 +1062,7 @@ void drop(GLFWwindow* window, int count, const char** paths)
     if( count>0 )
     {
         gui_mutex.lock();
-        loadmodel(window, paths[0]);
+        loadmodel(window, paths[0],0);
         gui_mutex.unlock();
     }
 }
@@ -857,13 +1110,13 @@ void advance(void)
     }
 
     // advance simulation
-    mj_step(m, d);
+	mj_inverse(m, d);
+    //mj_step(m, d);
 
     // clear perturbation
     if( selbody>0 )
         mju_zero(d->xfrc_applied+6*selbody, 6);
 }
-
 
 // render
 void render(GLFWwindow* window)
@@ -881,8 +1134,7 @@ void render(GLFWwindow* window)
     // no model: empty screen
     if( !m )
     {
-		mjr_rectangle(1, rect, 0, 0, rect.width, rect.height, 
-			0.2, 0.3, 0.4, 1);
+		mjr_rectangle(rect, 0, 0, rect.width, rect.height, 0.2, 0.3, 0.4, 1);
         mjr_overlay(rect, mjGRID_TOPLEFT, 0, "Drag-and-drop model file here", 0, &con);
         gui_mutex.unlock();
         return;
@@ -1084,11 +1336,8 @@ void render(GLFWwindow* window)
 int main(int argc, const char** argv)
 {
 	// activate MuJoCo license
-	mj_activate("E:\\mjpro\\mjkey.txt");
+	mj_activate("E:\\mjpro\\key_5293.txt");
 
-	// activate python server
-	int a = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\CycleGeneralizedCoordsServer.py\" &");
-	
 	// init GLFW, set multisampling
     if (!glfwInit())
         return 1;
@@ -1133,7 +1382,7 @@ int main(int argc, const char** argv)
 
     // load model if filename given as argument
     if( argc==2 )
-        loadmodel(window, argv[1]);
+        loadmodel(window, argv[1],0);
 
     // set GLFW callbacks
     glfwSetKeyCallback(window, keyboard);
@@ -1145,56 +1394,183 @@ int main(int argc, const char** argv)
     // print version
     printf("MuJoCo Pro version %.2lf\n\n", mj_version());
 
-	std::cout << "Connecting to python server ..." << std::endl;
+	std::cout << "Connecting to python server 1 ..." << std::endl;
 	publisher.connect("tcp://localhost:5556");
+	std::cout << "Connecting to python server 2 ..." << std::endl;
+    neuron_publisher.connect("tcp://localhost:5555");
+	
+	// activate python server
+	//int a = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\CycleGeneralizedCoordsServer.py\" &");
+	//int a = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\CycleJointServer.py\" &");
+	//int a = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\CycleMuscleServer.py\" &");
+	int a = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\CycleSiteCoordsServer.py\" &");
+	//int b = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\NeuronServer.py\" &");
 
 	//Levenberg Test
 	/*
-		solution_pose = testLmder1(200);
+	double targ[18] = { -0.04343, -0.0479416, 0.932763,
+	0.04343, -0.0672373, 1.04794,
+	-0.02423, 0.074101, 0.743362,
+	0.02423, -0.2566, 0.92589,
+	-0.03433, -0.0993, 0.849,
+	0.03433, -0.150931, 1.09938
+	};
+		solution_pose = testLmder1(200, targ);
 		paused = true;
 		mj_resetData(m, d);
 		for (int a = 0; a < m->nq; a++) {
-			//d->qpos[a] = solution_pose[a];
+			d->qpos[a] = solution_pose[a];
 		}
 		mj_forward(m, d);
 	*/
 
 	// get a target configuration
 	/*
-	std::string target = "r_VAS_femur";
+	std::string target = "right_hip";
 	int siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
-	std::cout << "r_VAS_femur: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
+	std::cout << "right_hip: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
 
-	target = "l_VAS_femur";
+	target = "right_knee";
 	siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
-	std::cout << "l_VAS_femur: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
+	std::cout << "right_knee: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
 
-	target = "r_TA_ankle";
+	target = "right_ankle";
 	siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
-	std::cout << "r_TA_ankle: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
+	std::cout << "right_ankle: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
 
-	target = "l_TA_ankle";
+	target = "right_toe";
 	siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
-	std::cout << "l_TA_ankle: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
+	std::cout << "right_toe: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
 
-	target = "r_RF_tibia";
+	target = "left_hip";
 	siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
-	std::cout << "r_RF_tibia: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
+	std::cout << "left_hip: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
 
-	target = "l_RF_tibia";
+	target = "left_knee";
 	siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
-	std::cout << "l_RF_tibia: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
+	std::cout << "left_knee: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
+
+	target = "left_ankle";
+	siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
+	std::cout << "left_ankle: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
+
+	target = "left_toe";
+	siteID = mj_name2id(m, mjOBJ_SITE, target.c_str());
+	std::cout << "left_toe: " << d->site_xpos[3 * siteID + 0] << "  " << d->site_xpos[3 * siteID + 1] << "  " << d->site_xpos[3 * siteID + 2] << std::endl;
 	*/
 	// main loop
+	std::vector<std::string> tendons;
+
+	tendons.push_back("r_IL");
+	tendons.push_back("l_IL");
+	tendons.push_back("r_GMED");
+	tendons.push_back("l_GMED");
+	tendons.push_back("r_VAS");
+	tendons.push_back("l_VAS");
+	tendons.push_back("r_TA");
+	tendons.push_back("l_TA");
+	tendons.push_back("r_SOL");
+	tendons.push_back("l_SOL");
+	tendons.push_back("r_RF");
+	tendons.push_back("l_RF");
+	tendons.push_back("r_BF");
+	tendons.push_back("l_BF");
+	tendons.push_back("r_GAS");
+	tendons.push_back("l_GAS");
+
+	std::vector<std::string> joints;
+
+	joints.push_back("right_hip_x");
+	joints.push_back("right_knee");
+	joints.push_back("right_ankle_x");
+	joints.push_back("left_hip_x");
+	joints.push_back("left_knee");
+	joints.push_back("left_ankle_x");
+
+	std::vector<std::string> name_pairs[2];
+	double start_poses[11];
+	double end_poses[11];
+
+	name_pairs[0].push_back("r_IL");
+	name_pairs[1].push_back("right_hip_x");
+
+	start_poses[0] = -40;
+	end_poses[0] = 90;
+
+	name_pairs[0].push_back("r_GMED");
+	name_pairs[1].push_back("right_hip_x");
+
+	start_poses[1] = -40;
+	end_poses[1] = 90;
+
+	name_pairs[0].push_back("r_VAS");
+	name_pairs[1].push_back("right_knee");
+
+	start_poses[2] = -60;
+	end_poses[2] = 90;
+
+	name_pairs[0].push_back("r_TA");
+	name_pairs[1].push_back("right_ankle_x");
+
+	start_poses[3] = -60;
+	end_poses[3] = 30;
+
+	name_pairs[0].push_back("r_SOL");
+	name_pairs[1].push_back("right_ankle_x");
+
+	start_poses[4] = -60;
+	end_poses[4] = 30;
+
+	name_pairs[0].push_back("r_RF");
+	name_pairs[1].push_back("right_hip_x");
+
+	start_poses[5] = -40;
+	end_poses[5] = 90;
+
+	name_pairs[0].push_back("r_RF");
+	name_pairs[1].push_back("right_knee");
+
+	start_poses[6] = -60;
+	end_poses[6] = 90;
+
+	name_pairs[0].push_back("r_BF");
+	name_pairs[1].push_back("right_hip_x");
+
+	start_poses[7] = -40;
+	end_poses[7] = 90;
+
+	name_pairs[0].push_back("r_BF");
+	name_pairs[1].push_back("right_knee");
+
+	start_poses[8] = -60;
+	end_poses[8] = 90;
+
+	name_pairs[0].push_back("r_GAS");
+	name_pairs[1].push_back("right_knee");
+
+	start_poses[9] = -60;
+	end_poses[9] = 90;
+
+	name_pairs[0].push_back("r_GAS");
+	name_pairs[1].push_back("right_ankle");
+
+	start_poses[10] = -60;
+	end_poses[10] = 30;
+
     while( !glfwWindowShouldClose(window) )
     {
+		if (update_cmd) {
+			//SweepMomentArms(d, m, name_pairs, 100, start_poses, end_poses, &publisher);
+			//Sleep(100);
+			//cycleMuscle(d, m, "r_TA", "r_TA", &publisher);
+
+			cycleSitePos(d, m, &publisher, tendons, joints);
+		}
         // simulate and render
         render(window);
-		
+		//mj_inverse(m, d);
 		if (update_cmd) {
-			cycleJoint(d, m, "r_GAS", "right_hip_x", &publisher);
-			Sleep(500);
-			//cycleMuscle(d, m, "r_GAS", "r_GAS", &publisher);
+			//updateNeuron(d, m, &neuron_publisher, tendons);
 		}
 		
         // finalize
