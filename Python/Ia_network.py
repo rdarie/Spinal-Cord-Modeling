@@ -21,7 +21,6 @@ class Ia_network:
         self._N = N
         self.create_cells(N)
         self.connect_cells()
-        #self.connect_stim()
    #
     def create_cells(self, N):
         """Create and layout N cells in the network."""
