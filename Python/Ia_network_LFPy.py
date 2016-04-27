@@ -22,10 +22,19 @@ class Ia_network(Network):
             'Mn' : [],
             'Ia' : []
         }
-        
+
         self.cellRotations = {
             'Mn' : [],
             'Ia' : []
+        }
+
+        sim_params = hf.get_net_params(hf.get_tempdata_address())
+        dummy_Ia = Ia(n_nodes = sim_params[0][0])
+        dummy_Mn = Mn()
+
+        self.cellMorphologies = {
+            'Mn' : dummy_Mn.morphology_address,
+            'Ia' : dummy_Ia.morphology_address
         }
     #
 
@@ -33,7 +42,7 @@ class Ia_network(Network):
         """Create and layout N cells in the network."""
         cells = {}
 
-        position_factor = 5e3;
+        position_factor = 2e3
         sim_params = hf.get_net_params(hf.get_tempdata_address())
         mn_pos_x = sim_params[10]
         mn_pos_y = sim_params[11]
@@ -46,7 +55,7 @@ class Ia_network(Network):
         cells.update({"Mn" : cell})
         self.cellPositions['Mn'].append([cell.somapos[0], cell.somapos[1], cell.somapos[2]])
 
-        cell = Ia(n_nodes = 43)
+        cell = Ia(n_nodes = sim_params[0][0])
         cell.set_pos(cellindex * position_factor,
                           cellindex * position_factor,
                           cellindex * position_factor)
@@ -75,10 +84,10 @@ class Ia_network(Network):
         #perform NEURON simulation, results saved as attributes in cell
         self.simulate(cells)
 
-        shape_window = h.PlotShape()
+        '''shape_window = h.PlotShape()
         input('Pick a card, any card')
 
-        print("nsoma_sec = %d" % cells['Mn'].nsomasec)
+        print("nsoma_sec = %d" % cells['Mn'].nsomasec)'''
         #return dict with primary results from simulation
         return {'somav' : cells['Mn'].somav}
 

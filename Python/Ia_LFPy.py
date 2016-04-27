@@ -12,10 +12,11 @@ class Ia(my_cell):  #### Inherits from Cell
     from Ia_geometry_output import shape_3D as Ia_shape
 
     def __init__(self, *args, **kwargs):
+        self.morphology_address = 'E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\Python\\Ia_geometry_output.py'
         self.n_nodes =kwargs.pop('n_nodes')
         kwargs.update({'delete_sections' : False})
         kwargs.update({'pt3d' : True})
-        kwargs.update({'morphology' : 'E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\Python\\Ia_geometry_output.py'})
+        kwargs.update({'morphology' : self.morphology_address})
         super(Ia, self).__init__(*args, **kwargs)
 
     #

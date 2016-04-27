@@ -20,8 +20,8 @@ cellParameters = {
         'lambda_f' : 10,            # segments are isopotential at frequency
         'timeres_NEURON' : 2**-3,   # dt of LFP and NEURON simulation.
         'timeres_python' : 2**-3,
-        'tstartms' : -100,          #start time, recorders start at t=0
-        'tstopms' : 200,            #stop time of simulation
+        'tstartms' : -1,          #start time, recorders start at t=0
+        'tstopms' : 2,            #stop time of simulation
         'custom_code'  : [], #active decl.
 }
 
@@ -50,5 +50,6 @@ bla = Ia_network(POPULATION_SIZE,
                      cellParameters,
                      populationParameters,
                      synapseParameters)
-bla.run()
+#bla.run()
+bla.plot_network()
 input('Pick a card, any card')

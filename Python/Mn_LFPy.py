@@ -11,9 +11,10 @@ class Mn(my_cell):  #### Inherits from Cell
     ####
 
     def __init__(self, *args, **kwargs):
+        self.morphology_address = 'E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\Python\\Mn_geometry_output3.py'
         kwargs.update({'delete_sections' : False})
         kwargs.update({'pt3d' : True})
-        kwargs.update({'morphology' : 'E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\Python\\Mn_geometry_output3.py'})
+        kwargs.update({'morphology' : self.morphology_address})
         super(Mn, self).__init__(*args, **kwargs)
     #
     def create_sections(self):
@@ -38,7 +39,7 @@ class Mn(my_cell):  #### Inherits from Cell
         of the dendrite. Set its tau to 2ms, and append this
         synapse to the synlist of the cell."""
         synapseParameters = {
-        'idx' : self.get_idx(section='soma'),               # insert synapse on index "0", the soma
+        'idx' : self.get_idx(section='soma')[0],               # insert synapse on index "0", the soma
         'e' : 0.,                # reversal potential of synapse
         'syntype' : 'ExpSyn',   # conductance based double-exponential synapse
         'tau' : 2.0,            # Time constant

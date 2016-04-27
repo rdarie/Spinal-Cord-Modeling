@@ -3,6 +3,8 @@ import numpy as np
 from neuron import h
 from mpi4py import MPI
 from neuronpy.util import spiketrain
+import matplotlib.pyplot as plt
+from matplotlib.collections import PolyCollection
 
 class Network(object):
     '''prototype population class'''
@@ -24,13 +26,11 @@ class Network(object):
         #set one global seed, ensure all randomizations are set on RANK 0 in script!
         np.random.seed(12345)
         self._POPULATION_SIZE = POPULATION_SIZE
-        self._cellParameters = cellParameters
-        self._populationParameters = populationParameters
         self._synapseParameters = synapseParameters
 
         self.cellPositions = {}
         self.cellRotations = {}
-        self.cells = {}
+        self.cellMorphologies = {}
 
         #MPI stuff we're using
         self.COMM = MPI.COMM_WORLD
@@ -66,7 +66,7 @@ class Network(object):
         else:
             self.COMM.send(self.cellPositions, dest=0)                    #send to RANK 0
             self.cellPositions = None                                     #results only exist on RANK 0
-
+        #print("Just ended Run!")
         self.COMM.Barrier()  #sync MPI threads
     #
     def distribute_cellsims(self):
@@ -85,35 +85,33 @@ class Network(object):
 
     def plot_network(self):
         '''plot cell traces'''
+        print("At the beginning of plot_network! Cell positions are: ")
+        print(self.cellPositions)
         if self.RANK == 0:
             fig = plt.figure(figsize=(12, 8))
 
-            ax = fig.add_axes([0.05, 0.0, 0.45, 1.0],
+            ax = fig.add_axes([0.05, 0.05, 0.9, 0.9],
                         aspect='equal', frameon=False,
                         xticks=[], xticklabels=[], yticks=[], yticklabels=[])
+
             for cellindex in range(self._POPULATION_SIZE):
-                for key, value in self.cellPositions.iteritems():
-                    cell = LFPy.Cell(**self._cellParameters)
-                    cell.set_pos(xpos = self._cellPositions[cellindex, 0],
-                         ypos = self._cellPositions[cellindex, 1],
-                         zpos = self._cellPositions[cellindex, 2])
-                    cell.set_rotation(z = self._cellRotations[cellindex])
+                cells = self.create_cells(cellindex)
+                for key, value in cells.iteritems():
+                    zips = []
+                    for x, z in value.get_idx_polygons():
+                        #zips.append(list(zip(x, z)))
+                        zips.append(zip(x, z))
 
-                zips = []
-                for x, z in cell.get_idx_polygons():
-                    zips.append(list(zip(x, z)))
-
-                polycol = PolyCollection(zips,
-                                edgecolors='none',
-                                facecolors='bgrcmykbgrcmykbgrcmyk'[cellindex],
-                                zorder = self.cellPositions[cellindex, 1])
-
-                ax.add_collection(polycol)
-
-            ax.plot(self.electrodeParameters['x'],
+                    polycol = PolyCollection(zips,
+                                    edgecolors='none', closed = False,
+                                    facecolors='bgrcmykbgrcmykbgrcmyk'[cellindex])
+                                    #zorder = self.cellPositions[key][cellindex][2])
+                    ax.add_collection(polycol)
+            ax.plot()
+            plt.show()
+            '''ax.plot(self.electrodeParameters['x'],
                     self.electrodeParameters['z'],
                     marker='o', color='g', clip_on=False, zorder=0)
-
             ax = fig.add_axes([0.5, 0.55, 0.40, 0.4])
             for key, value in list(self.results.items()):
                 tvec = np.arange(value['somav'].size) * \
@@ -124,7 +122,6 @@ class Network(object):
             #ax.set_xlabel('time (ms)')
             ax.set_ylabel('$V_{soma}$ (mV)')
             ax.set_title('somatic potentials')
-
             ax = fig.add_axes([0.5, 0.075, 0.40, 0.4])
             cax = fig.add_axes([0.91, 0.075, 0.02, 0.40])
             im = ax.pcolormesh(tvec, self.electrodeParameters['z'], self.LFP,
@@ -136,22 +133,18 @@ class Network(object):
             cbar.set_label('LFP (mV)')
             ax.set_title('superimposed LFP')
             ax.set_xlabel('time (ms)')
-            ax.set_ylabel('$z$ ($\mu$m)')
-
-            fig.savefig('example_mpi.pdf', dpi=300)
+            ax.set_ylabel('$z$ ($\mu$m)')'''
+        fig.savefig('example_mpi.pdf', dpi=300)
 
     #
-    def create_cells(self, POPULATION_SIZE):
+    def create_cells(self, cellindex):
         """Create and layout N cells in the network."""
         raise NotImplementedError("create_cells() is not implemented.")
     #
-    def connect_cells(self):
+    def connect_cells(self, cells, cellindex):
         """Connect cell i to cell i + N."""
         raise NotImplementedError("connect_cells() is not implemented.")
     #
-    def get_spikes(self):
-        """Get the spikes as a list of lists."""
-        return spiketrain.netconvecs_to_listoflists(self.t_vec, self.id_vec)
 
     def simulate(self,cells):
         """Run the simulation"""
