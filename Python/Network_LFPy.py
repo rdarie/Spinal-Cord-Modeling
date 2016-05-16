@@ -32,6 +32,7 @@ class Network(object):
         self.cellRotations = {}
         self.cellMorphologies = {}
 
+        self.hasExtracellularVoltage = False
         #MPI stuff we're using
         self.COMM = MPI.COMM_WORLD
         self.SIZE = self.COMM.Get_size()
@@ -40,6 +41,16 @@ class Network(object):
         #sync threads
         self.COMM.Barrier()
     #
+    def reset(self):
+        for key, value in self.cellPositions.iteritems():
+            value = []
+
+        for key, value in self.cellRotations.iteritems():
+            value = []
+
+        for key, value in self.cellMorphologies.iteritems():
+            value = []
+
     def run(self):
         '''execute the proper simulation and collect simulation results'''
         #produce simulation results on each RANK
@@ -85,30 +96,43 @@ class Network(object):
 
     def plot_network(self):
         '''plot cell traces'''
-        print("At the beginning of plot_network! Cell positions are: ")
-        print(self.cellPositions)
+
         if self.RANK == 0:
-            fig = plt.figure(figsize=(12, 8))
+            fig = plt.figure(figsize=(12, 12))
 
             ax = fig.add_axes([0.05, 0.05, 0.9, 0.9],
-                        aspect='equal', frameon=False,
+                        frameon=True, aspect = 'equal',
                         xticks=[], xticklabels=[], yticks=[], yticklabels=[])
 
             for cellindex in range(self._POPULATION_SIZE):
+                #self.reset()
                 cells = self.create_cells(cellindex)
-                for key, value in cells.iteritems():
-                    zips = []
-                    for x, z in value.get_idx_polygons():
-                        #zips.append(list(zip(x, z)))
-                        zips.append(zip(x, z))
 
+                counter = 0
+                for key, value in cells.iteritems():
+                    #if counter == 1:
+                    zips = []
+                    #print("plotting %s" % key)
+                    for x, z in value.get_idx_polygons(projection=('y', 'z')):
+                        zips.append(list(zip(x, z)))
+                    #print(zips)
                     polycol = PolyCollection(zips,
                                     edgecolors='none', closed = False,
                                     facecolors='bgrcmykbgrcmykbgrcmyk'[cellindex])
                                     #zorder = self.cellPositions[key][cellindex][2])
+                    #print("using color %s" % 'bgrcmykbgrcmykbgrcmyk'[cellindex])
+
                     ax.add_collection(polycol)
+
+                    del value
+
+                del cells
+                for sec in h.allsec():
+                    print(sec.name())
+
             ax.plot()
             plt.show()
+
             '''ax.plot(self.electrodeParameters['x'],
                     self.electrodeParameters['z'],
                     marker='o', color='g', clip_on=False, zorder=0)
@@ -134,7 +158,8 @@ class Network(object):
             ax.set_title('superimposed LFP')
             ax.set_xlabel('time (ms)')
             ax.set_ylabel('$z$ ($\mu$m)')'''
-        fig.savefig('example_mpi.pdf', dpi=300)
+
+            fig.savefig('example_mpi.pdf', dpi=300)
 
     #
     def create_cells(self, cellindex):
@@ -145,6 +170,11 @@ class Network(object):
         """Connect cell i to cell i + N."""
         raise NotImplementedError("connect_cells() is not implemented.")
     #
+    def insert_voltage(self, v_space, v_time):
+        """Insert extracellular voltage trace"""
+        self.v_space = v_space
+        self.v_time = v_time
+        self.hasExtracellularVoltage = True
 
     def simulate(self,cells):
         """Run the simulation"""

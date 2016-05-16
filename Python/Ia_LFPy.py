@@ -24,6 +24,25 @@ class Ia(my_cell):  #### Inherits from Cell
         self.Ia_node = [h.Section(name='Ia_node_%d' % i, cell=self) for i in range(int(self.n_nodes))]
         self.Ia_paranode = [h.Section(name='Ia_paranode_%d' % i, cell=self) for i in range(int(self.n_nodes))]
     #
+
+    def _create_sectionlists(self):
+            '''Create section lists for different kinds of sections'''
+            #list with all sections
+            self.allsecnames = []
+            self.allseclist = h.SectionList()
+            for sec in h.allsec():
+                if sec.name().find('Ia_') >= 0:
+                    self.allsecnames.append(sec.name())
+                    self.allseclist.append(sec=sec)
+
+            #list of soma sections, assuming it is named on the format "soma*"
+            self.nsomasec = 0
+            self.somalist = h.SectionList()
+            for sec in h.allsec():
+                if sec.name().find('Ia_soma') >= 0:
+                    self.somalist.append(sec=sec)
+                    self.nsomasec += 1
+
     def build_topology(self):
         """Connect the sections of the cell to build a tree."""
         for a in range(int(self.n_nodes)):

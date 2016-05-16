@@ -36,22 +36,28 @@ class Ia_network(Network):
             'Mn' : dummy_Mn.morphology_address,
             'Ia' : dummy_Ia.morphology_address
         }
+
+        del dummy_Ia, dummy_Mn
     #
 
     def create_cells(self, cellindex):
         """Create and layout N cells in the network."""
         cells = {}
 
-        position_factor = 2e3
+        position_factor = 1e3
         sim_params = hf.get_net_params(hf.get_tempdata_address())
         mn_pos_x = sim_params[10]
         mn_pos_y = sim_params[11]
         mn_pos_z = sim_params[12]
 
         cell = Mn()
-        cell.set_pos(mn_pos_x[0] + cellindex * position_factor,
-                          mn_pos_y[0] + cellindex * position_factor,
+        '''cell.set_pos(mn_pos_x[0] + cellindex * position_factor,
+                      mn_pos_y[0] + cellindex * position_factor,
                           mn_pos_z[0] + cellindex * position_factor)
+'''
+        cell.set_pos(cellindex * position_factor,
+                          cellindex * position_factor,
+                          cellindex * position_factor)
         cells.update({"Mn" : cell})
         self.cellPositions['Mn'].append([cell.somapos[0], cell.somapos[1], cell.somapos[2]])
 
@@ -83,15 +89,26 @@ class Ia_network(Network):
 
         #perform NEURON simulation, results saved as attributes in cell
         self.simulate(cells)
+        somav = cells['Mn'].somav
 
-        '''shape_window = h.PlotShape()
-        input('Pick a card, any card')
+        for key, value in cells.iteritems():
+            del value
+        del cells
 
-        print("nsoma_sec = %d" % cells['Mn'].nsomasec)'''
+        #print("nsoma_sec = %d" % cells['Mn'].nsomasec)
         #return dict with primary results from simulation
-        return {'somav' : cells['Mn'].somav}
+        return {'somav' : somav}
 
     def simulate(self,cells):
         """Run the simulation"""
+
+        if self.hasExtracellularVoltage:
+            for key, value in self.v_space.iteritems():
+                t_ext = np.arange(cells[key].tstopms / cells[key].timeres_python+ 1) * \
+                    cells[key].timeres_python
+                original_locations = np.arange(cells[key].totnsegs)
+                v_interp = interp1d()
+                cells[key].insert_voltage(value)
+
         cells['Mn'].simulate(rec_vmem=True)
         cells['Ia'].simulate(rec_vmem=True)

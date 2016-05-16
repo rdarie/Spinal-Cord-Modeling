@@ -39,6 +39,7 @@ class my_cell(Cell):  #### Inherits from Cell
                     pt3d=False,
                     verbose=False
         }'''
+        kwargs.update({'verbose' : False})
         super(my_cell, self).__init__(*args, **kwargs)
         # Add biophysics and synapses. Note that these could be run as custom code too
         self.define_biophysics()

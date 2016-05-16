@@ -5,7 +5,7 @@ Created on Mon Apr 25 14:12:00 2016
 @author: Radu
 """
 
-from neuron import h, gui
+from neuron import h
 from Ia_network_LFPy import Ia_network
 #define cell parameters used as input to cell-class
 h.nrn_load_dll("E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\nrnmech.dll")
@@ -37,7 +37,7 @@ synapseParameters = {
 }
 
 #the number of cells in the population
-POPULATION_SIZE = 4
+POPULATION_SIZE = 5
 
 #will draw random cell locations within cylinder constraints:
 populationParameters = {
@@ -50,6 +50,6 @@ bla = Ia_network(POPULATION_SIZE,
                      cellParameters,
                      populationParameters,
                      synapseParameters)
-#bla.run()
+bla.run()
 bla.plot_network()
-input('Pick a card, any card')
+#input('Pick a card, any card')

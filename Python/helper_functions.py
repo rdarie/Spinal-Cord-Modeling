@@ -17,8 +17,8 @@ def get_net_params(tempdata_address):
     while value:
         result.append(struct.unpack("d",value))
         value = text_file.read(8)
-    print result
-    print len(result)
+    #print result
+    #print len(result)
     text_file.close()
     return result
 
@@ -47,3 +47,16 @@ def get_mn_geom_address(double_escaped = 0):
         mn_geom_address = "mn_geometries/"
 
     return mn_geom_address
+
+def get_comsol_voltage(tempdata_address):
+
+    text_file_location = tempdata_address + "matlab_v_extra"
+    result = []
+    text_file = open(text_file_location, 'rb')
+
+    value = text_file.read(8)
+    while value:
+        result.append(struct.unpack("d",value))
+        value = text_file.read(8)
+    text_file.close()
+    return result
