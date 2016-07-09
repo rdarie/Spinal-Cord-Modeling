@@ -1,13 +1,13 @@
 debugging = 1
 
-import os
+import os, pdb
 from neuron import h
 if debugging:
     from neuron import gui
 else:
     h.load_file('noload.hoc')
 
-from scipy import signal
+import scipy
 from scipy.interpolate import interp1d
 
 from mpi4py import MPI
@@ -15,6 +15,8 @@ from matplotlib import pyplot
 from neuronpy.graphics import spikeplot
 import helper_functions as hf
 from Ia_network_LFPy import Ia_network as Ia_net
+import numpy as np
+import cPickle as pickle
 
 os.chdir('E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\Python')
 
@@ -56,8 +58,8 @@ cellParameters = {
         'lambda_f' : 10,            # segments are isopotential at frequency
         'timeres_NEURON' : 2**-3,   # dt of LFP and NEURON simulation.
         'timeres_python' : 2**-3,
-        'tstartms' : -1,          #start time, recorders start at t=0
-        'tstopms' : 2,            #stop time of simulation
+        'tstartms' : -1,            #start time, recorders start at t=0
+        'tstopms' : 5000,            #stop time of simulation
         'custom_code'  : [], #active decl.
 }
 
@@ -68,12 +70,12 @@ synapseParameters = {
     'syntype' : 'Exp2Syn',   # conductance based double-exponential synapse
     'tau1' : 1.0,            # Time constant, rise
     'tau2' : 1.0,            # Time constant, decay
-    'weight' : (0.002, 0),   # Synaptic weight
+    'weight' : (0.05, 0),   # Synaptic weight
     'record_current' : False,# disable synapse current recording
 }
 
 #the number of cells in the population
-POPULATION_SIZE = 3
+POPULATION_SIZE = 2
 
 #will draw random cell locations within cylinder constraints:
 populationParameters = {
@@ -82,23 +84,21 @@ populationParameters = {
     'zmax' : 200,
 }
 
-net = Ia_network(POPULATION_SIZE,
+net = Ia_net(POPULATION_SIZE,
                      cellParameters,
                      populationParameters,
                      synapseParameters)
 
 ev_list = hf.get_comsol_voltage(tempdata_address)
 ev = {"Ia" : np.array(ev_list)}
-
-net.insert_voltage(ev, scipy.signal)
-
 #/////////////////////////////////////////////////////////////
 # Debugging: override stim params manually set amplitude
-'''fudge_factor = 5e4
-h('{xopen(\"debug_statements\")}')
-#/////////////////////////////////////////////////////////////
-h('{xopen(\"vextandinit\")}')
-h.run()'''
+fudge_factor = 5e4
+net.insert_voltage(ev, np.sin) # TODO wrong
+
+net.run()
+res = net.results
+pickle.dump(res, open( "E:\\Google Drive\\Github\\tempdata\\test_net.p", "wb" ) )
 
 #/////////////////////////////////////////////////////////////
 input("Please press a key.")

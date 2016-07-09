@@ -1,6 +1,7 @@
 from neuron import h
 from mycell_LFPy import my_cell
 import helper_functions as hf
+import pdb
 
 class Mn(my_cell):  #### Inherits from Cell
     """Motoneuron"""
@@ -11,15 +12,15 @@ class Mn(my_cell):  #### Inherits from Cell
     ####
 
     def __init__(self, *args, **kwargs):
-        self.morphology_address = 'E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\Python\\Mn_geometry_output3.py'
+        self.morphology_address = 'E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\mn_geometries\\burke_mn_2_postparser.py'
         kwargs.update({'delete_sections' : False})
         kwargs.update({'pt3d' : True})
         kwargs.update({'morphology' : self.morphology_address})
         super(Mn, self).__init__(*args, **kwargs)
     #
     def create_sections(self):
-        self.soma = h.Section(name = 'Mn_soma', cell = self)
-        self.dend = [h.Section(name = 'Mn_dend_%d' % x, cell = self) for x in range(249)]
+    	self.soma = [h.Section(name = 'Mn_soma', cell = self)]
+    	self.dend = [h.Section(name = 'Mn_dend_%d' % x, cell = self) for x in range(351)]
         self.ndend = len(self.dend)
     #
     def _create_sectionlists(self):
@@ -37,6 +38,7 @@ class Mn(my_cell):  #### Inherits from Cell
             self.somalist = h.SectionList()
             for sec in h.allsec():
                 if sec.name().find('Mn_soma') >= 0:
+                    #pdb.set_trace()
                     self.somalist.append(sec=sec)
                     self.nsomasec += 1
 
@@ -46,19 +48,20 @@ class Mn(my_cell):  #### Inherits from Cell
     #
     def define_biophysics(self):
         """Assign the membrane properties across the cell."""
-        self.soma.insert("motoneuron")
+        self.soma[0].insert("motoneuron")
 
     def build_subsets(self):
         """Build subset lists. """
     #### NEW STUFF ####
     #
     def create_synapses(self):
+        #pdb.set_trace()
         """Add an exponentially decaying synapse in the middle
         of the dendrite. Set its tau to 2ms, and append this
         synapse to the synlist of the cell."""
         synapseParameters = {
-        'idx' : self.get_idx(section='soma')[0],               # insert synapse on index "0", the soma
-        'e' : 0.,                # reversal potential of synapse
+        'idx' : self.get_idx(section='Mn_soma')[0],   # insert synapse on index "0", the soma
+        'e' : 0.,                                     # reversal potential of synapse
         'syntype' : 'ExpSyn',   # conductance based double-exponential synapse
         'tau' : 2.0,            # Time constant
         'weight' : 0.002,        # Synaptic weight

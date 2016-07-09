@@ -8,7 +8,6 @@ Created on Mon Apr 25 14:12:00 2016
 from neuron import h
 from Ia_network_LFPy import Ia_network
 #define cell parameters used as input to cell-class
-h.nrn_load_dll("E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\nrnmech.dll")
 cellParameters = {
         'rm' : 30000,               # membrane resistance
         'cm' : 1.0,                 # membrane capacitance

@@ -1,8 +1,14 @@
 import helper_functions as hf
+
 from neuron import h
+h.nrn_load_dll("E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\nrnmech.dll")
+
+import numpy as np
+
 from Network_LFPy import Network
 from Ia_LFPy import Ia
 from Mn_LFPy import Mn
+import pdb
 
 class Ia_network(Network):
     #
@@ -68,6 +74,9 @@ class Ia_network(Network):
         cells.update({"Ia" : cell})
         self.cellPositions['Ia'].append([cell.somapos[0], cell.somapos[1], cell.somapos[2]])
 
+        for key, value in cells.iteritems():
+            value.tstopms = self.cellParameters['tstopms']
+
         return cells
     #
     def connect_cells(self, cells, cellindex):
@@ -89,7 +98,10 @@ class Ia_network(Network):
 
         #perform NEURON simulation, results saved as attributes in cell
         self.simulate(cells)
+        #pdb.set_trace()
         somav = cells['Mn'].somav
+        iav = cells['Ia'].vmem
+        tvec = cells['Ia'].tvec
 
         for key, value in cells.iteritems():
             del value
@@ -97,18 +109,10 @@ class Ia_network(Network):
 
         #print("nsoma_sec = %d" % cells['Mn'].nsomasec)
         #return dict with primary results from simulation
-        return {'somav' : somav}
+        return {'somav' : somav, 'iav' : iav, 'tvec' : tvec}
 
     def simulate(self,cells):
         """Run the simulation"""
-
-        if self.hasExtracellularVoltage:
-            for key, value in self.v_space.iteritems():
-                t_ext = np.arange(cells[key].tstopms / cells[key].timeres_python+ 1) * \
-                    cells[key].timeres_python
-                original_locations = np.arange(cells[key].totnsegs)
-                v_interp = interp1d()
-                cells[key].insert_voltage(value)
-
-        cells['Mn'].simulate(rec_vmem=True)
-        cells['Ia'].simulate(rec_vmem=True)
+        super(Ia_network, self).simulate(cells)
+        cells['Ia'].simulate(rec_vmem=True, rec_imem = True)
+        cells['Mn'].simulate(rec_vmem=True, rec_imem = True)

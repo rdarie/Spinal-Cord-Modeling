@@ -1,6 +1,6 @@
 clear;clc;close all;
 
-ppn = 1e2+1;
+ppn = 50+1;
 inl = 100;% how many times longer is a paranode than a node?
 diam = log(random('logn', 9, 0.2, 10, 1));
 %diam = [9,5];

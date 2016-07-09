@@ -5,6 +5,8 @@ from mpi4py import MPI
 from neuronpy.util import spiketrain
 import matplotlib.pyplot as plt
 from matplotlib.collections import PolyCollection
+import scipy
+from scipy.interpolate import interp1d
 
 class Network(object):
     '''prototype population class'''
@@ -27,6 +29,8 @@ class Network(object):
         np.random.seed(12345)
         self._POPULATION_SIZE = POPULATION_SIZE
         self._synapseParameters = synapseParameters
+        self._populationParameters = populationParameters
+        self.cellParameters = cellParameters
 
         self.cellPositions = {}
         self.cellRotations = {}
@@ -178,3 +182,19 @@ class Network(object):
 
     def simulate(self,cells):
         """Run the simulation"""
+
+        if self.hasExtracellularVoltage:
+            for key, value in self.v_space.iteritems():
+                #pdb.set_trace()
+                t_ext = np.arange(cells[key].tstopms / cells[key].timeres_python + 1) * \
+                    cells[key].timeres_python
+
+                v_interp = interp1d(np.arange(0,len(value)), value.transpose())
+                x_new = np.linspace(0, len(value)-1, cells[key].totnsegs)
+
+                v_ext = np.zeros([cells[key].totnsegs, t_ext.size])
+                for r in range(len(t_ext)):
+                    this_v = v_interp(x_new)[0] * self.v_time(t_ext[r])
+                    v_ext[:, r] = 1e3*this_v.transpose()
+
+                cells[key].insert_v_ext(v_ext, t_ext)

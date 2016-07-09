@@ -13,6 +13,5 @@ stepsize = 1;
 ppn = 1e2+1;
 inl = 100;
 
-
 recruitment('5M mesh\no_root_um_axon_centers_cs', start_time, dur_time,...
     interval_time, ampstart, ampmax, stepsize, ppn, inl);
