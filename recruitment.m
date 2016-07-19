@@ -19,7 +19,6 @@ n_cells = size(simulation,1)*size(simulation,2);
 AMPS = ampstart:stepsize:ampmax;
 rec_curve = zeros(n_cells, length(AMPS));
 
-
 for a = 1:size(simulation,1)
     for b= 1:size(simulation,2)
         

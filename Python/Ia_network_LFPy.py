@@ -1,7 +1,7 @@
 import helper_functions as hf
 
 from neuron import h
-h.nrn_load_dll("E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\nrnmech.dll")
+#h.nrn_load_dll("E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\nrnmech.dll")
 
 import numpy as np
 
@@ -35,7 +35,7 @@ class Ia_network(Network):
         }
 
         sim_params = hf.get_net_params(hf.get_tempdata_address())
-        dummy_Ia = Ia(n_nodes = sim_params[0][0])
+        dummy_Ia = Ia(n_nodes = hf.get_n_nodes_from_mat('E:\\Google Drive\\Github\\tempdata\\move_root_um_move_root_points_cs.mat',0))
         dummy_Mn = Mn()
 
         self.cellMorphologies = {
@@ -67,7 +67,7 @@ class Ia_network(Network):
         cells.update({"Mn" : cell})
         self.cellPositions['Mn'].append([cell.somapos[0], cell.somapos[1], cell.somapos[2]])
 
-        cell = Ia(n_nodes = sim_params[0][0])
+        cell = Ia(n_nodes = hf.get_n_nodes_from_mat('E:\\Google Drive\\Github\\tempdata\\move_root_um_move_root_points_cs.mat',0))
         cell.set_pos(cellindex * position_factor,
                           cellindex * position_factor,
                           cellindex * position_factor)
@@ -84,7 +84,7 @@ class Ia_network(Network):
             tgt_syn = cells["Mn"].synlist[0]
             nc = src.connect2target(src.Ia_node[0], tgt_syn)
             nc.weight[0] = self._synapseParameters['weight'][0]
-            nc.delay = self._synapseParameters['weight'][0]
+            nc.delay = self._synapseParameters['delay'][0]
 
             return nc
     #

@@ -9,14 +9,15 @@ class Ia(my_cell):  #### Inherits from Cell
     #### our own initialization first, and then let Cell do its
     #### thing, and then do a bit more ourselves with "super".
     ####
-    from Ia_geometry_output import shape_3D as Ia_shape
+    from Ia_geometry_postparser import shape_3D as Ia_shape
 
     def __init__(self, *args, **kwargs):
-        self.morphology_address = 'E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\Python\\Ia_geometry_output.py'
+        self.morphology_address = 'E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\Python\\Ia_geometry_postparser.py'
         self.n_nodes =kwargs.pop('n_nodes')
         kwargs.update({'delete_sections' : False})
         kwargs.update({'pt3d' : True})
         kwargs.update({'morphology' : self.morphology_address})
+        kwargs.update({'v_init' : -87.0 })
         super(Ia, self).__init__(*args, **kwargs)
 
     #
@@ -54,6 +55,8 @@ class Ia(my_cell):  #### Inherits from Cell
         """Assign the membrane properties across the cell."""
         for a in range(int(self.n_nodes)): # 'all' exists in parent object.
             self.Ia_node[a].insert("axnode")
+            self.Ia_paranode[a].g_pas=0.001/(2*9.15*self.Ia_node[a].diam+2*30)
+            self.Ia_paranode[a].e_pas=-80
 
     def build_subsets(self):
         """Build subset lists. """

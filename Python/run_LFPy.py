@@ -1,6 +1,9 @@
 debugging = 1
 
 import os, pdb
+import sip
+sip.setapi('QString', 2)
+sip.setapi('QVariant', 2)
 from neuron import h
 if debugging:
     from neuron import gui
@@ -17,6 +20,7 @@ import helper_functions as hf
 from Ia_network_LFPy import Ia_network as Ia_net
 import numpy as np
 import cPickle as pickle
+import scipy
 
 os.chdir('E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\Python')
 
@@ -59,7 +63,7 @@ cellParameters = {
         'timeres_NEURON' : 2**-3,   # dt of LFP and NEURON simulation.
         'timeres_python' : 2**-3,
         'tstartms' : -1,            #start time, recorders start at t=0
-        'tstopms' : 5000,            #stop time of simulation
+        'tstopms' : 2000,            #stop time of simulation
         'custom_code'  : [], #active decl.
 }
 
@@ -70,12 +74,13 @@ synapseParameters = {
     'syntype' : 'Exp2Syn',   # conductance based double-exponential synapse
     'tau1' : 1.0,            # Time constant, rise
     'tau2' : 1.0,            # Time constant, decay
-    'weight' : (0.05, 0),   # Synaptic weight
+    'weight' : (0.5, 0),   # Synaptic weight
+    'delay' : (1, 0),   # Synaptic delay
     'record_current' : False,# disable synapse current recording
 }
 
 #the number of cells in the population
-POPULATION_SIZE = 2
+POPULATION_SIZE = 1
 
 #will draw random cell locations within cylinder constraints:
 populationParameters = {
@@ -88,17 +93,22 @@ net = Ia_net(POPULATION_SIZE,
                      cellParameters,
                      populationParameters,
                      synapseParameters)
+#
+ev_list = hf.get_v_from_mat('E:\\Google Drive\\Github\\tempdata\\move_root_um_move_root_points_cs.mat',0)
+#pdb.set_trace()
+#ev_list = np.linspace(0,ev_list[0],20).tolist() + ev_list
+#ev_list = ev_list + np.linspace(ev_list[-1],0,20).tolist()
+fudge_factor = -5e5
+ev = {"Ia" : fudge_factor * np.array(ev_list)}
 
-ev_list = hf.get_comsol_voltage(tempdata_address)
-ev = {"Ia" : np.array(ev_list)}
 #/////////////////////////////////////////////////////////////
 # Debugging: override stim params manually set amplitude
-fudge_factor = 5e4
-net.insert_voltage(ev, np.sin) # TODO wrong
+#pdb.set_trace()
+net.insert_voltage(ev, hf.sine_wave)
 
 net.run()
 res = net.results
-pickle.dump(res, open( "E:\\Google Drive\\Github\\tempdata\\test_net.p", "wb" ) )
+pickle.dump(res, open( "E:\\Google Drive\\Github\\tempdata\\Ia_net_sine.p", "wb" ) )
 
 #/////////////////////////////////////////////////////////////
 input("Please press a key.")

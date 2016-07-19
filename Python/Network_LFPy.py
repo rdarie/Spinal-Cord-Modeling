@@ -5,7 +5,7 @@ from mpi4py import MPI
 from neuronpy.util import spiketrain
 import matplotlib.pyplot as plt
 from matplotlib.collections import PolyCollection
-import scipy
+import scipy, pdb
 from scipy.interpolate import interp1d
 
 class Network(object):
@@ -189,12 +189,14 @@ class Network(object):
                 t_ext = np.arange(cells[key].tstopms / cells[key].timeres_python + 1) * \
                     cells[key].timeres_python
 
-                v_interp = interp1d(np.arange(0,len(value)), value.transpose())
+                #pdb.set_trace()
+                v_interp = interp1d(np.arange(0,len(value)), value)
                 x_new = np.linspace(0, len(value)-1, cells[key].totnsegs)
 
                 v_ext = np.zeros([cells[key].totnsegs, t_ext.size])
                 for r in range(len(t_ext)):
-                    this_v = v_interp(x_new)[0] * self.v_time(t_ext[r])
-                    v_ext[:, r] = 1e3*this_v.transpose()
+                    this_v = v_interp(x_new) * self.v_time(t_ext[r])
+                    v_ext[:, r] = this_v.transpose()
 
+                #pdb.set_trace()
                 cells[key].insert_v_ext(v_ext, t_ext)

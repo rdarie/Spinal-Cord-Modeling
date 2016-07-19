@@ -16,6 +16,7 @@ class Mn(my_cell):  #### Inherits from Cell
         kwargs.update({'delete_sections' : False})
         kwargs.update({'pt3d' : True})
         kwargs.update({'morphology' : self.morphology_address})
+        #kwargs.update({'v_init' : -67.0 })
         super(Mn, self).__init__(*args, **kwargs)
     #
     def create_sections(self):
@@ -59,12 +60,42 @@ class Mn(my_cell):  #### Inherits from Cell
         """Add an exponentially decaying synapse in the middle
         of the dendrite. Set its tau to 2ms, and append this
         synapse to the synlist of the cell."""
-        synapseParameters = {
+        synapseParameters_E0 = {
         'idx' : self.get_idx(section='Mn_soma')[0],   # insert synapse on index "0", the soma
-        'e' : 0.,                                     # reversal potential of synapse
+        'e' : -10.,                                     # reversal potential of synapse
         'syntype' : 'ExpSyn',   # conductance based double-exponential synapse
         'tau' : 2.0,            # Time constant
-        'weight' : 0.002,        # Synaptic weight
+        'weight' : 0.5,        # Synaptic weight
         'record_current' : True,# disable synapse current recording
         }
-        self.set_synapse(**synapseParameters)
+        self.set_synapse(**synapseParameters_E0)
+
+        synapseParameters_E1 = {
+        'idx' : self.get_idx(section='Mn_soma')[0],   # insert synapse on index "0", the soma
+        'e' : -10.,                                     # reversal potential of synapse
+        'syntype' : 'ExpSyn',   # conductance based double-exponential synapse
+        'tau' : 2.0,            # Time constant
+        'weight' : 0.5,        # Synaptic weight
+        'record_current' : True,# disable synapse current recording
+        }
+        self.set_synapse(**synapseParameters_E1)
+
+        synapseParameters_I2 = {
+        'idx' : self.get_idx(section='Mn_soma')[0],   # insert synapse on index "0", the soma
+        'e' : -70.,                                     # reversal potential of synapse
+        'syntype' : 'ExpSyn',   # conductance based double-exponential synapse
+        'tau' : 2.0,            # Time constant
+        'weight' : 0.5,        # Synaptic weight
+        'record_current' : True,# disable synapse current recording
+        }
+        self.set_synapse(**synapseParameters_I2)
+        
+        synapseParameters_I3 = {
+        'idx' : self.get_idx(section='Mn_soma')[0],   # insert synapse on index "0", the soma
+        'e' : -70.,                                     # reversal potential of synapse
+        'syntype' : 'ExpSyn',   # conductance based double-exponential synapse
+        'tau' : 2.0,            # Time constant
+        'weight' : 0.5,        # Synaptic weight
+        'record_current' : True,# disable synapse current recording
+        }
+        self.set_synapse(**synapseParameters_I3)
