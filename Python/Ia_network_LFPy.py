@@ -13,15 +13,15 @@ import pdb
 class Ia_network(Network):
     #
     def __init__(self, *args, **kwargs):
+
         '''
         class initialization
-
         POPULATION_SIZE :       int, number of cells
         cellParameters :        dict
         populationParameters :  dict
         synapseParameters :     dict
-
         '''
+
         super(Ia_network, self).__init__(*args, **kwargs)
 
         self.cellPositions = {
@@ -56,7 +56,10 @@ class Ia_network(Network):
         mn_pos_y = sim_params[11]
         mn_pos_z = sim_params[12]
 
-        cell = Mn()
+        if cellindex = self.populationParameters['size'] - 1:
+            cell = Mn(is_last_in_network = True)
+        else:
+            cell = Mn()
         '''cell.set_pos(mn_pos_x[0] + cellindex * position_factor,
                       mn_pos_y[0] + cellindex * position_factor,
                           mn_pos_z[0] + cellindex * position_factor)
@@ -116,3 +119,6 @@ class Ia_network(Network):
         super(Ia_network, self).simulate(cells)
         cells['Ia'].simulate(rec_vmem=True, rec_imem = True)
         cells['Mn'].simulate(rec_vmem=True, rec_imem = True)
+        #
+        cells['Ia'].gather_recordings(rec_vmem=True, rec_imem = True)
+        cells['Mn'].gather_recordings(rec_vmem=True, rec_imem = True)

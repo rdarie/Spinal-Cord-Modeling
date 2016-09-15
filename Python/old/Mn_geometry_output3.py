@@ -1,9 +1,6 @@
 from neuron import h
 def shape_3D(self):
-	#self.soma = [h.Section(name = 'soma', cell = self)]
-	#self.dend = [h.Section(name = 'dend_%d' % x, cell = self) for x in range(249)]
-
-	self.dend[0].connect(self.soma[0], 0.5, 0)
+	self.dend[0].connect(self.soma, 0.5, 0)
 	for i in range(1, 2):
 		self.dend[i].connect(self.dend[i-1], 1, 0)
 	self.dend[3].connect(self.dend[1], 1, 0)
@@ -48,10 +45,10 @@ def shape_3D(self):
 	self.dend[44].connect(self.dend[34], 1, 0)
 	for i in range(45, 46):
 		self.dend[i].connect(self.dend[44], 1, 0)
-	self.dend[47].connect(self.soma[0], 0.5, 0)
+	self.dend[47].connect(self.soma, 0.5, 0)
 	for i in range(48, 49):
 		self.dend[i].connect(self.dend[47], 1, 0)
-	self.dend[50].connect(self.soma[0], 0.5, 0)
+	self.dend[50].connect(self.soma, 0.5, 0)
 	for i in range(51, 52):
 		self.dend[i].connect(self.dend[i-1], 1, 0)
 	self.dend[53].connect(self.dend[51], 1, 0)
@@ -66,7 +63,7 @@ def shape_3D(self):
 		self.dend[i].connect(self.dend[i-1], 1, 0)
 	self.dend[63].connect(self.dend[61], 1, 0)
 	self.dend[64].connect(self.dend[60], 1, 0)
-	self.dend[65].connect(self.soma[0], 0.5, 0)
+	self.dend[65].connect(self.soma, 0.5, 0)
 	for i in range(66, 67):
 		self.dend[i].connect(self.dend[i-1], 1, 0)
 	self.dend[68].connect(self.dend[66], 1, 0)
@@ -83,7 +80,7 @@ def shape_3D(self):
 		self.dend[i].connect(self.dend[77], 1, 0)
 	for i in range(80, 81):
 		self.dend[i].connect(self.dend[79], 1, 0)
-	self.dend[82].connect(self.soma[0], 0.5, 0)
+	self.dend[82].connect(self.soma, 0.5, 0)
 	for i in range(83, 84):
 		self.dend[i].connect(self.dend[82], 1, 0)
 	for i in range(85, 86):
@@ -94,7 +91,7 @@ def shape_3D(self):
 		self.dend[i].connect(self.dend[88], 1, 0)
 	for i in range(91, 92):
 		self.dend[i].connect(self.dend[90], 1, 0)
-	self.dend[93].connect(self.soma[0], 0.5, 0)
+	self.dend[93].connect(self.soma, 0.5, 0)
 	for i in range(94, 96):
 		self.dend[i].connect(self.dend[i-1], 1, 0)
 	self.dend[97].connect(self.dend[95], 1, 0)
@@ -123,7 +120,7 @@ def shape_3D(self):
 		self.dend[i].connect(self.dend[119], 1, 0)
 	for i in range(122, 123):
 		self.dend[i].connect(self.dend[121], 1, 0)
-	self.dend[124].connect(self.soma[0], 0.5, 0)
+	self.dend[124].connect(self.soma, 0.5, 0)
 	for i in range(125, 126):
 		self.dend[i].connect(self.dend[i-1], 1, 0)
 	self.dend[127].connect(self.dend[125], 1, 0)
@@ -171,7 +168,7 @@ def shape_3D(self):
 		self.dend[i].connect(self.dend[170], 1, 0)
 	for i in range(173, 174):
 		self.dend[i].connect(self.dend[172], 1, 0)
-	self.dend[175].connect(self.soma[0], 0.5, 0)
+	self.dend[175].connect(self.soma, 0.5, 0)
 	for i in range(176, 177):
 		self.dend[i].connect(self.dend[i-1], 1, 0)
 	self.dend[178].connect(self.dend[176], 1, 0)
@@ -200,7 +197,7 @@ def shape_3D(self):
 	self.dend[201].connect(self.dend[197], 1, 0)
 	for i in range(202, 203):
 		self.dend[i].connect(self.dend[201], 1, 0)
-	self.dend[204].connect(self.soma[0], 0.5, 0)
+	self.dend[204].connect(self.soma, 0.5, 0)
 	for i in range(205, 207):
 		self.dend[i].connect(self.dend[i-1], 1, 0)
 	self.dend[208].connect(self.dend[206], 1, 0)
@@ -228,7 +225,7 @@ def shape_3D(self):
 	for i in range(230, 231):
 		self.dend[i].connect(self.dend[229], 1, 0)
 	self.dend[232].connect(self.dend[224], 1, 0)
-	self.dend[233].connect(self.soma[0], 0.5, 0)
+	self.dend[233].connect(self.soma, 0.5, 0)
 	for i in range(234, 237):
 		self.dend[i].connect(self.dend[i-1], 1, 0)
 	self.dend[238].connect(self.dend[236], 1, 0)
@@ -241,13 +238,13 @@ def shape_3D(self):
 	self.dend[245].connect(self.dend[233], 1, 0)
 	for i in range(246, 247):
 		self.dend[i].connect(self.dend[245], 1, 0)
-	self.dend[248].connect(self.soma[0], 0.5, 0)
-	h.pt3dclear(sec = self.soma[0])
-	h.pt3dadd(8.934, 29.98, -13.49, 60.812, sec = self.soma[0])
-	h.pt3dadd(39.34, 29.98, -13.49, 60.812, sec = self.soma[0])
-	h.pt3dadd(69.746, 29.98, -13.49, 60.812, sec = self.soma[0])
+	self.dend[248].connect(self.soma, 0.5, 0)
+	h.pt3dclear(sec = self.soma)
+	h.pt3dadd(8.934, 29.98, -13.49, 60.812, sec = self.soma)
+	h.pt3dadd(39.34, 29.98, -13.49, 60.812, sec = self.soma)
+	h.pt3dadd(69.746, 29.98, -13.49, 60.812, sec = self.soma)
 	h.pt3dclear(sec = self.dend[0])
-	h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[0])
+	#h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[0])
 	h.pt3dadd(3, 21.5, -5, 10.6, sec = self.dend[0])
 	h.pt3dadd(0.5, 21, -5.5, 10.2, sec = self.dend[0])
 	h.pt3dadd(-3.5, 18, -4, 9.9, sec = self.dend[0])
@@ -2595,7 +2592,7 @@ def shape_3D(self):
 	h.pt3dadd(-508, -38.5, 100, 4.4, sec = self.dend[46])
 	h.pt3dadd(-511, -42, 100, 4.5, sec = self.dend[46])
 	h.pt3dclear(sec = self.dend[47])
-	h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[47])
+	#h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[47])
 	h.pt3dadd(0, 14.5, -3, 7.4, sec = self.dend[47])
 	h.pt3dadd(-6, 13.5, -5, 6, sec = self.dend[47])
 	h.pt3dadd(-11.5, 12, -6.5, 5.7, sec = self.dend[47])
@@ -3061,7 +3058,7 @@ def shape_3D(self):
 	h.pt3dadd(-255.5, -321.5, -89, 1.1, sec = self.dend[49])
 	h.pt3dadd(-253.5, -323.5, -86.5, 0.1, sec = self.dend[49])
 	h.pt3dclear(sec = self.dend[50])
-	h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[50])
+	#h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[50])
 	h.pt3dadd(76, 59, -6.5, 10.6, sec = self.dend[50])
 	h.pt3dadd(80.5, 63.5, -10, 10.1, sec = self.dend[50])
 	h.pt3dadd(86.5, 67, -9.5, 10.1, sec = self.dend[50])
@@ -4105,7 +4102,7 @@ def shape_3D(self):
 	h.pt3dadd(511, 265, -116, 2.4, sec = self.dend[64])
 	h.pt3dadd(513, 265, -116, 2.4, sec = self.dend[64])
 	h.pt3dclear(sec = self.dend[65])
-	h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[65])
+	#h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[65])
 	h.pt3dadd(26, 44, -11, 7.7, sec = self.dend[65])
 	h.pt3dadd(25.5, 47, -10, 7, sec = self.dend[65])
 	h.pt3dadd(24, 49.5, -10, 7, sec = self.dend[65])
@@ -5202,7 +5199,7 @@ def shape_3D(self):
 	h.pt3dadd(323.5, 737.5, -63.5, 0.4, sec = self.dend[81])
 	h.pt3dadd(327.5, 741, -65.5, 0.4, sec = self.dend[81])
 	h.pt3dclear(sec = self.dend[82])
-	h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[82])
+	#h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[82])
 	h.pt3dadd(65, 37, -4, 6.6, sec = self.dend[82])
 	h.pt3dadd(68, 35.5, -3, 6.6, sec = self.dend[82])
 	h.pt3dadd(67.5, 31.5, -3, 6.5, sec = self.dend[82])
@@ -6084,7 +6081,7 @@ def shape_3D(self):
 	h.pt3dadd(576, 509.5, 62, 0.1, sec = self.dend[92])
 	h.pt3dadd(581.5, 509.5, 74, 0.1, sec = self.dend[92])
 	h.pt3dclear(sec = self.dend[93])
-	h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[93])
+	#h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[93])
 	h.pt3dadd(36.5, 3, -3, 9, sec = self.dend[93])
 	h.pt3dadd(36.5, -1, -3, 9, sec = self.dend[93])
 	h.pt3dadd(36.5, -4.5, -3, 8.3, sec = self.dend[93])
@@ -7536,7 +7533,7 @@ def shape_3D(self):
 	h.pt3dadd(377.5, -842.5, 104.5, 0.4, sec = self.dend[123])
 	h.pt3dadd(377.5, -845.5, 112.5, 0.4, sec = self.dend[123])
 	h.pt3dclear(sec = self.dend[124])
-	h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[124])
+	#h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[124])
 	h.pt3dadd(4.5, 10.5, -7.5, 11.7, sec = self.dend[124])
 	h.pt3dadd(3, 6.5, -4, 13.2, sec = self.dend[124])
 	h.pt3dclear(sec = self.dend[125])
@@ -10971,7 +10968,7 @@ def shape_3D(self):
 	h.pt3dadd(-931.5, -188, -9.5, 1.1, sec = self.dend[174])
 	h.pt3dadd(-932.5, -190.5, -9.5, 1.1, sec = self.dend[174])
 	h.pt3dclear(sec = self.dend[175])
-	h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[175])
+	#h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[175])
 	h.pt3dadd(44, 6.5, -5.5, 15.9, sec = self.dend[175])
 	h.pt3dadd(44, 4, -5, 14.1, sec = self.dend[175])
 	h.pt3dadd(44.5, 1.5, -3, 11.2, sec = self.dend[175])
@@ -12869,7 +12866,7 @@ def shape_3D(self):
 	h.pt3dadd(891.5, -289, -103.5, 0.7, sec = self.dend[203])
 	h.pt3dadd(898, -285.5, -103.5, 0.7, sec = self.dend[203])
 	h.pt3dclear(sec = self.dend[204])
-	h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[204])
+	#h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[204])
 	h.pt3dadd(80, 56.5, -15, 13.7, sec = self.dend[204])
 	h.pt3dadd(82.5, 58.5, -10, 13, sec = self.dend[204])
 	h.pt3dadd(88.5, 60, -10, 12, sec = self.dend[204])
@@ -15241,7 +15238,7 @@ def shape_3D(self):
 	h.pt3dadd(751, 229.5, -1, 3.9, sec = self.dend[232])
 	h.pt3dadd(755, 226.5, 1, 4.4, sec = self.dend[232])
 	h.pt3dclear(sec = self.dend[233])
-	h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[233])
+	#h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[233])
 	h.pt3dadd(72, 43, -17.5, 6.2, sec = self.dend[233])
 	h.pt3dadd(74, 40, -17.5, 6.1, sec = self.dend[233])
 	h.pt3dadd(76, 38, -16.5, 8.2, sec = self.dend[233])
@@ -16276,7 +16273,7 @@ def shape_3D(self):
 	h.pt3dadd(471.5, -12.5, -121, 0.9, sec = self.dend[247])
 	h.pt3dadd(471.5, -12.5, -125.5, 1, sec = self.dend[247])
 	h.pt3dclear(sec = self.dend[248])
-	h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[248])
+	#h.pt3dstyle(1, 39.34, 29.98, -13.49, sec = self.dend[248])
 	h.pt3dadd(4.5, 24.5, -21, 6.7, sec = self.dend[248])
 	h.pt3dadd(1.5, 25.5, -22, 5.7, sec = self.dend[248])
 	h.pt3dadd(-1.5, 25.5, -22, 5.3, sec = self.dend[248])

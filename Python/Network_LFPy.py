@@ -10,8 +10,7 @@ from scipy.interpolate import interp1d
 
 class Network(object):
     '''prototype population class'''
-
-    def __init__(self, POPULATION_SIZE,
+    def __init__(self,
                  cellParameters,
                  populationParameters,
                  synapseParameters,
@@ -27,7 +26,6 @@ class Network(object):
         '''
         #set one global seed, ensure all randomizations are set on RANK 0 in script!
         np.random.seed(12345)
-        self._POPULATION_SIZE = POPULATION_SIZE
         self._synapseParameters = synapseParameters
         self._populationParameters = populationParameters
         self.cellParameters = cellParameters
@@ -41,17 +39,14 @@ class Network(object):
         self.COMM = MPI.COMM_WORLD
         self.SIZE = self.COMM.Get_size()
         self.RANK = self.COMM.Get_rank()
-
         #sync threads
         self.COMM.Barrier()
     #
     def reset(self):
         for key, value in self.cellPositions.iteritems():
             value = []
-
         for key, value in self.cellRotations.iteritems():
             value = []
-
         for key, value in self.cellMorphologies.iteritems():
             value = []
 
@@ -77,7 +72,6 @@ class Network(object):
                 thesePositions = self.COMM.recv(source=MPI.ANY_SOURCE)      #receive from ANY rank
                 for key, value in thesePositions.iteritems():
                     self.cellPositions[key].append(value)
-
         else:
             self.COMM.send(self.cellPositions, dest=0)                    #send to RANK 0
             self.cellPositions = None                                     #results only exist on RANK 0
@@ -89,7 +83,7 @@ class Network(object):
         #start unique cell simulation on every RANK,
         #and store the cell objects in dicts indexed by cellindex
         results = {}
-        for cellindex in range(self._POPULATION_SIZE):
+        for cellindex in range(self._populationParameters['size']):
             if divmod(cellindex, self.SIZE)[1] == self.RANK:
                 results.update({cellindex : self.cellsim(cellindex)})
         return results
@@ -108,7 +102,7 @@ class Network(object):
                         frameon=True, aspect = 'equal',
                         xticks=[], xticklabels=[], yticks=[], yticklabels=[])
 
-            for cellindex in range(self._POPULATION_SIZE):
+            for cellindex in range(self._populationParameters['size']):
                 #self.reset()
                 cells = self.create_cells(cellindex)
 

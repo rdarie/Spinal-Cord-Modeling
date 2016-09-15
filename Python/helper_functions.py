@@ -72,21 +72,21 @@ def get_comsol_voltage(tempdata_address):
     return result
 
 def square_wave(t):
-    pdb.set_trace()
-    ret_val = scipy.signal.square(2 * np.pi * t * 1e-3 * 10, duty = 0.2)
+    #pdb.set_trace()
+    ret_val = scipy.signal.square(2 * np.pi * t * 1e-3 * 5, duty = 0.2)
     if isinstance(ret_val, collections.Iterable):
-        ret_val[t<100] = 0
+        ret_val[t<1000] = 0
     else:
-        if t < 100:
+        if t < 1000:
             ret_val = 0
     return ret_val
 
 def sine_wave(t):
-    ret_val = np.sin(2 * np.pi * t * 1e-3 * 10)
+    ret_val = np.sin(2 * np.pi * t * 1e-3 * 5)
     if isinstance(ret_val, collections.Iterable):
-        ret_val[t<100] = 0
+        ret_val[t<1000] = 0
     else:
-        if t < 100:
+        if t < 1000:
             ret_val = 0
     return ret_val
 
@@ -98,7 +98,7 @@ def plot_fiber_location_voltage(filename,nameout,stim_func,fibertype, location):
     decimate_t = 1
     nproc = len(data)
     ia_plot = []
-    #mn_plot = []
+    mn_plot = []
     t_plot = []
     #pdb.set_trace()
     t_plot.append(data[0]['tvec'][::decimate_t])
@@ -107,17 +107,17 @@ def plot_fiber_location_voltage(filename,nameout,stim_func,fibertype, location):
     for proc in range(len(data)):
         #pdb.set_trace()
         ia_plot.append(data[proc][fibertype][location, ::decimate_t])
-        #mn_plot.append(data[proc]['somav'][::decimate_t])
+        mn_plot.append(data[proc]['somav'][::decimate_t])
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
     ia_plot, = ax.plot(t_plot[0], ia_plot[0], label = 'Membrane voltage of axon terminal')
-    #mn_plot, = ax.plot(t_plot[0], mn_plot[0], label = 'Membrane voltage of motoneuron soma')
+    mn_plot, = ax.plot(t_plot[0], mn_plot[0], label = 'Membrane voltage of motoneuron soma')
     stim_plot, = ax.plot(t_plot[0], stim_func(t_plot[0]), label = 'Stimulus waveform')
     plt.xlabel('Time (msec)')
     plt.ylabel('Membrane Voltage (mV)')
-    ax.legend(handles=[ia_plot, stim_plot])
+    ax.legend(handles=[ia_plot, mn_plot, stim_plot])
     # Shrink current axis by 20%
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width, box.height * 0.8])

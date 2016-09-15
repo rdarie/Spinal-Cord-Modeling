@@ -1,0 +1,148 @@
+
+<mujoco model="testPassiveWalker">
+
+    <compiler inertiafromgeom='true' angle='degree'/>
+    <option gravity='0 0 -9.81'/>
+    <asset>
+		<!-- Sets sky rendering
+		-->
+        <texture type="skybox" builtin="gradient" width="100" height="100" rgb1="1 1 1"
+            rgb2="1 1 1"/>
+		<!-- Not clear to me where this is used yet
+		-->
+        <texture name="texgeom" type="cube" builtin="flat" mark="cross" width="127" height="1278"
+            rgb1="0.1 0.8 0.1" rgb2="0.8 0.6 0.4" markrgb="1 1 1" random="0.01"/>
+		<!-- Sets floor rendering
+		-->
+        <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2"
+            width="1000" height="1000"/>
+		<!-- Create materials based on textures above
+		-->
+        <material name='MatPlane' reflectance='0.5' texture="texplane"/>
+        <material name='geom' texture="texgeom" texuniform="true"/>
+		<mesh file="bunny.stl" scale = '2 2 2' />
+		<mesh file="miniature_monkey.stl" scale = '2e-3 2e-3 2e-3' />
+    </asset>
+
+	<default>
+    <site type="sphere" rgba=".2 .2 .5 .1" size="5e-3"/>
+        <camera pos='1 1 1' euler='90 0 0'/>
+
+		<default class = 'HAT'>
+			<geom density='1.55e-3' type='capsule' size='1.56e-3 241e-3' />
+<!-- Remember to add m1 = 0 and m2 = 31 and  delta_m = 68.78
+-->
+		</default>
+		<default class = 'pelvis'>
+			<geom mass='1776e-3' type='capsule' size='1.56e-3 31.43e-3' />
+		</default>
+		<default class = 'thigh'>
+			<geom density='2.89e-3' type='capsule' size='1.56e-3 81.5e-3' />
+<!-- Remember to add m1 = 37.14 and m2 = 48.27
+-->
+		</default>
+		<default class = 'shin'>
+			<geom density='0.87e-3' type='capsule' size='1.56e-3 91e-3' />
+<!-- Remember to add m1 = 39.67 and m2 = 0 and delta_m = 25.9
+-->
+		</default>
+		<default class = 'foot_cap'>
+			<geom density='0.14e-3' type='capsule' size='1.56e-3 37e-3' />
+<!-- Remember to add m1 = 33.28 and m2 = 57.52 and delta_m = 0
+-->
+		</default>
+		<default class = 'hip_joint_x'>
+      <joint type='hinge' axis='1 0 0' ref='0' range='-40 90' limited='true' armature='0.0001' stiffness='0' springref='0'/>
+		</default>
+    <!--
+		<default class = 'hip_joint_y'>
+            <joint type='hinge' axis='0 1 0' range='0 0' damping='5' limited='true' stiffness='20' armature='0.0080' />
+		</default>
+		<default class = 'hip_joint_z'>
+            <joint type='hinge' axis='0 0 1' range='0 0'  damping='5' limited='true' stiffness='10' armature='0.01' />
+		</default>
+  -->
+		<default class = 'knee_joint'>
+			<joint type='hinge' axis='1 0 0' range='0 40' limited='true'  armature='0.0006'  stiffness='0' springref='0'/>
+		</default>
+		<default class = 'ankle_joint_x'>
+			<joint type='hinge' axis='1 0 0' pos='0 0 0' range='-60 30' limited='true'  armature='0.0006' stiffness='0' springref='0'/>
+		</default>
+    <!--
+		<default class = 'ankle_joint_y'>
+            <joint type='hinge' axis='0 1 0' pos='0 0 0' range='-5 5' limited='true'  armature='0.0008' />
+		</default>
+  -->
+	</default>
+
+	<worldbody>
+        <light directional='false' diffuse='.8 .8 .8' specular='0.3 0.3 0.3' pos='0 0 40.5' dir='0 0 -1'/>
+
+		<!-- Everything pretty self explanatory, condim = 3 sets the contact type to Regular frictional contact, opposing slip in the tangent plane. see http://mujoco.org/book/modeling.html#CSchema for details
+		-->
+        <!--<geom name='floor' pos='0 0 -1' size='1 1 1' euler='15 0 0' type='plane' material="MatPlane" condim='3'/>
+-->
+        <body name='axes' pos='20e-3 -1e-3 0'>
+          <geom name='x' type='cylinder' fromto='100e-3 0 0 170e-3 0 0' size='5e-3' rgba='0 0 1 1'/>
+          <geom name='y' type='cylinder' fromto='100e-3 0 0 100e-3 70e-3 0' size='5e-3' rgba='0 1 0 1'/>
+          <geom name='z' type='cylinder' fromto='100e-3 0 0 100e-3 0 70e-3' size='5e-3' rgba='1 0 0 1'/>
+        </body>
+
+        <body name='left_wheel' pos='0 -172.5e-3 0' euler='0 0 0'>
+          <!--<geom name='wheel' density='1e3' type='cylinder' size='170e-3 10e-3' pos = '0 -200e-3 0' euler='0 90 0'/>
+          -->
+          <geom name='left_spoke' density='5e3' type='cylinder' size='2.5e-3 96.25e-3' pos = '5e-3 -86.25e-3 0' euler='90 0 0'/>
+          <joint name='left_wheel' type='hinge' axis='1 0 0'  pos='0 0 0'/>
+          <body name='left_foothold' pos='40e-3 -185e-3 0' euler='0 0 0'>
+            <geom name='left_foothold' density='5e4'  type='box' size='80e-3 5e-3 30e-3' pos='0 0 50e-3' euler='0 90 0'/>
+            <joint name='left_pedal' type='hinge' axis='1 0 0' pos='0 0 0'/>
+            <site name="left_foothold_bottom" pos='0 0 0'/>
+            <site name="left_foothold_top"    pos='0 0 74e-3'/>
+          </body>
+        </body>
+
+        <body name='right_wheel' pos='0 -172.5e-3 0' euler='0 0 0'>
+          <!--<geom name='wheel' density='1e3' type='cylinder' size='170e-3 10e-3' pos = '0 -200e-3 0' euler='0 90 0'/>
+          -->
+          <geom name='right_spoke' density='5e3' type='cylinder' size='2.5e-3 96.25e-3' pos = '-5e-3 -86.25e-3 0' euler='90 0 0'/>
+          <joint name='right_wheel' type='hinge' axis='1 0 0'  pos='0 0 0'/>
+          <body name='right_foothold' pos='-40e-3 -185e-3 0' euler='0 0 0'>
+            <geom name='right_foothold' density='5e4'  type='box' size='80e-3 5e-3 30e-3' pos='0 0 50e-3' euler='0 90 0'/>
+            <joint name='right_pedal' type='hinge' axis='1 0 0' pos='0 0 0'/>
+            <site name="right_foothold_bottom" pos='0 0 0'/>
+            <site name="right_foothold_top"    pos='0 0 74e-3'/>
+          </body>
+        </body>
+
+        <body name='lower_body' pos='0 0 0' euler='0 0 0'>
+		        <!--<geom mass='0' type='mesh' mesh='miniature_monkey' pos='0 30e-3 320e-3' axisangle = '0 0  1 0'/>
+-->
+            <!--<joint name='root' type='free' pos='0 0 0' limited='false' damping='0' armature='0' stiffness='0'/>-->
+
+			      <!-- Details on attributes of geoms here: http://mujoco.org/book/modeling.html
+			      -->
+
+            <site name="r_GMED_pelvis" pos='-16.5e-3 9.8e-3 80.6e-3'/>
+            <site name="l_GMED_pelvis" pos='16.5e-3 9.8e-3 80.6e-3'/>
+
+            <site name="r_IL_pelvis" pos='-7e-3 -21.5e-3 17.3e-3'/>
+            <site name="l_IL_pelvis" pos='7e-3 -21.5e-3 17.3e-3'/>
+
+            <site name="r_RF_pelvis" pos='-15.3e-3 -6.4e-3 33e-3' />
+            <site name="l_RF_pelvis" pos='15.3e-3 -6.4e-3 33e-3' />
+
+            <site name="r_BF_pelvis" pos='-14e-3 11.1e-3 -37.8e-3'/>
+            <site name="l_BF_pelvis" pos='14e-3 11.1e-3 -37.8e-3'/>
+
+		    </body>
+		      <!-- End Lower body
+		      -->
+	</worldbody>
+
+<actuator>
+
+  <velocity name='right_wheel' gear='1' joint='right_wheel' ctrllimited='true' ctrlrange='-1 1' />
+  <velocity name='left_wheel' gear='1' joint='left_wheel' ctrllimited='true' ctrlrange='-1 1' />
+</actuator>
+
+</mujoco>

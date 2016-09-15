@@ -1336,7 +1336,7 @@ void render(GLFWwindow* window)
 int main(int argc, const char** argv)
 {
 	// activate MuJoCo license
-	mj_activate("E:\\mjpro\\key_5293.txt");
+	mj_activate("E:\\mjpro\\key_5511.txt");
 
 	// init GLFW, set multisampling
     if (!glfwInit())
@@ -1404,7 +1404,7 @@ int main(int argc, const char** argv)
 	//int a = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\CycleJointServer.py\" &");
 	//int a = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\CycleMuscleServer.py\" &");
 	int a = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\CycleSiteCoordsServer.py\" &");
-	//int b = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\NeuronServer.py\" &");
+	int b = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\NeuronServer.py\" &");
 
 	//Levenberg Test
 	/*
@@ -1462,20 +1462,20 @@ int main(int argc, const char** argv)
 	std::vector<std::string> tendons;
 
 	tendons.push_back("r_IL");
-	tendons.push_back("l_IL");
 	tendons.push_back("r_GMED");
-	tendons.push_back("l_GMED");
 	tendons.push_back("r_VAS");
-	tendons.push_back("l_VAS");
 	tendons.push_back("r_TA");
-	tendons.push_back("l_TA");
 	tendons.push_back("r_SOL");
-	tendons.push_back("l_SOL");
 	tendons.push_back("r_RF");
-	tendons.push_back("l_RF");
 	tendons.push_back("r_BF");
-	tendons.push_back("l_BF");
 	tendons.push_back("r_GAS");
+	tendons.push_back("l_IL");
+	tendons.push_back("l_GMED");
+	tendons.push_back("l_VAS");
+	tendons.push_back("l_TA");
+	tendons.push_back("l_SOL");
+	tendons.push_back("l_RF");
+	tendons.push_back("l_BF");
 	tendons.push_back("l_GAS");
 
 	std::vector<std::string> joints;
@@ -1570,7 +1570,7 @@ int main(int argc, const char** argv)
         render(window);
 		//mj_inverse(m, d);
 		if (update_cmd) {
-			//updateNeuron(d, m, &neuron_publisher, tendons);
+			updateNeuron(d, m, &neuron_publisher, tendons);
 		}
 		
         // finalize

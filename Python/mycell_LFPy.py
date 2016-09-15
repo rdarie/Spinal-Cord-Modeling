@@ -1,6 +1,11 @@
 from neuron import h
 from LFPy import Cell
-import imp
+import imp, pdb
+import numpy as np
+from LFPy import RecExtElectrode
+from LFPy.run_simulation import _run_simulation, _run_simulation_with_electrode
+from LFPy.run_simulation import _collect_geometry_neuron
+from LFPy.alias_method import alias_method
 
 class my_cell(Cell):  #### Inherits from Cell
     """Generic cell template"""
@@ -10,11 +15,8 @@ class my_cell(Cell):  #### Inherits from Cell
     #### thing, and then do a bit more ourselves with "super".
     ####
 
-    def __init__(self, *args, **kwargs):
-    # Create and connect the sections
-        self.create_sections()
-        self.build_topology()
-
+    def __init__(self,is_last_in_network = False, *args,  **kwargs):
+        # Create and connect the sections
         '''        popped_kwargs = {
                     morphology,
                     v_init=-65.,
@@ -39,6 +41,10 @@ class my_cell(Cell):  #### Inherits from Cell
                     pt3d=False,
                     verbose=False
         }'''
+        self.is_last_in_network = is_last_in_network
+        self.create_sections()
+        self.build_topology()
+        #pdb.set_trace()
         kwargs.update({'verbose' : False})
         super(my_cell, self).__init__(*args, **kwargs)
         # Add biophysics and synapses. Note that these could be run as custom code too
@@ -111,6 +117,95 @@ class my_cell(Cell):  #### Inherits from Cell
         """Add an exponentially decaying synapse in the middle
         of the dendrite. Set its tau to 2ms, and append this
         synapse to the synlist of the cell."""
+
+    def gather_recordings(self, rec_imem=False, rec_vmem=False,
+                     rec_ipas=False, rec_icap=False,
+                     rec_isyn=False, rec_vmemsyn=False, rec_istim=False,
+                     rec_variables=[]):
+        if rec_imem:
+            self._calc_imem()
+        if rec_ipas:
+            self._calc_ipas()
+        if rec_icap:
+            self._calc_icap()
+        if rec_vmem:
+            self._collect_vmem()
+        if rec_isyn:
+            self._collect_isyn()
+        if rec_vmemsyn:
+            self._collect_vsyn()
+        if rec_istim:
+            self._collect_istim()
+        if len(rec_variables) > 0:
+            self._collect_rec_variables(rec_variables)
+        if hasattr(self, 'netstimlist'):
+            del self.netstimlist
+        #somatic trace
+        self.somav = np.array(self.somav)
+
+    def simulate(self, electrode=None, rec_imem=False, rec_vmem=False,
+                     rec_ipas=False, rec_icap=False,
+                     rec_isyn=False, rec_vmemsyn=False, rec_istim=False,
+                     rec_variables=[], variable_dt=False, atol=0.001,
+                     to_memory=True, to_file=False, file_name=None,
+                     dotprodcoeffs=None):
+            '''
+            This is the main function running the simulation of the NEURON model.
+            Start NEURON simulation and record variables specified by arguments.
+
+            Arguments:
+            ::
+
+                electrode:  Either an LFPy.RecExtElectrode object or a list of such.
+                            If supplied, LFPs will be calculated at every time step
+                            and accessible as electrode.LFP. If a list of objects
+                            is given, accessible as electrode[0].LFP etc.
+                rec_imem:   If true, segment membrane currents will be recorded
+                            If no electrode argument is given, it is necessary to
+                            set rec_imem=True in order to calculate LFP later on.
+                            Units of (nA).
+                rec_vmem:   record segment membrane voltages (mV)
+                rec_ipas:   record passive segment membrane currents (nA)
+                rec_icap:   record capacitive segment membrane currents (nA)
+                rec_isyn:   record synaptic currents of from Synapse class (nA)
+                rec_vmemsyn:    record membrane voltage of segments with Synapse(mV)
+                rec_istim:  record currents of StimIntraElectrode (nA)
+                rec_variables: list of variables to record, i.e arg=['cai', ]
+                variable_dt: boolean, using variable timestep in NEURON
+                atol:       absolute tolerance used with NEURON variable timestep
+                to_memory:  only valid with electrode, store lfp in -> electrode.LFP
+                to_file:    only valid with electrode, save LFPs in hdf5 file format
+                file_name:  name of hdf5 file, '.h5' is appended if it doesnt exist
+                dotprodcoeffs :  list of N x Nseg np.ndarray. These arrays will at
+                            every timestep be multiplied by the membrane currents.
+                            Presumably useful for memory efficient csd or lfp calcs
+                '''
+            self._set_soma_volt_recorder()
+            self._collect_tvec()
+
+            if rec_imem:
+                self._set_imem_recorders()
+            if rec_vmem:
+                self._set_voltage_recorders()
+            if rec_ipas:
+                self._set_ipas_recorders()
+            if rec_icap:
+                self._set_icap_recorders()
+            if len(rec_variables) > 0:
+                self._set_variable_recorders(rec_variables)
+
+            #run fadvance until t >= tstopms, and calculate LFP if asked for
+            if self.is_last_in_network:
+                if electrode is None and dotprodcoeffs is None:
+                    if not rec_imem:
+                        print(("rec_imem = %s, membrane currents will not be recorded!" \
+                                          % str(rec_imem)))
+                    _run_simulation(self, variable_dt, atol)
+                else:
+                    #allow using both electrode and additional coefficients:
+                    _run_simulation_with_electrode(self, electrode, variable_dt, atol,
+                                                       to_memory, to_file, file_name,
+                                                       dotprodcoeffs)
 
     def _loadspikes(self):
         '''

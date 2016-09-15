@@ -84,13 +84,13 @@ POPULATION_SIZE = 1
 
 #will draw random cell locations within cylinder constraints:
 populationParameters = {
+    'size' : 1,
     'radius' : 20,
     'zmin' : -200,
     'zmax' : 200,
 }
 
-net = Ia_net(POPULATION_SIZE,
-                     cellParameters,
+net = Ia_net(cellParameters,
                      populationParameters,
                      synapseParameters)
 #
@@ -98,17 +98,19 @@ ev_list = hf.get_v_from_mat('E:\\Google Drive\\Github\\tempdata\\move_root_um_mo
 #pdb.set_trace()
 #ev_list = np.linspace(0,ev_list[0],20).tolist() + ev_list
 #ev_list = ev_list + np.linspace(ev_list[-1],0,20).tolist()
-fudge_factor = -5e5
+
+fudge_factor = 2e5
+#fudge_factor = 0
 ev = {"Ia" : fudge_factor * np.array(ev_list)}
 
 #/////////////////////////////////////////////////////////////
 # Debugging: override stim params manually set amplitude
 #pdb.set_trace()
-net.insert_voltage(ev, hf.sine_wave)
+net.insert_voltage(ev, hf.square_wave)
 
 net.run()
 res = net.results
-pickle.dump(res, open( "E:\\Google Drive\\Github\\tempdata\\Ia_net_sine.p", "wb" ) )
+pickle.dump(res, open( "E:\\Google Drive\\Github\\tempdata\\Ia_net_square.p", "wb" ) )
 
 #/////////////////////////////////////////////////////////////
 input("Please press a key.")

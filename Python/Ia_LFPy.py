@@ -25,7 +25,7 @@ class Ia(my_cell):  #### Inherits from Cell
         self.Ia_node = [h.Section(name='Ia_node_%d' % i, cell=self) for i in range(int(self.n_nodes))]
         self.Ia_paranode = [h.Section(name='Ia_paranode_%d' % i, cell=self) for i in range(int(self.n_nodes))]
     #
-
+    
     def _create_sectionlists(self):
             '''Create section lists for different kinds of sections'''
             #list with all sections
