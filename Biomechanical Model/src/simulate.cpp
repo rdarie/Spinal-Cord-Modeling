@@ -23,8 +23,8 @@ std::mutex gui_mutex;
 
 //communication
 zmq::context_t context(1);
-zmq::socket_t publisher = zmq::socket_t(context, ZMQ_REQ);;
-zmq::socket_t neuron_publisher = zmq::socket_t(context, ZMQ_REQ);;
+zmq::socket_t publisher = zmq::socket_t(context, ZMQ_REQ);
+zmq::socket_t neuron_publisher = zmq::socket_t(context, ZMQ_REQ);
 
 // model
 mjModel* m = 0;
@@ -71,10 +71,10 @@ int perturb = 0;
 mjtNum selpos[3] = {0, 0, 0};
 mjtNum refpos[3] = {0, 0, 0};
 mjtNum refquat[4] = {1, 0, 0, 0};
-int needselect = 0;                 // 0: none, 1: select, 2: center 
+int needselect = 0;                 // 0: none, 1: select, 2: center
 
 // help strings
-const char help_title[] = 
+const char help_title[] =
 "Help\n"
 "Option\n"
 "Info\n"
@@ -98,7 +98,7 @@ const char help_title[] =
 "Perturb\n"
 "Switch Cam";
 
-const char help_content[] = 
+const char help_content[] =
 "F1\n"
 "F2\n"
 "F3\n"
@@ -184,14 +184,14 @@ struct site_functor : Eigen::DenseFunctor<double>
 	int _n_sites;
 
 	std::vector<std::string> _site_name;
-	
+
 	site_functor(mjModel* m, mjData* d, double* tgt, std::vector<std::string> siteNames) : DenseFunctor<double>(6, 24) {
 		//
 		//_model = new mjModel();
 		_model = NULL;
 		_model = mj_copyModel(_model, m);
 		//std::cout << "inputs = " << inputs() << std::endl;
-		
+
 		_data = NULL;
 		_data = mj_makeData(_model);
 		//std::cout << "values = " << values() << std::endl;
@@ -207,12 +207,12 @@ struct site_functor : Eigen::DenseFunctor<double>
 		//std::cout << "]" << std::endl;
 
 	}
-	
+
 	int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
 	{
 		double current_site_xpos[100];
 		int count = 0;
-		
+
 		for (int i = 0; i < inputs(); i++) {
 			_data->qpos[i] = x[i];
 			_data->qvel[i] = 0;
@@ -262,7 +262,7 @@ struct site_functor : Eigen::DenseFunctor<double>
 
 			mj_forward(_model, _data);
 			mj_jacSite(_model, _data, jacp, jacr, siteID);
-			
+
 			//Reset Model
 			//mj_resetData(_model, _data);
 			//mj_forward(_model, _data);
@@ -297,7 +297,7 @@ Eigen::VectorXd testLmder1(double *targ, Eigen::VectorXd x, std::vector<std::str
 	//std::cout << "Starting with a guess of: " << std::endl << x << std::endl;
 
 	info = lm.minimize(x);
-	
+
 	// check return value
 	//std::cout << "lm.minimize info was " << info << std::endl;
 	//std::cout << "Levenberg Computed" << std::endl << x << std::endl;
@@ -325,7 +325,7 @@ double h_ogi(double eta) {
 
 double extended_ctrl(double ctrl, std::string muscle_name) {
 	int actID = mj_name2id(m, mjOBJ_ACTUATOR, muscle_name.c_str());
-	
+
 	double ext_ctrl = ctrl;
 
 	double L = d->actuator_length[actID];
@@ -424,7 +424,7 @@ void SweepMomentArms(mjData* d, mjModel* m, std::vector<std::string> *pair_names
 
 	mujoco2py::mujoco_msg_mj_tend *tendon_msg;
 	mujoco2py::mujoco_msg_mj_joint *joint_msg;
-	
+
 	std::vector<std::string>::iterator jnt_it = pair_names[1].begin();
 
 	init_msg.set_instruction("begin");
@@ -600,7 +600,7 @@ void cycleSitePos(mjData* d, mjModel*  m, zmq::socket_t *publisher, std::vector<
 		joint_msg = to_msg.add_joint();
 		(*joint_msg).set_name(*it);
 		joint_forces(i) = d->qfrc_inverse[jointID];
-		
+
 		(*joint_msg).set_force(joint_forces(i));
 	}
 
@@ -649,7 +649,7 @@ void cycleSitePos(mjData* d, mjModel*  m, zmq::socket_t *publisher, std::vector<
 	zmq::message_t message(msg_str.length());
 	memcpy(message.data(), msg_str.c_str(), msg_str.length());
 	(*publisher).send(message);
-	
+
 	//  Get the reply.
 	zmq::message_t reply;
 	(*publisher).recv(&reply);
@@ -1025,7 +1025,7 @@ void mouse_move(GLFWwindow* window, double xpos, double ypos)
     if( perturb )
     {
         if( selbody>0 )
-            mjv_moveObject(action, dx, dy, &cam.pose, 
+            mjv_moveObject(action, dx, dy, &cam.pose,
                            (float)width, (float)height, refpos, refquat);
     }
 
@@ -1102,10 +1102,10 @@ void advance(void)
         // fixed object: edit
         if( m->body_jntnum[selbody]==0 && m->body_parentid[selbody]==0 )
             mjv_mouseEdit(m, d, selbody, perturb, refpos, refquat);
-    
+
         // movable object: set mouse perturbation
         else
-            mjv_mousePerturb(m, d, selbody, perturb, refpos, refquat, 
+            mjv_mousePerturb(m, d, selbody, perturb, refpos, refquat,
                              d->xfrc_applied+6*selbody);
     }
 
@@ -1185,7 +1185,7 @@ void render(GLFWwindow* window)
     // update simulation statistics
     if( !paused )
         sprintf(status, "%.1f\n%d (%d)\n%.2f\n%.0f          \n%.2f\n%.2f\n%d",
-                d->time, d->nefc, d->ncon, 
+                d->time, d->nefc, d->ncon,
                 duration, 1.0/(glfwGetTime()-lastrendertm),
                 d->energy[0]+d->energy[1],
                 mju_log10(mju_max(mjMINVAL,
@@ -1195,9 +1195,9 @@ void render(GLFWwindow* window)
     lastrendertm = glfwGetTime();
 
     // create geoms and lights
-    mjv_makeGeoms(m, d, &objects, &vopt, mjCAT_ALL, selbody, 
-                  (perturb & mjPERT_TRANSLATE) ? refpos : 0, 
-                  (perturb & mjPERT_ROTATE) ? refquat : 0, selpos); 
+    mjv_makeGeoms(m, d, &objects, &vopt, mjCAT_ALL, selbody,
+                  (perturb & mjPERT_TRANSLATE) ? refpos : 0,
+                  (perturb & mjPERT_ROTATE) ? refquat : 0, selpos);
     mjv_makeLights(m, d, &objects);
 
     // update camera
@@ -1209,7 +1209,7 @@ void render(GLFWwindow* window)
     {
         // find selected geom
         mjtNum pos[3];
-        int selgeom = mjr_select(rect, &objects, lastx, rect.height - lasty, 
+        int selgeom = mjr_select(rect, &objects, lastx, rect.height - lasty,
                                  pos, 0, &ropt, &cam.pose, &con);
 
         // set lookat point
@@ -1263,7 +1263,7 @@ void render(GLFWwindow* window)
                 int adr = (r/4)*(rect.width/4) + c/4;
 
                 // assign rgb
-                depth_rgb[3*adr] = depth_rgb[3*adr+1] = depth_rgb[3*adr+2] = 
+                depth_rgb[3*adr] = depth_rgb[3*adr+1] = depth_rgb[3*adr+2] =
                     (unsigned char)((1.0f-depth_buffer[r*rect.width+c])*255.0f);
             }
 
@@ -1282,7 +1282,7 @@ void render(GLFWwindow* window)
         if( paused )
             mjr_overlay(rect, mjGRID_BOTTOMLEFT, 0, "PAUSED", 0, &con);
         else
-            mjr_overlay(rect, mjGRID_BOTTOMLEFT, 0, 
+            mjr_overlay(rect, mjGRID_BOTTOMLEFT, 0,
                 "Time\nSize\nCPU\nFPS\nEngy\nStat\nCam", status, &con);
     }
 
@@ -1397,8 +1397,8 @@ int main(int argc, const char** argv)
 	std::cout << "Connecting to python server 1 ..." << std::endl;
 	publisher.connect("tcp://localhost:5556");
 	std::cout << "Connecting to python server 2 ..." << std::endl;
-    neuron_publisher.connect("tcp://localhost:5555");
-	
+  neuron_publisher.connect("tcp://localhost:5555");
+
 	// activate python server
 	//int a = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\CycleGeneralizedCoordsServer.py\" &");
 	//int a = std::system("start python \"E:\\Google Drive\\Borton Lab\\Inter Process Communication\\CycleJointServer.py\" &");
@@ -1572,7 +1572,7 @@ int main(int argc, const char** argv)
 		if (update_cmd) {
 			updateNeuron(d, m, &neuron_publisher, tendons);
 		}
-		
+
         // finalize
         glfwSwapBuffers(window);
         glfwPollEvents();
