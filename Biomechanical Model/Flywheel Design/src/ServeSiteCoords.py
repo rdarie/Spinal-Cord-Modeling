@@ -24,17 +24,7 @@ socket = context.socket(zmq.REP)
 socket.bind("tcp://*:5556")
 mat_contents = sio.loadmat("E:\\Google Drive\\Github\\tempdata\\Biomechanical Model\\data\\kinematics_bip_Array_Q19_20131126.mat") # move to fnc
 
-all_kin = mat_contents['bip_kin'] # move to fnc
-trials = range(7,20) # move to fnc
-#trials = [7,8]
-
 sitenames, target = get_kin('CORR', trials)
-
-sitenames =    ['right_hip',  'right_knee',   'right_ankle', 'right_toe'] #move to fnc
-sitenames, target = get_kin('CORR', trials)
-
-site2mat_y  =  [8,            10,             12,            14] # move to fnc
-site2mat_z  =  [9,            11,             13,            15] # move to fnc
 
 N = 16
 forces = [[] for i in range(N)]
@@ -45,27 +35,19 @@ target_ypos = [[] for i in range(4)]
 target_zpos = [[] for i in range (4)]
 
 in_msg = mj2py.mujoco_msg()
-#total_num_items = 0
+
 total_num_samples = 0
 
 for a in range(len(trials)):
-    current_trial = trials[a] # move to fnc
-    trial = all_kin[0,current_trial] # move to fnc
 
     angle_trace_deg = [trial[1,:],     trial[2,:],     trial[3,:]]
 
-    # num_items = trial[0,:].size # replace with below
     num_samples = len(target[a][0]['ypos'])
 
-    # total_num_items += num_items # replace with below
     total_num_samples += num_samples
 
-    # x = np.linspace(1,num_items, num_items) # replace with below
     x = np.linspace(1, num_samples, num_samples)
 
-
-    #pdb.set_trace()
-    #for b in range(num_items):
     for b in range(num_samples):
 
         #  Wait for next request from client
@@ -90,10 +72,8 @@ for a in range(len(trials)):
 
             site.name = sitenames[c]
             site.x = -0.03143
-            #site.y = trial[site2mat_y[c],:][b]-trial[8,:][b] # replace with below
             site.y = target[a][c]['ypos'][b]-target[a][0]['ypos'][b]
             target_ypos[c].append(site.y)
-            #site.z = trial[site2mat_z[c],:][b]-trial[9,:][b]
             site.z = target[a][c]['zpos'][b]-target[a][0]['zpos'][b]
             target_zpos[c].append(site.z)
             #print("%f: site %s to x: %f y: %f" % (c, sitenames[c], site.y, site.x))
