@@ -12,24 +12,30 @@ def get_kin(kin_type, which_trials, filename_path = "A:\\Array files\\Newer Arra
     array = mat_contents['Array']
     all_trials = array.Trials
 
+    #pdb.set_trace()
     matching_trials = [trial for trial in all_trials if trial.Type == kin_type]
     matching_kinematics = [trial.KIN for trial in matching_trials]
+    print("%d trials match this kinematic type" % len(matching_kinematics))
     #  matching_kinematics = [trial.KIN for trial in all_trials if trial.Type == kin_type]
 
     target = []
     sitenames =    ['right_hip',  'right_knee',   'right_ankle', 'right_toe']
-    for kin in matching_kinematics:
-        hip_y   = [measure.Data for measure in kin if measure.name == 'GT Y'][0]
-        hip_z   = [measure.Data for measure in kin if measure.name == 'GT Z'][0]
-        knee_y  = [measure.Data for measure in kin if measure.name == 'K Y'][0]
-        knee_z  = [measure.Data for measure in kin if measure.name == 'K Z'][0]
-        ankle_y = [measure.Data for measure in kin if measure.name == 'M Y'][0]
-        ankle_z = [measure.Data for measure in kin if measure.name == 'M Z'][0]
-        toe_y = [measure.Data for measure in kin if measure.name == 'MT Y'][0]
-        toe_z = [measure.Data for measure in kin if measure.name == 'MT Z'][0]
+    site_aliases = [['GT Y', 'GT Z'],
+                    ['K Y','K Z'],
+                    [ 'M Y', 'M Z'],
+                    ['MT Y', 'MT Z']
+                    ]
+    for kin in [matching_kinematics[i] for i in which_trials]:
+        current_target = []
+        for alias in site_aliases:
+            current_target.append({
+            # I am going to forget what this does before long
+                'ypos':[measure.Data[np.isfinite(measure.Data)] for measure in kin if measure.name == alias[0]][0],
+                'zpos':[measure.Data[np.isfinite(measure.Data)] for measure in kin if measure.name == alias[1]][0]
+                })
 
-        target.append([{'ypos':hip_y, 'zpos':hip_z},{'ypos':knee_y, 'zpos':knee_z},
-            {'ypos':ankle_y, 'zpos':ankle_z},{'ypos':toe_y, 'zpos':toe_z}])
+        target.append(current_target)
+        # Perhaps at this point it'd be good to check that all traces have equal length, since we deleted nans
 
     #pdb.set_trace()
 

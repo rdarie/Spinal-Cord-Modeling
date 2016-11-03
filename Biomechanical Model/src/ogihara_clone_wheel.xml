@@ -32,7 +32,7 @@
 			<geom density='1.55e-3' type='capsule' size='1.56e-3 241e-3' />
 <!-- Remember to add m1 = 0 and m2 = 31 and  delta_m = 68.78
 -->
-		</default>
+	  </default>
 		<default class = 'pelvis'>
 			<geom mass='1776e-3' type='capsule' size='1.56e-3 31.43e-3' />
 		</default>
@@ -46,12 +46,12 @@
 <!-- Remember to add m1 = 39.67 and m2 = 0 and delta_m = 25.9
 -->
 		</default>
-		<default class = 'foot_cap'>
+		<default class='foot_cap'>
 			<geom density='0.14e-3' type='capsule' size='1.56e-3 37e-3' />
 <!-- Remember to add m1 = 33.28 and m2 = 57.52 and delta_m = 0
 -->
 		</default>
-		<default class = 'hip_joint_x'>
+		<default class='hip_joint_x'>
       <joint type='hinge' axis='1 0 0' ref='0' range='-40 90' limited='true' armature='0.0001' stiffness='0' springref='0'/>
 		</default>
     <!--
@@ -62,10 +62,10 @@
             <joint type='hinge' axis='0 0 1' range='0 0'  damping='5' limited='true' stiffness='10' armature='0.01' />
 		</default>
   -->
-		<default class = 'knee_joint'>
+		<default class='knee_joint'>
 			<joint type='hinge' axis='1 0 0' range='0 130' limited='true'  armature='0.0006'  stiffness='0' springref='0'/>
 		</default>
-		<default class = 'ankle_joint_x'>
+		<default class='ankle_joint_x'>
 			<joint type='hinge' axis='1 0 0' pos='0 0 0' range='-30 60' limited='true'  armature='0.0006' stiffness='0' springref='0'/>
 		</default>
     <!--
@@ -76,6 +76,8 @@
 	</default>
 
 	<worldbody>
+        <camera name='main_camera' mode='fixed' pos='1 1 1' euler='0 0 180' />
+
         <light directional='false' diffuse='.8 .8 .8' specular='0.3 0.3 0.3' pos='0 0 40.5' dir='0 0 -1'/>
 
 		<!-- Everything pretty self explanatory, condim = 3 sets the contact type to Regular frictional contact, opposing slip in the tangent plane. see http://mujoco.org/book/modeling.html#CSchema for details
@@ -94,7 +96,7 @@
           <geom name='left_spoke' mass='100e-3' type='cylinder' size='2.5e-3 96.25e-3' pos = '5e-3 -86.25e-3 0' euler='90 0 0'/>
           <joint name='left_wheel' type='hinge' axis='1 0 0'  pos='0 0 0'/>
           <body name='left_foothold' pos='31.43e-3 -185e-3 -37e-3' euler='0 0 0'>
-            <geom name='left_foothold' mass='100e-3' type='box' size='100e-3 5e-3 20e-3' pos='0 0 40e-3' euler='0 90 0' rgba='5e-1 1 5e-1 5e-1'/>
+            <geom name='left_foothold' mass='100e-3' type='box' size='100e-3 5e-3 20e-3' pos='0 0 40e-3' euler='0 90 0' rgba='1 5e-1 5e-1 5e-1'/>
             <joint name='left_pedal' type='hinge' axis='1 0 0' pos='0 0 37e-3'/>
             <site name="left_foothold_bottom" pos='0 0 0'/>
             <site name="left_foothold_top"    pos='0 0 74e-3'/>
@@ -292,7 +294,7 @@
       <site site='right_toes'/>
     </spatial>
 
-    <spatial name="r_IL" stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+    <spatial name="r_IL" stiffness="10" width="0.002" rgba=".3 .95 .3 1" limited="false" range="0 0.33">
       <site site='r_IL_pelvis'/>
       <geom geom='right_thigh_top_mass' sidesite='r_IL_front'/>
       <site site='r_IL_femur'/>
@@ -304,7 +306,7 @@
       <site site='l_IL_femur'/>
   </spatial>
 
-  <spatial name="r_GMED" stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name="r_GMED" stiffness="10" width="0.002" rgba=".3 .95 .3 1" limited="false" range="0 0.33">
     <site site='r_GMED_pelvis'/>
     <geom geom='right_thigh_top_mass'/>
     <site site='r_GMED_femur'/>
@@ -316,7 +318,7 @@
     <site site='l_GMED_femur'/>
   </spatial>
 
-  <spatial name='r_VAS' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name='r_VAS' stiffness="10" width="0.002" rgba=".3 .95 .3 1" limited="false" range="0 0.33">
     <site site='r_VAS_femur'/>
     <geom geom='right_thigh_bot_mass'/>
     <site site='r_VAS_tibia'/>
@@ -328,7 +330,7 @@
     <site site='l_VAS_tibia'/>
   </spatial>
 
-  <spatial name='r_TA' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name='r_TA' stiffness="10" width="0.002" rgba=".3 .95 .3 1" limited="false" range="0 0.33">
     <site site='r_TA_tibia'/>
     <geom geom='right_foot_top_mass'/>
     <site site='r_TA_ankle'/>
@@ -340,7 +342,7 @@
     <site site='l_TA_ankle'/>
   </spatial>
 
-  <spatial name='r_SOL' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name='r_SOL' stiffness="10" width="0.002" rgba=".3 .95 .3 1" limited="false" range="0 0.33">
     <site site='r_SOL_tibia'/>
     <geom geom='right_foot_top_mass'/>
     <site site='r_SOL_ankle'/>
@@ -352,19 +354,19 @@
     <site site='l_SOL_ankle'/>
   </spatial>
 
+  <spatial name='r_RF' stiffness="10" width="0.002" rgba=".3 .95 .3 1" limited="false" range="0 0.33">
+    <site site='r_RF_pelvis'/>
+    <geom geom='right_thigh_top_mass'/>
+    <site site='r_RF_tibia'/>
+  </spatial>
+
   <spatial name='l_RF' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
     <site site='l_RF_pelvis'/>
     <geom geom='left_thigh_top_mass'/>
     <site site='l_RF_tibia'/>
   </spatial>
 
-  <spatial name='r_RF' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
-    <site site='r_RF_pelvis'/>
-    <geom geom='right_thigh_top_mass'/>
-    <site site='r_RF_tibia'/>
-  </spatial>
-
-  <spatial name='r_BF' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name='r_BF' stiffness="10" width="0.002" rgba=".3 .95 .3 1" limited="false" range="0 0.33">
     <site site='r_BF_pelvis'/>
     <geom geom='right_thigh_top_mass'/>
     <site site='r_BF_tibia'/>
@@ -376,7 +378,7 @@
     <site site='l_BF_tibia'/>
   </spatial>
 
-  <spatial name='r_GAS' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name='r_GAS' stiffness="10" width="0.002" rgba=".3 .95 .3 1" limited="false" range="0 0.33">
     <site site='r_GAS_femur'/>
     <geom geom='right_foot_top_mass'/>
     <site site='r_GAS_ankle'/>
@@ -415,8 +417,8 @@
   <general name='r_GAS'  gear='1' tendon='r_GAS'  ctrllimited='true' ctrlrange='-1 1' gainprm='720' biastype="affine" biasprm='0 0 -91'/>
   <general name='l_GAS'  gear='1' tendon='l_GAS'  ctrllimited='true' ctrlrange='-1 1' gainprm='720' biastype="affine" biasprm='0 0 -91'/>
 
-  <general name='right_wheel' gear='1' gainprm='5e1 0 0' joint='right_wheel' ctrllimited='true' ctrlrange='-1 1' />
-  <general name='left_wheel' gear= '1' gainprm='5e1 0 0' joint='left_wheel' ctrllimited='true' ctrlrange='-1 1' />
+  <general name='right_wheel' gear='5' gainprm='1e1 0 0' joint='right_wheel' ctrllimited='true' ctrlrange='-1 1' />
+  <general name='left_wheel' gear= '5' gainprm='1e1 0 0' joint='left_wheel' ctrllimited='true' ctrlrange='-1 1' />
 </actuator>
 
 </mujoco>

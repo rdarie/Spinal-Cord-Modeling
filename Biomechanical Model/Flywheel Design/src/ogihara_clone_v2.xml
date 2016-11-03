@@ -181,10 +181,10 @@
 				              <joint name='left_hip_y' class = 'hip_joint_y'/>
 				              <joint name='left_hip_z' class = 'hip_joint_z'/>
 				            -->
-				      <geom class="thigh" name='left_thigh' pos='0 0 -81.5e-3' euler='0 0 0'/>
-              <geom mass='37.14e-3' name='left_thigh_top_mass' pos='0 0 0' type='sphere' size='5e-3' />
-              <geom mass='0' name='left_thigh_mid_mass' pos='0 0 -81.5e-3' type='sphere' size='5e-3' />
-              <geom mass='48.27e-3' name='left_thigh_bot_mass' pos='0 0 -163e-3' type='sphere' size='5e-3' />
+				      <geom class="thigh" name='left_thigh' pos='0 0 -81.5e-3' euler='0 0 0' rgba="0.5 0.5 0.5 0.3"/>
+              <geom mass='37.14e-3' name='left_thigh_top_mass' pos='0 0 0' type='sphere' size='5e-3' rgba="0.5 0.5 0.5 0.3"/>
+              <geom mass='0' name='left_thigh_mid_mass' pos='0 0 -81.5e-3' type='sphere' size='5e-3' rgba="0.5 0.5 0.5 0.3"/>
+              <geom mass='48.27e-3' name='left_thigh_bot_mass' pos='0 0 -163e-3' type='sphere' size='5e-3' rgba="0.5 0.5 0.5 0.3"/>
 
               <site name="l_GMED_femur" pos='0 -6.9e-3 -2.3e-3'/>
 
@@ -196,10 +196,10 @@
               <!--<site name="l_VAS_front" pos='0 -30e-3 -10e-3'/>-->
 
 				      <body name='left_shin' pos='0 0 -163e-3' euler='0 0 0'>
-					          <geom name='left_shin' pos='0 0 -91e-3' class = 'shin'/>
-                    <geom mass='39.67e-3' name='left_shin_top_mass' pos='0 0 0' type='sphere' size='5e-3' />
-                    <geom mass='25.9e-3' name='left_shin_mid_mass' pos='0 0 -91e-3' type='sphere' size='5e-3' />
-                    <geom mass='0' name='left_shin_bot_mass' pos='0 0 -182e-3' type='sphere' size='5e-3' />
+					          <geom name='left_shin' pos='0 0 -91e-3' class = 'shin'rgba="0.5 0.5 0.5 0.3"/>
+                    <geom mass='39.67e-3' name='left_shin_top_mass' pos='0 0 0' type='sphere' size='5e-3' rgba="0.5 0.5 0.5 0.3"/>
+                    <geom mass='25.9e-3' name='left_shin_mid_mass' pos='0 0 -91e-3' type='sphere' size='5e-3' rgba="0.5 0.5 0.5 0.3"/>
+                    <geom mass='0' name='left_shin_bot_mass' pos='0 0 -182e-3' type='sphere' size='5e-3' rgba="0.5 0.5 0.5 0.3"/>
 
                     <site name="l_VAS_tibia" pos='3.1e-3 -16.8e-3 11e-3'/>
                     <site name="l_TA_tibia" pos='0 2.2e-3 -73.3e-3'/>
@@ -210,10 +210,10 @@
                     <site name="left_knee" pos='0 0 0' rgba='1 0 0 1'/>
 					          <joint name='left_knee' class = 'knee_joint'/>
 					          <body name='left_foot' pos='0 0 -182e-3' >
-						                 <geom class = 'foot_cap' pos='0 -37e-3 0' euler='90 0 0' name='left_foot_cap'/>
-                             <geom mass='33.28e-3' name='left_foot_top_mass' pos='0 0 0' euler='0 90 0' type='cylinder'  size='5e-3 10e-3' />
-                             <geom mass='0' name='left_foot_mid_mass' pos='0 -37e-3 0' type='sphere' size='5e-3' />
-                             <geom mass='57.52e-3' name='left_foot_bot_mass' pos='0  -74e-3 0' euler='0 90 0' type='cylinder'  size='5e-3 10e-3' />
+						                 <geom class = 'foot_cap' pos='0 -37e-3 0' euler='90 0 0' name='left_foot_cap' rgba="0.5 0.5 0.5 0.3"/>
+                             <geom mass='33.28e-3' name='left_foot_top_mass' pos='0 0 0' euler='0 90 0' type='cylinder'  size='5e-3 10e-3' rgba="0.5 0.5 0.5 0.3"/>
+                             <geom mass='0' name='left_foot_mid_mass' pos='0 -37e-3 0' type='sphere' size='5e-3' rgba="0.5 0.5 0.5 0.3"/>
+                             <geom mass='57.52e-3' name='left_foot_bot_mass' pos='0  -74e-3 0' euler='0 90 0' type='cylinder'  size='5e-3 10e-3' rgba="0.5 0.5 0.5 0.3"/>
                              <site name="left_toe" pos='0 -74e-3 0' rgba='1 0 0 1'/>
 
                              <site name="l_TA_ankle" pos='-7.2e-3 -22.2e-3 -10.5e-3'/>
@@ -244,7 +244,7 @@
       <site site='r_IL_femur'/>
     </spatial>
 
-    <spatial name="l_IL" stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+    <spatial name="l_IL" stiffness="10" width="0.002" rgba=".95 .3 .3 0.3" limited="false" range="0 0.33">
       <site site='l_IL_pelvis'/>
       <geom geom='left_thigh_top_mass' sidesite='l_IL_front'/>
       <site site='l_IL_femur'/>
@@ -256,7 +256,7 @@
     <site site='r_GMED_femur'/>
   </spatial>
 
-  <spatial name="l_GMED" stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name="l_GMED" stiffness="10" width="0.002" rgba=".95 .3 .3 0.3" limited="false" range="0 0.33">
     <site site='l_GMED_pelvis'/>
     <geom geom='left_thigh_top_mass'/>
     <site site='l_GMED_femur'/>
@@ -268,7 +268,7 @@
     <site site='r_VAS_tibia'/>
   </spatial>
 
-  <spatial name='l_VAS' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name='l_VAS' stiffness="10" width="0.002" rgba=".95 .3 .3 0.3" limited="false" range="0 0.33">
     <site site='l_VAS_femur'/>
     <geom geom='left_thigh_bot_mass'/>
     <site site='l_VAS_tibia'/>
@@ -280,7 +280,7 @@
     <site site='r_TA_ankle'/>
   </spatial>
 
-  <spatial name='l_TA' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name='l_TA' stiffness="10" width="0.002" rgba=".95 .3 .3 0.3" limited="false" range="0 0.33">
     <site site='l_TA_tibia'/>
     <geom geom='left_foot_top_mass'/>
     <site site='l_TA_ankle'/>
@@ -292,13 +292,13 @@
     <site site='r_SOL_ankle'/>
   </spatial>
 
-  <spatial name='l_SOL' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name='l_SOL' stiffness="10" width="0.002" rgba=".95 .3 .3 0.3" limited="false" range="0 0.33">
     <site site='l_SOL_tibia'/>
     <geom geom='left_foot_top_mass'/>
     <site site='l_SOL_ankle'/>
   </spatial>
 
-  <spatial name='l_RF' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name='l_RF' stiffness="10" width="0.002" rgba=".95 .3 .3 0.3" limited="false" range="0 0.33">
     <site site='l_RF_pelvis'/>
     <geom geom='left_thigh_top_mass'/>
     <site site='l_RF_tibia'/>
@@ -316,7 +316,7 @@
     <site site='r_BF_tibia'/>
   </spatial>
 
-  <spatial name='l_BF' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name='l_BF' stiffness="10" width="0.002" rgba=".95 .3 .3 0.3" limited="false" range="0 0.33">
     <site site='l_BF_pelvis'/>
     <geom geom='left_thigh_top_mass'/>
     <site site='l_BF_tibia'/>
@@ -328,7 +328,7 @@
     <site site='r_GAS_ankle'/>
   </spatial>
 
-  <spatial name='l_GAS' stiffness="10" width="0.002" rgba=".95 .3 .3 1" limited="false" range="0 0.33">
+  <spatial name='l_GAS' stiffness="10" width="0.002" rgba=".95 .3 .3 0.3" limited="false" range="0 0.33">
     <site site='l_GAS_femur'/>
     <geom geom='left_foot_top_mass'/>
     <site site='l_GAS_ankle'/>

@@ -24,6 +24,7 @@ socket = context.socket(zmq.REP)
 socket.bind("tcp://*:5556")
 mat_contents = sio.loadmat("E:\\Google Drive\\Github\\tempdata\\Biomechanical Model\\data\\kinematics_bip_Array_Q19_20131126.mat") # move to fnc
 
+trials = range(20)
 sitenames, target = get_kin('CORR', trials)
 
 N = 16
@@ -38,9 +39,16 @@ in_msg = mj2py.mujoco_msg()
 
 total_num_samples = 0
 
-for a in range(len(trials)):
 
-    angle_trace_deg = [trial[1,:],     trial[2,:],     trial[3,:]]
+for a in range(len(trials)):
+    #pdb.set_trace()
+    #angle_trace_deg = [trial[1,:],     trial[2,:],     trial[3,:]]
+
+    #start_idx = 1
+    #end_idx = -20
+    #for idx in range(4):
+    #    target[a][idx]['ypos'] = target[a][idx]['ypos'][start_idx:end_idx]
+    #    target[a][idx]['zpos'] = target[a][idx]['zpos'][start_idx:end_idx]
 
     num_samples = len(target[a][0]['ypos'])
 
@@ -50,7 +58,6 @@ for a in range(len(trials)):
 
     for b in range(num_samples):
 
-        #  Wait for next request from client
         message = socket.recv()
 
         in_msg.ParseFromString(message)
@@ -72,14 +79,24 @@ for a in range(len(trials)):
 
             site.name = sitenames[c]
             site.x = -0.03143
-            site.y = target[a][c]['ypos'][b]-target[a][0]['ypos'][b]
+            #pdb.set_trace()
+            site.y = target[a][c]['ypos'][b]-target[a][0]['ypos'][b]+0.015095 # crest to hip joint correction
             target_ypos[c].append(site.y)
-            site.z = target[a][c]['zpos'][b]-target[a][0]['zpos'][b]
+            site.z = target[a][c]['zpos'][b]-target[a][0]['zpos'][b]-0.098851 # crest to hip joint correction
             target_zpos[c].append(site.z)
             #print("%f: site %s to x: %f y: %f" % (c, sitenames[c], site.y, site.x))
 
         out_msg_str = out_msg.SerializeToString()
         socket.send(out_msg_str)
+
+        #start_time = 10
+        #mid_time = 60
+        #end_time = 110
+
+        #if b == start_time or b == mid_time or b == end_time:
+        #    print("t = %f" % b*10)
+        #    pdb.set_trace()
+        #Wait for next request from client
         #print(" ")
 
 # Plotting
@@ -94,7 +111,7 @@ if enable_plotting:
     fig4, axarr4 = pyplot.subplots(3)
     fig4.set_size_inches(6,15)
 
-    time = np.array(range(len(joint_forces[0])))*0.01
+    time = np.array(range(len(joint_forces[0])))*10
     for a in range(6):
         axarr1[a].plot(time, joint_forces[a], 'k-') # Returns a tuple of line objects, thus the comma
         axarr1[a].set_title(in_msg.joint[a].name)
@@ -105,7 +122,7 @@ if enable_plotting:
     fig1.text(0.02, 0.5, 'Torque ($N\cdot m$)', va='center', rotation='vertical')
 
     for a in range(N):
-        time = np.array(range(len(forces[a])))*0.01
+        time = np.array(range(len(forces[a])))*10
         axarr2[a].plot(time, forces[a], 'k-') # Returns a tuple of line objects, thus the comma
         axarr2[a].set_title(in_msg.act[a].name)
         pyplot.setp(axarr2[a].get_yticklabels(), visible=False)
@@ -115,7 +132,7 @@ if enable_plotting:
     fig2.text(0.02, 0.5, 'Force (N)', va='center', rotation='vertical')
 
     for a in range(1,4):
-        time = np.array(range(len(site_ypos[a])))*0.01
+        time = np.array(range(len(site_ypos[a])))*10
         line1, = axarr3[a-1].plot(time, site_ypos[a], 'r--') # Returns a tuple of line objects, thus the comma
         line1.set_label("Computed Y position")
         line2, = axarr3[a-1].plot(time, target_ypos[a], 'r-') # Returns a tuple of line objects, thus the comma
@@ -151,5 +168,5 @@ if enable_plotting:
 #fig4.savefig("trajectories.png", bbox_inches='tight')
 
 pyplot.show()
-print("total_num_items = %d" % total_num_items)
+print("total_num_samples = %d" % total_num_samples)
 input("Please click enter to continue")

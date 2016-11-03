@@ -150,10 +150,10 @@
                             <site name="r_BF_tibia" pos='-14e-3 2.6e-3 -32.8e-3'/>
 
                              <site name="right_knee" pos='0 0 0' rgba='1 0 0 1'/>
-					                   <joint name='right_knee' class = 'knee_joint'/>
+					                   <joint name='right_knee' class='knee_joint'/>
 
 					                   <body name='right_foot' pos='0 0 -182e-3' >
-						                         <geom class = 'foot_cap' pos='0 -37e-3 0' euler='90 0 0' name='right_foot_cap'/>
+						                         <geom class='foot_cap' pos='0 -37e-3 0' euler='90 0 0' name='right_foot_cap'/>
                                  	   <geom mass='33.28e-3' name='right_foot_top_mass' pos='0 0 0' euler='0 90 0'  type='cylinder' size='5e-3 10e-3' />
                                  	   <geom mass='0' name='right_foot_mid_mass' pos='0 -37e-3 0' type='sphere' size='5e-3' />
                                  	   <geom mass='57.52e-3' name='right_foot_bot_mass' pos='0 -74e-3 0' euler='0 90 0'  type='cylinder' size='5e-3 10e-3' />
@@ -164,7 +164,7 @@
                                      <site name="r_GAS_ankle" pos='-13.3e-3 22e-3 -2.2e-3'/>
 
                                      <site name="right_ankle" pos='0 0 0' rgba='1 0 0 1'/>
-                                     <joint name='right_ankle_x' class = 'ankle_joint_x'/>
+                                     <joint name='right_ankle_x' class='ankle_joint_x'/>
 						                         <!--<joint name='right_ankle_y' class = 'ankle_joint_y'/>-->
 					                    </body>
 					                         <!-- End foot
@@ -178,7 +178,7 @@
 
 			      <body name='left_leg' pos='31.43e-3 0 0'  euler='0 0 0'>
               <site name="left_hip" pos='0 0 0' rgba='1 0 0 1'/>
-              <joint name='left_hip_x' class = 'hip_joint_x'/>
+              <joint name='left_hip_x' class='hip_joint_x'/>
 					         <!--
 				              <joint name='left_hip_y' class = 'hip_joint_y'/>
 				              <joint name='left_hip_z' class = 'hip_joint_z'/>

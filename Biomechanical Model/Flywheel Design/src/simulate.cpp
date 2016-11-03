@@ -1,7 +1,7 @@
-//-----------------------------------//
-//  This file is part of MuJoCo.     //
-//  Copyright (C) 2016 Roboti LLC.   //
-//-----------------------------------//
+//--------------------------------------------//
+//  This file is based on part of MuJoCo.     //
+//  Copyright (C) 2016 Roboti LLC.            //
+//--------------------------------------------//
 
 
 #include "mujoco.h"
@@ -174,6 +174,11 @@ void loadmodel(GLFWwindow* window, const char* filename, const char* xmlstring)
     d = mj_makeData(m);
     mj_forward(m, d);
 
+	// save initial lengths of things
+	for (int a = 0; a < m->nu; a++) {
+		actuator_length0.push_back(d->actuator_length[a]);
+		tendon_length0.push_back(d->ten_length[a]);
+	}
     // save filename for reload
     if( !xmlstring )
         strcpy(lastfile, filename);
@@ -830,7 +835,7 @@ int main(int argc, const char** argv)
 
     // Start connections to python slaves
     int a = std::system("start python \"E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\Biomechanical Model\\Flywheel Design\\src\\ServeSiteCoords.py\" &");
-    //int b = std::system("start python \"E:\\Google Drive\Github\\Spinal-Cord-Modeling\\Biomechanical Model\\Flywheel Design\\src\\NeuronServer.py\" &");
+    int b = std::system("start python \"E:\\Google Drive\\Github\\Spinal-Cord-Modeling\\Biomechanical Model\\Flywheel Design\\src\\NeuronServer.py\" &");
 
   	std::vector<std::string> tendons;
 
@@ -934,9 +939,10 @@ int main(int argc, const char** argv)
     while( !glfwWindowShouldClose(window) )
     {
         // simulate and render
+		//poseJoints(d, m, &incoming_publisher);
 		fitPoseToSites(d, m, &incoming_publisher, tendons, joints, &solution_pose);
         render(window);
-		// updateNeuron(d, m, &neuron_publisher, tendons, tendon_length0);
+		//updateNeuron(d, m, &neuron_publisher, tendons, tendon_length0);
 
         // handle events (this calls all callbacks)
         glfwPollEvents();

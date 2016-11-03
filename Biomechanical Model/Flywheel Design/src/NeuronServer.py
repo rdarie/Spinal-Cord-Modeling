@@ -12,6 +12,7 @@ from neuronpy.graphics import spikeplot
 from neuronpy.util import spiketrain
 
 matplotlib.rcParams.update({'font.size': 20})
+
 def Ia_model(k, l, l_dot, l0):
     return k*(cmp(l_dot,0)*21*m.pow((abs(l_dot/l0)),0.5)+200*(l-l0)/l0+60)
 
@@ -36,7 +37,7 @@ for i in range(N):
     cells[i].netcon.record(t_vec, id_vec, i)
 
 # Simulate
-tstop = 3790
+tstop = 1170 # must be frame_interval * number of samples in the site server
 frame_interval = 10
 sim_steps_per_frame = frame_interval / h.dt
 num_iterations = m.floor(tstop / frame_interval)
@@ -80,7 +81,7 @@ for a in range(int(num_iterations)):
         #print("Advancing...")
 
     #os.system('cls')
-    #print("Running ... %2.2f %% left" % (100*a/num_iterations))
+    print("Running ... %2.2f %% left" % (100*a/num_iterations))
 
 spikes = spiketrain.netconvecs_to_listoflists(t_vec, id_vec)
 spikes = list(reversed(spikes))

@@ -1,5 +1,14 @@
 #include "mujoco2py_functions.hpp"
 
+double getTendonMomentArm(mjData* d, mjModel* m, std::string tendon_name, std::string joint_name) {
+
+	int jointID = mj_name2id(m, mjOBJ_JOINT, joint_name.c_str());
+	int tendonID = mj_name2id(m, mjOBJ_TENDON, tendon_name.c_str());
+	int nv = m->nv;
+	double ma = d->ten_moment[nv*tendonID + jointID];
+	return ma;
+}
+
 struct site_functor : Eigen::DenseFunctor<double>
 {
 	mjModel* _model = new mjModel();
@@ -229,7 +238,7 @@ void fitPoseToSites(mjData* d, mjModel*  m, zmq::socket_t *publisher, std::vecto
 	}
 
 	(*solution_pose) = apply_lm(m,d,targ,x,sites);
-	//std::cout << "solution pose: " << solution_pose.transpose() << std::endl;
+	std::cout << "solution pose: " << (*solution_pose).transpose() << std::endl;
 	mj_resetData(m, d);
 	for (int a = 0; a < m->nq; a++) {
 		d->qpos[a] = (*solution_pose)[a];
@@ -268,4 +277,36 @@ void updateNeuron(mjData* d, mjModel*  m, zmq::socket_t *publisher, std::vector<
 	(*publisher).recv(&reply);
 
 	from_msg.ParseFromArray(reply.data(), reply.size());
+}
+void poseJoints(mjData* d, mjModel* m, zmq::socket_t *publisher) {
+
+	// protocol buffer stuff
+	mujoco2py::mujoco_msg to_msg;
+	mujoco2py::mujoco_msg from_msg;
+
+	mujoco2py::mujoco_msg_mj_tend *tendon_msg = to_msg.add_tend();
+	(*tendon_msg).set_ma(0);
+	(*tendon_msg).set_name("DUMMY");
+
+	std::string msg_str;
+	to_msg.SerializeToString(&msg_str);
+
+	//  Send message to all subscribers
+	zmq::message_t message(msg_str.length());
+	memcpy(message.data(), msg_str.c_str(), msg_str.length());
+	(*publisher).send(message);
+	//std::cout << "moment arm was: " << ma_model << std::endl;
+
+	//  Get the reply.
+	zmq::message_t reply;
+	(*publisher).recv(&reply);
+
+	from_msg.ParseFromArray(reply.data(), reply.size());
+
+	for (int i = 0; i < from_msg.joint_size(); i++) {
+		std::string current_joint = from_msg.joint(i).name();
+		int jointID = mj_name2id(m, mjOBJ_JOINT, current_joint.c_str());
+		d->qpos[jointID] = from_msg.joint(i).qpos();
+		//std::cout << "The reply moved joint " << from_msg.joint(i).name() << " to position " << from_msg.joint(i).qpos() << std::endl;
+	}
 }
