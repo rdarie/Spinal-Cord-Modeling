@@ -22,18 +22,25 @@ if enable_plotting:
 context = zmq.Context()
 socket = context.socket(zmq.REP)
 socket.bind("tcp://*:5556")
-mat_contents = sio.loadmat("E:\\Google Drive\\Github\\tempdata\\Biomechanical Model\\data\\kinematics_bip_Array_Q19_20131126.mat") # move to fnc
+#mat_contents = sio.loadmat("E:\\Google Drive\\Github\\tempdata\\Biomechanical Model\\data\\kinematics_bip_Array_Q19_20131126.mat") # move to fnc
 
-trials = range(20)
-sitenames, target = get_kin('CORR', trials)
+trials = [0]
+sitenames, target = get_kin('TRM20', trials)
 
 N = 16
+nsites = 5
+njoints = 8
 forces = [[] for i in range(N)]
-joint_forces = [[] for i in range(6)]
-site_ypos = [[] for i in range(4)]
-site_zpos = [[] for i in range (4)]
-target_ypos = [[] for i in range(4)]
-target_zpos = [[] for i in range (4)]
+
+joint_forces = [[] for i in range(njoints)]
+
+site_xpos = [[] for i in range(nsites) ]
+site_ypos = [[] for i in range(nsites) ]
+site_zpos = [[] for i in range (nsites)]
+
+target_xpos = [[] for i in range(nsites) ]
+target_ypos = [[] for i in range(nsites) ]
+target_zpos = [[] for i in range (nsites)]
 
 in_msg = mj2py.mujoco_msg()
 
@@ -65,24 +72,28 @@ for a in range(len(trials)):
             forces[c].append(in_msg.act[c].force)
             #print("Force[%d] = %f" % (c, in_msg.act[c].force))
             #print("Force[%d] = %f" % (c, forces[c][-1]))
-        for c in range(6):
+        for c in range(njoints):
             joint_forces[c].append(in_msg.joint[c].force)
-
-        for c in range(4):
+        #pdb.set_trace()
+        for c in range(nsites):
+            site_xpos[c].append(in_msg.site[c].x)
             site_ypos[c].append(in_msg.site[c].y)
             site_zpos[c].append(in_msg.site[c].z)
         #  Send reply back to client
         out_msg = mj2py.mujoco_msg()
 
-        for c in range(4):
+        for c in range(nsites):
             site = out_msg.site.add()
 
             site.name = sitenames[c]
-            site.x = -0.03143
+            #site.x = -0.03143
             #pdb.set_trace()
-            site.y = target[a][c]['ypos'][b]-target[a][0]['ypos'][b]+0.015095 # crest to hip joint correction
+            # The crest, in hipjoint coordinates is: -0.0240141	0.013947	-0.099572
+            site.x = target[a][c]['xpos'][b]-target[a][0]['xpos'][b]-0.0240141 # crest to hip joint correction
+            target_xpos[c].append(site.x)
+            site.y = target[a][c]['ypos'][b]-target[a][0]['ypos'][b]+0.013947 # crest to hip joint correction
             target_ypos[c].append(site.y)
-            site.z = target[a][c]['zpos'][b]-target[a][0]['zpos'][b]-0.098851 # crest to hip joint correction
+            site.z = target[a][c]['zpos'][b]-target[a][0]['zpos'][b]-0.099572 # crest to hip joint correction
             target_zpos[c].append(site.z)
             #print("%f: site %s to x: %f y: %f" % (c, sitenames[c], site.y, site.x))
 
@@ -102,17 +113,17 @@ for a in range(len(trials)):
 # Plotting
 # pdb.set_trace()
 if enable_plotting:
-    fig1, axarr1 = pyplot.subplots(6, sharex=True)
+    fig1, axarr1 = pyplot.subplots(njoints, sharex=True)
     fig1.set_size_inches(6,15)
     fig2, axarr2 = pyplot.subplots(N, sharex=True)
     fig2.set_size_inches(12,30)
-    fig3, axarr3 = pyplot.subplots(3, sharex=True)
+    fig3, axarr3 = pyplot.subplots(nsites-1, sharex=True)
     fig3.set_size_inches(6,15)
-    fig4, axarr4 = pyplot.subplots(3)
+    fig4, axarr4 = pyplot.subplots(nsites-1)
     fig4.set_size_inches(6,15)
 
     time = np.array(range(len(joint_forces[0])))*10
-    for a in range(6):
+    for a in range(njoints):
         axarr1[a].plot(time, joint_forces[a], 'k-') # Returns a tuple of line objects, thus the comma
         axarr1[a].set_title(in_msg.joint[a].name)
         pyplot.setp(axarr1[a].get_yticklabels(), visible=False)
@@ -131,8 +142,12 @@ if enable_plotting:
     axarr2[N-1].set_xlabel("Time (msec)")
     fig2.text(0.02, 0.5, 'Force (N)', va='center', rotation='vertical')
 
-    for a in range(1,4):
+    for a in range(1,5):
         time = np.array(range(len(site_ypos[a])))*10
+        line1, = axarr3[a-1].plot(time, site_xpos[a], 'g--') # Returns a tuple of line objects, thus the comma
+        line1.set_label("Computed X position")
+        line2, = axarr3[a-1].plot(time, target_xpos[a], 'g-') # Returns a tuple of line objects, thus the comma
+        line2.set_label("Experimental X position")
         line1, = axarr3[a-1].plot(time, site_ypos[a], 'r--') # Returns a tuple of line objects, thus the comma
         line1.set_label("Computed Y position")
         line2, = axarr3[a-1].plot(time, target_ypos[a], 'r-') # Returns a tuple of line objects, thus the comma

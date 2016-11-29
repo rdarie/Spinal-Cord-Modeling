@@ -1,4 +1,25 @@
 #include "mujoco2py_functions.hpp"
+#define PI 3.141592
+#define ERROR_MULTIPLIER 1
+
+// make default abstract geom
+void v_defaultGeom(mjvGeom* geom)
+{
+	geom->type = mjGEOM_NONE;
+	geom->dataid = -1;
+	geom->objtype = mjOBJ_UNKNOWN;
+	geom->objid = -1;
+	geom->category = mjCAT_DECOR;
+	geom->texid = -1;
+	geom->texuniform = 0;
+	geom->texrepeat[0] = 1;
+	geom->texrepeat[1] = 1;
+	geom->emission = 0;
+	geom->specular = 0.5;
+	geom->shininess = 0.5;
+	geom->reflectance = 0;
+	geom->label[0] = 0;
+}
 
 double getTendonMomentArm(mjData* d, mjModel* m, std::string tendon_name, std::string joint_name) {
 
@@ -9,6 +30,36 @@ double getTendonMomentArm(mjData* d, mjModel* m, std::string tendon_name, std::s
 	return ma;
 }
 
+double apply_constraints(double xin, int i) {
+	double low_bounds[8] = {
+		-40 * 2 * PI / 360,
+		-10 * 2 * PI / 360,
+		-120 * 2 * PI / 360,
+		-60 * 2 * PI / 360,
+		-1 * 2 * PI / 360,
+		-1 * 2 * PI / 360,
+		-1 * 2 * PI / 360,
+		-1 * 2 * PI / 360,
+	};
+	double high_bounds[8] = {
+		150 * 2 * PI / 360,
+		10 * 2 * PI / 360,
+		40 * 2 * PI / 360,
+		120 * 2 * PI / 360,
+		1 * 2 * PI / 360,
+		1 * 2 * PI / 360,
+		1 * 2 * PI / 360,
+		1 * 2 * PI / 360,
+	};
+	
+	if (xin < low_bounds[i])
+		return low_bounds[i];
+	else if (xin > high_bounds[i])
+		return high_bounds[i];
+	else
+		return xin;
+}
+
 struct site_functor : Eigen::DenseFunctor<double>
 {
 	mjModel* _model = new mjModel();
@@ -17,8 +68,8 @@ struct site_functor : Eigen::DenseFunctor<double>
 	int _n_sites;
 
 	std::vector<std::string> _site_name;
-
-	site_functor(mjModel* m, mjData* d, double* tgt, std::vector<std::string> siteNames) : DenseFunctor<double>(6, 24) {
+	
+	site_functor(mjModel* m, mjData* d, double* tgt, std::vector<std::string> siteNames) : DenseFunctor<double>(8, 30) {
 
 		_model = NULL;
 		_model = mj_copyModel(_model, m);
@@ -57,9 +108,42 @@ struct site_functor : Eigen::DenseFunctor<double>
 			count++;
 		}
 
+		double weights[30] = {
+			0, // right hip
+			0,
+			0,
+			1, // right knee
+			1,
+			1,
+			10, // right ankle
+			10,
+			10,
+			10, // right knuckle
+			10,
+			10,
+			1, // right toe
+			1,
+			1,
+			0, // left hip
+			0,
+			0,
+			0, // left knee
+			0,
+			0,
+			0, // left ankle
+			0,
+			0,
+			0, // left knuckle
+			0,
+			0,
+			0, // left toe
+			0,
+			0
+		};
+
 		for (int i = 0; i < values(); i++)
 		{
-			fvec[i] = _target_site_xpos[i] - current_site_xpos[i];
+			fvec[i] = weights[i]*ERROR_MULTIPLIER*(_target_site_xpos[i] - current_site_xpos[i]);
 		}
 		return 0;
 	}
@@ -80,6 +164,12 @@ struct site_functor : Eigen::DenseFunctor<double>
 			mj_forward(_model, _data);
 			mj_jacSite(_model, _data, jacp, jacr, siteID);
 
+			//std::cout << "There are " << inputs() << "inputs.";
+			// remember, inputs() counts joints
+
+			//std::cout << "There are " << values() << "values.";
+			// values counts site positions (e.g. 3 x,y,z values per site)
+
 			for (int j = 0; j < values()/_n_sites; j++)
 			{
 				for (int k = 0; k < inputs(); k++) {
@@ -93,29 +183,58 @@ struct site_functor : Eigen::DenseFunctor<double>
 
 Eigen::VectorXd apply_lm(mjModel* m, mjData* d, double *targ, Eigen::VectorXd x, std::vector<std::string> sites)
 {
-	int n = 6, info;
+	int n = 8, info;
 
 	// do the computation
 	site_functor functor(m, d, targ, sites);
 	Eigen::LevenbergMarquardt<site_functor> lm(functor);
 
-	double factor = 200;
+	double factor = 10;
 	lm.setFactor(factor);
-	//lm.setEpsilon(std::numeric_limits<double>::epsilon());
+	
+	lm.setEpsilon(std::numeric_limits<double>::epsilon());
 
-	//std::cout << "lm.info says: " << lm.info() << std::endl;
-	//std::cout << "Starting with a guess of: " << std::endl << x << std::endl;
+	std::cout << "lm.info says: " << lm.info() << std::endl;
+	std::cout << "Starting with a guess of: " << std::endl << x << std::endl;
 
-	info = lm.minimize(x);
-
+	//info = lm.minimize(x);
+	Eigen::DenseIndex nfev = 100;
+	//info = lm.lmder1(x); // minimizes the squared sum of errors.
+	info = Eigen::LevenbergMarquardt<site_functor>::lmdif1(functor, x, &nfev);
 	// check return value
-	//std::cout << "lm.minimize info was " << info << std::endl;
-	//std::cout << "Levenberg Computed" << std::endl << x << std::endl;
+	std::cout << "lm.minimize info was " << info << std::endl;
+	std::cout << "Levenberg Computed" << std::endl << x << std::endl;
 
 	return x;
 }
+void renderTargetSite(mjvScene* scn, double x, double y, double z) {
 
-void fitPoseToSites(mjData* d, mjModel*  m, zmq::socket_t *publisher, std::vector<std::string> tendon_names, std::vector<std::string> joint_names, Eigen::VectorXd* solution_pose) {
+	mjvGeom* g; 
+	g = scn->geoms + scn->ngeom;
+	v_defaultGeom(g);
+
+	g->type = mjGEOM_SPHERE;
+	g->size[0] = 0.05f;
+	g->size[1] = 0.05f;
+	g->size[2] = 0.05f;
+
+	g->rgba[0] = 0.0f;
+	g->rgba[1] = 0.5f;
+	g->rgba[2] = 0.5f;
+	g->rgba[3] = 0.8f;
+
+	g->pos[0] = x;
+	g->pos[1] = y;
+	g->pos[2] = z;
+
+	mjtNum mat[9];
+	mjtNum randomQuat[4] = { 1, 0,0,0};
+	mju_quat2Mat(mat, randomQuat);
+	mju_n2f(g->mat, mat, 9);
+	scn->ngeom++;
+}
+
+void fitPoseToSites(mjData* d, mjModel*  m, mjvScene* scn, zmq::socket_t *publisher, std::vector<std::string> tendon_names, std::vector<std::string> joint_names, Eigen::VectorXd* solution_pose) {
 	// protocol buffer stuff
 	mujoco2py::mujoco_msg to_msg;
 	mujoco2py::mujoco_msg from_msg;
@@ -127,43 +246,53 @@ void fitPoseToSites(mjData* d, mjModel*  m, zmq::socket_t *publisher, std::vecto
 	Eigen::VectorXd actuator_forces(m->nu);
 	Eigen::VectorXd joint_forces(m->nv);
 
-	int n = 6;
-	Eigen::VectorXd x;
+	int n = 8; // of joints
+	Eigen::VectorXd qpos;
 
 	std::vector<std::string> sites;
+
 	sites.push_back("right_hip");
 	sites.push_back("right_knee");
 	sites.push_back("right_ankle");
+	sites.push_back("right_knuckle");
 	sites.push_back("right_toe");
+
 	sites.push_back("left_hip");
 	sites.push_back("left_knee");
 	sites.push_back("left_ankle");
+	sites.push_back("left_knuckle");
 	sites.push_back("left_toe");
 
 	/* the following starting values provide a rough fit. */
-	x.setConstant(n, 0);
+	qpos.setConstant(n, 0);
+	
 	for (int j = 0; j < n; j++) {
-		x[j] = d->qpos[j];
-		//std::cout << "x_i[" << j << "] = " << x[j] << " ";
+		qpos[j] = d->qpos[j];
+		std::cout << "x_i[" << j << "] = " << qpos[j] << " ";
 	}
 	//std::cout << std::endl;
-	double targ[24];
+	double targ[30];
+
 	//left hip:
-	targ[12] = 0.03143;
-	targ[13] = 0;
-	targ[14] = 0;
-	//left knee
 	targ[15] = 0.03143;
 	targ[16] = 0;
-	targ[17] = -0.163;
-	//left ankle
+	targ[17] = 0;
+	//left knee
 	targ[18] = 0.03143;
 	targ[19] = 0;
-	targ[20] = -0.345;
-	//left toe
+	targ[20] = -0.163;
+	//left ankle
 	targ[21] = 0.03143;
-	targ[22] = -0.074;
+	targ[22] = 0;
 	targ[23] = -0.345;
+	//left knuckle
+	targ[24] = 0.03143;
+	targ[25] = 0;
+	targ[26] = -0.345;
+	//left toe
+	targ[27] = 0.03143;
+	targ[28] = -0.074;
+	targ[29] = -0.345;
 
 	int i = 0;
 	for (std::vector<std::string>::iterator it = joint_names.begin(); it < joint_names.end(); it++, i++) {
@@ -181,9 +310,11 @@ void fitPoseToSites(mjData* d, mjModel*  m, zmq::socket_t *publisher, std::vecto
 
 		site_msg = to_msg.add_site();
 		(*site_msg).set_name(*it);
+		double x = d->site_xpos[3 * siteID    ];
 		double y = d->site_xpos[3 * siteID + 1];
 		double z = d->site_xpos[3 * siteID + 2];
 
+		(*site_msg).set_x(x);
 		(*site_msg).set_y(y);
 		(*site_msg).set_z(z);
 	}
@@ -227,19 +358,23 @@ void fitPoseToSites(mjData* d, mjModel*  m, zmq::socket_t *publisher, std::vecto
 	(*publisher).recv(&reply);
 
 	from_msg.ParseFromArray(reply.data(), reply.size());
-
+	
 	for (int i = 0; i < from_msg.site_size(); i++) {
 		targ[3 * i    ] = from_msg.site(i).x();
 		targ[3 * i + 1] = from_msg.site(i).y();
 		targ[3 * i + 2] = from_msg.site(i).z();
-		/*std::cout << "The reply expects site: " << from_msg.site(i).site_name()
+
+		renderTargetSite(scn, from_msg.site(i).x(), from_msg.site(i).y(), from_msg.site(i).z());
+		/*
+		std::cout << "The reply expects site: " << from_msg.site(i).name()
 			<< " to be at position <" << from_msg.site(i).x() << ", "
-			<< from_msg.site(i).y() << ", " << from_msg.site(i).z() << ">" << std::endl;*/
+			<< from_msg.site(i).y() << ", " << from_msg.site(i).z() << ">" << std::endl;
+		*/
 	}
 
-	(*solution_pose) = apply_lm(m,d,targ,x,sites);
+	(*solution_pose) = apply_lm(m,d,targ, qpos, sites);
 	std::cout << "solution pose: " << (*solution_pose).transpose() << std::endl;
-	mj_resetData(m, d);
+
 	for (int a = 0; a < m->nq; a++) {
 		d->qpos[a] = (*solution_pose)[a];
 	}

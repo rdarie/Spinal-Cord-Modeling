@@ -10,7 +10,8 @@
 #include "string.h"
 #include "mujoco2py_functions.hpp"
 
-
+#define WINW 900
+#define WINH 1088
 //-------------------------------- global variables -------------------------------------
 
 // model
@@ -25,7 +26,8 @@ bool showinfo = true;
 bool showfullscreen = false;
 bool slowmotion = false;
 bool showdepth = false;
-int showhelp = 1;                   // 0: none; 1: brief; 2: full
+int showhelp = 0;                   // 0: none; 1: brief; 2: full
+bool outputToFile = true;
 
 // abstract visualization
 mjvScene scn;
@@ -34,12 +36,15 @@ mjvOption vopt;
 mjvPerturb pert;
 char status[1000] = "";
 
+// video output:
+// create output rgb file
+FILE* fp = fopen("E:\\Google Drive\\Github\\tempdata\\Biomechanical Model\\figures\\mujoco_output.raw", "wb");
 // OpenGL rendering
 int refreshrate;
 const int fontscale = mjFONTSCALE_150;
 mjrContext con;
 float depth_buffer[5120*2880];        // big enough for 5K screen
-unsigned char depth_rgb[1280*720*3];  // 1/4th of screen
+unsigned char depth_rgb[WINW*WINH*3];  // 1/4th of screen
 
 // selection and perturbation
 bool button_left = false;
@@ -138,12 +143,12 @@ void autoscale(GLFWwindow* window)
     cam.lookat[0] = m->stat.center[0];
     cam.lookat[1] = m->stat.center[1];
     cam.lookat[2] = m->stat.center[2];
-    cam.distance = 1.5 * m->stat.extent;
+	cam.azimuth = 30;
+    cam.distance = 1.3 * m->stat.extent;
 
     // set to free camera
     cam.type = mjCAMERA_FREE;
 }
-
 
 // load mjb or xml model
 void loadmodel(GLFWwindow* window, const char* filename, const char* xmlstring)
@@ -482,7 +487,6 @@ void scroll(GLFWwindow* window, double xoffset, double yoffset)
     mjv_moveCamera(m, mjMOUSE_ZOOM, 0, -0.05*yoffset, &scn, &cam);
 }
 
-
 // drop
 void drop(GLFWwindow* window, int count, const char** paths)
 {
@@ -490,7 +494,6 @@ void drop(GLFWwindow* window, int count, const char** paths)
     if( count>0 )
         loadmodel(window, paths[0], 0);
 }
-
 
 //-------------------------------- simulation and rendering -----------------------------
 
@@ -669,8 +672,16 @@ void render(GLFWwindow* window)
 
     // render
     mjr_render(rect, &scn, &con);
-
+	
     // show depth map
+	if (outputToFile) {
+		// get the depth buffer
+		mjr_readPixels(depth_rgb, NULL, rect, &con);
+
+		// write rgb image to file
+		fwrite(depth_rgb, 3, WINW*WINH, fp);
+	}
+
     if( showdepth )
     {
         // get the depth buffer
@@ -771,14 +782,17 @@ int main(int argc, const char** argv)
     // init GLFW
     if (!glfwInit())
         return 1;
+	
 	// Connect ZMQ publishers
-
 	std::cout << "Connecting to python server 1 ..." << std::endl;
 	incoming_publisher.connect("tcp://localhost:5556");
+
+	int request_timeout = 15000;
+	incoming_publisher.setsockopt(ZMQ_RCVTIMEO, &request_timeout, sizeof(request_timeout));
+
 	std::cout << "Connecting to python server 2 ..." << std::endl;
 	neuron_publisher.connect("tcp://localhost:5555");
 
-    // get refreshrate
     refreshrate = glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate;
 
     // multisampling
@@ -789,14 +803,14 @@ int main(int argc, const char** argv)
     if( refreshrate>=100 )
     {
         glfwWindowHint(GLFW_STEREO, 1);
-        window = glfwCreateWindow(1200, 900, "Simulate", NULL, NULL);
+        window = glfwCreateWindow(WINW, WINH, "Simulate", NULL, NULL);
     }
 
     // no stereo: try mono
     if( !window )
     {
         glfwWindowHint(GLFW_STEREO, 0);
-        window = glfwCreateWindow(1200, 900, "Simulate", NULL, NULL);
+        window = glfwCreateWindow(WINW, WINH, "Simulate", NULL, NULL);
     }
     if( !window )
     {
@@ -828,7 +842,7 @@ int main(int argc, const char** argv)
     glfwSetScrollCallback(window, scroll);
     glfwSetDropCallback(window, drop);
     glfwSetWindowRefreshCallback(window, render);
-
+	
     // load model if filename given as argument
     if( argc==2 )
         loadmodel(window, argv[1], 0);
@@ -858,10 +872,12 @@ int main(int argc, const char** argv)
 
   	std::vector<std::string> joints;
 
-  	joints.push_back("right_hip_x");
+	joints.push_back("right_hip_x");
+	joints.push_back("right_hip_z");
   	joints.push_back("right_knee");
   	joints.push_back("right_ankle_x");
-  	joints.push_back("left_hip_x");
+	joints.push_back("left_hip_x");
+	joints.push_back("left_hip_z");
   	joints.push_back("left_knee");
   	joints.push_back("left_ankle_x");
 
@@ -935,14 +951,23 @@ int main(int argc, const char** argv)
   	start_poses[10] = -60;
   	end_poses[10] = 30;
 
+	mju_copy(d->qpos, m->key_qpos, m->nq*1);
     // main loop
+
     while( !glfwWindowShouldClose(window) )
     {
         // simulate and render
 		//poseJoints(d, m, &incoming_publisher);
-		fitPoseToSites(d, m, &incoming_publisher, tendons, joints, &solution_pose);
+		
+		try {
+			fitPoseToSites(d, m, &scn, &incoming_publisher, tendons, joints, &solution_pose);
+		}
+		catch (zmq::error_t e) {
+			break;
+		}
+		
         render(window);
-		//updateNeuron(d, m, &neuron_publisher, tendons, tendon_length0);
+		// updateNeuron(d, m, &neuron_publisher, tendons, tendon_length0);
 
         // handle events (this calls all callbacks)
         glfwPollEvents();
@@ -951,8 +976,12 @@ int main(int argc, const char** argv)
     // delete everything we allocated
     mj_deleteData(d);
     mj_deleteModel(m);
+
     mjr_freeContext(&con);
+
     mjv_freeScene(&scn);
+
+	fclose(fp);
 
     // terminate
     glfwTerminate();
